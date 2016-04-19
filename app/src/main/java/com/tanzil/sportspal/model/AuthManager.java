@@ -61,7 +61,7 @@ public class AuthManager {
                 SPLog.e(TAG, "onSuccess  --> " + response.toString());
 
                 try {
-                    String state = response.getString("response");
+                    String state = response.getString("status");
                     if (state.equalsIgnoreCase("200")) {
                         Preferences.writeBoolean(activity, Preferences.LOGIN, true);
 
@@ -126,7 +126,7 @@ public class AuthManager {
                 SPLog.e(TAG, "onSuccess  --> " + response.toString());
 
                 try {
-                    String state = response.getString("response");
+                    String state = response.getString("status");
                     if (state.equalsIgnoreCase("200")) {
                         Preferences.writeBoolean(activity, Preferences.REGISTRATION, true);
 
@@ -194,7 +194,7 @@ public class AuthManager {
                 SPLog.e(TAG, "onSuccess  --> " + response.toString());
 
                 try {
-                    String state = response.getString("response");
+                    String state = response.getString("status");
                     if (state.equalsIgnoreCase("200")) {
                         Preferences.writeBoolean(activity, Preferences.LOGIN, true);
                         Preferences.writeBoolean(activity, Preferences.REGISTRATION, false);
@@ -263,7 +263,7 @@ public class AuthManager {
                 SPLog.e(TAG, "onSuccess  --> " + response.toString());
 
                 try {
-                    String state = response.getString("response");
+                    String state = response.getString("status");
                     if (state.equalsIgnoreCase("200")) {
                         Preferences.writeBoolean(activity, Preferences.FORGET_PASS, true);
 
@@ -331,7 +331,7 @@ public class AuthManager {
                 SPLog.e(TAG, "onSuccess  --> " + response.toString());
 
                 try {
-                    String state = response.getString("response");
+                    String state = response.getString("status");
                     if (state.equalsIgnoreCase("200")) {
                         Preferences.writeBoolean(activity, Preferences.LOGIN, true);
 

@@ -80,7 +80,7 @@
             android:layout_marginTop="10dp"
             android:background="@drawable/edittext_transparent_bg"
             android:hint="@string/password"
-            android:inputType="textEmailAddress"
+            android:inputType="textPassword"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:textColor="@color/edit_text_color"
