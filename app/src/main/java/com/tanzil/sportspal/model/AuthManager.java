@@ -65,7 +65,6 @@ public class AuthManager {
                     if (state.equalsIgnoreCase("200")) {
                         Preferences.writeBoolean(activity, Preferences.LOGIN, true);
 
-                        setCoins(response.getString("coins"));
                         EventBus.getDefault().postSticky("Login True");
                     } else {
 
