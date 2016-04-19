@@ -1,4 +1,4 @@
-package com.tanzil.sportspal.view;
+package com.tanzil.sportspal.view.activity;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;

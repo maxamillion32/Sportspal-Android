@@ -5,11 +5,15 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.AnimationDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.IBinder;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.tanzil.sportspal.R;
@@ -53,6 +57,33 @@ public class Utils {
         return value;
     }
 
+    public static void startAnimationBG(Activity activity, ImageView mainView) {
+        AnimationDrawable animationDrawable = (AnimationDrawable) mainView
+                .getDrawable();
+        animationDrawable.setOneShot(false);
+        animationDrawable.start();
+        Animation animation = AnimationUtils.loadAnimation(activity,
+                android.R.anim.fade_in);
+        mainView.setAnimation(animation);
+        animation.start();
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                // Animation fadeOut = AnimationUtils.loadAnimation(
+                // LoginActivity.this, android.R.anim.fade_out);
+                // mainView.startAnimation(fadeOut);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+        });
+    }
+
     public static String capSentence(String string, boolean capitalize) {
         if (!Utils.isEmptyString(string)) {
             if (string.length() == 0) {
@@ -65,11 +96,10 @@ public class Utils {
             } else {
                 return c.toLowerCase() + capSentence(string.substring(1), c.equals(" "));
             }
-        }else{
+        } else {
             return "";
         }
     }
-
 
 
     public static boolean isConnectingToInternet(Activity act) {
@@ -92,7 +122,6 @@ public class Utils {
     }
 
 
-
     public static void showAlert(Activity activity, String msg) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
         alertDialogBuilder
@@ -111,9 +140,8 @@ public class Utils {
     }
 
     public static void showMessage(Activity activity, String msg) {
-        Toast.makeText(activity, ""+msg, Toast.LENGTH_SHORT).show();
+        Toast.makeText(activity, "" + msg, Toast.LENGTH_SHORT).show();
     }
-
 
 
     public static void defaultLoader(Activity act) {

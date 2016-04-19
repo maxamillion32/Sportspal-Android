@@ -5,12 +5,12 @@ package com.tanzil.sportspal.Utility;
  */
 public class ServiceApi {
 
-    public static final String baseurl = "http://eracoin.in"; //staging..
+    public static final String baseurl = "http://youthtalking.com/sportspal/users"; //staging..
 
 
     // Users Family
-    public static final String LOGIN = baseurl + "/login.php";
-    public static final String REGISTER = baseurl + "/register.php";
+    public static final String LOGIN = baseurl + "/login";
+    public static final String REGISTER = baseurl + "/add";
     public static final String VERIFY_USER = baseurl + "/verifyuser.php";
     public static final String FORGOT_PASSWORD = baseurl + "/forgetpassword.php";
     public static final String CHANGE_PASSWORD = baseurl + "/changepassword.php";
