@@ -2,14 +2,23 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background"
     android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/mainView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@string/app_name"
+        android:scaleType="fitXY"
+        android:src="@drawable/animation_background" />
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="@dimen/logo_top_margin"
+        android:contentDescription="@string/app_name"
         android:src="@drawable/logo" />
 
     <LinearLayout
@@ -20,11 +29,13 @@
 
         <ImageView
             android:id="@+id/img_facebook"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:contentDescription="@string/app_name"
             android:paddingLeft="@dimen/splash_margin"
             android:paddingRight="@dimen/splash_margin"
+            android:scaleType="fitXY"
             android:src="@drawable/facebook" />
 
         <LinearLayout
@@ -34,22 +45,29 @@
             android:gravity="center"
             android:orientation="horizontal">
 
-            <ImageView
-                android:id="@+id/img_signup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/ic_launcher" />
+            <com.tanzil.sportspal.customUi.MyButton
+                android:id="@+id/sign_up_btn"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/button_height"
+                android:layout_weight="1"
+                android:background="@drawable/button_sign_up_green_bg"
+                android:text="@string/sign_up"
+                android:textColor="@color/white"
+                android:textSize="@dimen/button_text_size" />
 
             <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:layout_width="@dimen/splash_margin"
+                android:layout_height="wrap_content" />
 
-            <ImageView
-                android:id="@+id/img_login"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/ic_launcher" />
+            <com.tanzil.sportspal.customUi.MyButton
+                android:id="@+id/login_btn"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/button_height"
+                android:layout_weight="1"
+                android:background="@drawable/button_green_bg"
+                android:text="@string/login"
+                android:textColor="@color/white"
+                android:textSize="@dimen/button_text_size" />
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>
