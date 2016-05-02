@@ -22,26 +22,25 @@ public class AuthManager {
 
     private static final String TAG = AuthManager.class.getSimpleName();
 
-    private String coins;
+    private String deviceToken;
+    private String userToken;
 
-    public String getCoins() {
-        return coins;
+    public String getDeviceToken() {
+        return deviceToken;
     }
 
-    public void setCoins(String coins) {
-        this.coins = coins;
+    public void setDeviceToken(String deviceToken) {
+        this.deviceToken = deviceToken;
     }
 
-    public void logIn(final Activity activity, String email, String password) {
-        JSONObject post_data = new JSONObject();
-        try {
-            post_data.put("email", email);
-            post_data.put("password", password);
-            SPLog.e(TAG, "LoginData" + post_data.toString());
+    public String getUserToken() {
+        return userToken;
+    }
 
-        } catch (Exception e1) {
-            e1.printStackTrace();
-        }
+    public void setUserToken(String userToken) {
+        this.userToken = userToken;
+    }
+    public void logIn(final Activity activity, JSONObject post_data) {
 
         SPRestClient.post(ServiceApi.LOGIN, post_data.toString(), new JsonHttpResponseHandler() {
             @Override

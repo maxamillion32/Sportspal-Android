@@ -23,6 +23,8 @@ public class Preferences {
     public static final String FORGET_PASS = "forget_pass";
     public static final String PASSWORD = "password";
 
+    public static final String DEVICE_ID = "device_id";
+
     //  GpPreferences.writeString(getApplicationContext(), Preferences.NAME, "dev");
     // GpPreferences.readString(getApplicationContext(), Preferences.NAME, "");
 

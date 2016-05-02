@@ -7,6 +7,7 @@ public class ServiceApi {
 
     public static final String baseurl = "http://youthtalking.com/sportspal/users"; //staging..
 
+    public static String GCM_PROJECT_NUMBER = "723846163712";
 
     // Users Family
     public static final String LOGIN = baseurl + "/login";
