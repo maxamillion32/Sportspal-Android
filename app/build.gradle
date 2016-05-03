@@ -26,7 +26,8 @@ dependencies {
     compile 'com.android.support:design:23.3.0'
     compile 'com.android.support:recyclerview-v7:23.3.0'
     compile 'com.loopj.android:android-async-http:1.4.9'
-    compile 'de.greenrobot:eventbus:2.+'
+    compile 'de.greenrobot:eventbus:2.4.0'
     compile 'com.pubnub:pubnub-android:3.7.8'
     compile "com.google.android.gms:play-services-gcm:8.4.0"
+    compile 'com.pkmmte.view:circularimageview:1.1'
 }

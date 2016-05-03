@@ -15,9 +15,9 @@ public class ServiceApi {
     public static final String VERIFY_USER = baseurl + "/verifyuser.php";
     public static final String FORGOT_PASSWORD = baseurl + "/forgetpassword.php";
     public static final String CHANGE_PASSWORD = baseurl + "/changepassword.php";
-    public static final String PREDICTION = baseurl + "/prediction.php";
-    public static final String GET_DROP_DOWN = baseurl + "/getmenu.php";
-    public static final String GET_SELECTED_USERS = baseurl + "/selectedusers.php";
+    public static final String GET_USER_SPORTS = baseurl + "/sports/";
+    public static final String GET_ALL_SPORTS = baseurl + "/sports";
+    public static final String ADD_USER_SPORT = baseurl + "/selectedusers.php";
 
 
 }

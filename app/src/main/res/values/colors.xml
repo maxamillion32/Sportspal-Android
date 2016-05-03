@@ -10,5 +10,10 @@
     <color name="transparent_white">#11FFFFFF</color>
     <color name="hint_color">#FFFFFF</color>
     <color name="edit_text_color">#FFFFFF</color>
+    <color name="dark_grey">#818181</color>
+    <color name="bg_color">#dedfd1</color>
+    <color name="grey_text">#9f9fa2</color>
+    <color name="bottom_bar_text">#929292</color>
+    <color name="circular_image_border_color">#EEEEEE</color>
 
 </resources>
