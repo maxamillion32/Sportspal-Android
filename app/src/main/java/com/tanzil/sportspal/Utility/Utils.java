@@ -37,6 +37,7 @@ public class Utils {
     private static ProgressDialog progressDialog;
     private static GoogleCloudMessaging gcm;
     private static String regid;
+    private static SingleShotLocationProvider.GPSCoordinates locations;
 
 
     public static void showLoading(Activity act, String msg) {
@@ -62,6 +63,20 @@ public class Utils {
             e.printStackTrace();
         }
         return value;
+    }
+
+    public static SingleShotLocationProvider.GPSCoordinates getLocation(Context context) {
+        // when you need location
+        // if inside activity context = this;
+
+        SingleShotLocationProvider.requestSingleUpdate(context,
+                new SingleShotLocationProvider.LocationCallback() {
+                    @Override public void onNewLocationAvailable(SingleShotLocationProvider.GPSCoordinates location) {
+                        Log.d("Location", "my location is " + location.toString());
+                        locations = location;
+                    }
+                });
+        return locations;
     }
 
     public static void startAnimationBG(Activity activity, ImageView mainView) {
@@ -167,6 +182,17 @@ public class Utils {
 
     public static String getRegId(final Activity contex) {
         new AsyncTask<Void, Void, String>() {
+            ProgressDialog progressDialog;
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progressDialog = ProgressDialog
+                        .show(contex,
+                                "",
+                                contex.getString(R.string.please_wait),
+                                true);
+            }
+
             @Override
             protected String doInBackground(Void... params) {
                 String msg = "";
@@ -188,6 +214,9 @@ public class Utils {
 
             @Override
             protected void onPostExecute(String msg) {
+                if (progressDialog != null) {
+                    progressDialog.dismiss();
+                }
                 Log.e("UTILS", "DEVICE_Token---> " + regid);
             }
 

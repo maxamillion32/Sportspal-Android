@@ -12,9 +12,11 @@ import android.widget.Toast;
 import com.tanzil.sportspal.R;
 import com.tanzil.sportspal.Utility.Preferences;
 import com.tanzil.sportspal.Utility.SPLog;
+import com.tanzil.sportspal.Utility.SingleShotLocationProvider;
 import com.tanzil.sportspal.Utility.Utils;
 import com.tanzil.sportspal.customUi.MyButton;
 import com.tanzil.sportspal.customUi.MyEditText;
+import com.tanzil.sportspal.model.AuthManager;
 import com.tanzil.sportspal.model.ModelManager;
 
 import org.json.JSONObject;
@@ -36,12 +38,22 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
     private MyButton signUpBtn;
     private MyEditText et_Email, et_Password, et_ConfirmPassword, et_Name, et_LastName, et_DOB, et_Gender;
     private Calendar myCalendar;
+    private AuthManager authManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sign_up_screen);
+
+        authManager = ModelManager.getInstance().getAuthManager();
+        String deviceId = Preferences.readString(getApplicationContext(), Preferences.DEVICE_ID, "");
+        if (Utils.isEmptyString(deviceId)) {
+            deviceId = Utils.getRegId(this);
+            authManager.setDeviceToken(deviceId);
+        } else {
+            authManager.setDeviceToken(deviceId);
+        }
 
         signUpBtn = (MyButton) findViewById(R.id.sign_up_btn);
         img_back = (ImageView) findViewById(R.id.img_back);
@@ -88,6 +100,7 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
         et_DOB.setText(sdf.format(myCalendar.getTime()));
     }
 
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -114,7 +127,18 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
                     et_Gender.requestFocus();
                     Toast.makeText(getBaseContext(), getString(R.string.please_enter_sex), Toast.LENGTH_SHORT).show();
                 } else {
+                    SingleShotLocationProvider.GPSCoordinates locations = Utils.getLocation(activity);
+                    double lat, lng;
+                    if (locations != null) {
+                        lat = locations.latitude;
+                        lng = locations.longitude;
+                    } else {
+                        lat = 0.000;
+                        lng = 0.000;
+                    }
+
                     Utils.showLoading(activity, getString(R.string.please_wait));
+
                     JSONObject post_data = new JSONObject();
                     try {
                         post_data.put("email", et_Email.getText().toString().trim());
@@ -122,13 +146,17 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
                         post_data.put("first_name", et_Name.getText().toString().trim());
                         post_data.put("last_name", et_LastName.getText().toString().trim());
                         post_data.put("dob", et_DOB.getText().toString().trim());
-                        post_data.put("sex", et_Gender.getText().toString().trim());
+                        post_data.put("gender", et_Gender.getText().toString().trim());
+                        post_data.put("latitude", lat);
+                        post_data.put("longitude", lng);
+                        post_data.put("device_type", "Android");
+                        post_data.put("device_token", authManager.getDeviceToken());
                         SPLog.e(TAG, "Data" + post_data.toString());
 
                     } catch (Exception e1) {
                         e1.printStackTrace();
                     }
-                    ModelManager.getInstance().getAuthManager().registerUser(SignUpScreen.this, post_data);
+                    authManager.registerUser(SignUpScreen.this, post_data);
                 }
                 break;
             case R.id.img_back:
@@ -159,9 +187,8 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
         if (message.equalsIgnoreCase("Register True")) {
             Utils.dismissLoading();
             Preferences.writeString(activity, Preferences.EMAIL, et_Email.getText().toString());
-            Preferences.writeString(activity, Preferences.PASSWORD, et_Password.getText().toString());
             SPLog.e(TAG, "Register True");
-            startActivity(new Intent(activity, MainActivity.class));
+            startActivity(new Intent(activity, LoginScreen.class));
             finish();
         } else if (message.contains("Register False")) {
             // showMatchHistoryList();

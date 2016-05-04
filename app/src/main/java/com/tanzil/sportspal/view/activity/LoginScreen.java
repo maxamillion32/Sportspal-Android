@@ -2,18 +2,14 @@ package com.tanzil.sportspal.view.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.tanzil.sportspal.R;
 import com.tanzil.sportspal.Utility.Preferences;
 import com.tanzil.sportspal.Utility.SPLog;
-import com.tanzil.sportspal.Utility.ServiceApi;
 import com.tanzil.sportspal.Utility.Utils;
 import com.tanzil.sportspal.customUi.MyButton;
 import com.tanzil.sportspal.customUi.MyEditText;
@@ -21,8 +17,6 @@ import com.tanzil.sportspal.model.AuthManager;
 import com.tanzil.sportspal.model.ModelManager;
 
 import org.json.JSONObject;
-
-import java.io.IOException;
 
 import de.greenrobot.event.EventBus;
 
@@ -36,8 +30,6 @@ public class LoginScreen extends Activity implements View.OnClickListener {
     private ImageView img_forget_password, img_back;
     private MyButton loginBtn;
     private MyEditText et_Email, et_Password;
-    private  GoogleCloudMessaging gcm;
-    private String regid;
     private AuthManager authManager;
 
     @Override
@@ -141,32 +133,4 @@ public class LoginScreen extends Activity implements View.OnClickListener {
 
     }
 
-    public String getRegId(final Activity contex) {
-        new AsyncTask<Void, Void, String>() {
-            @Override
-            protected String doInBackground(Void... params) {
-                String msg = "";
-                try {
-                    if (gcm == null) {
-                        gcm = GoogleCloudMessaging.getInstance(contex);
-                    }
-                    regid = gcm.register(ServiceApi.GCM_PROJECT_NUMBER);
-                    ModelManager.getInstance().getAuthManager().setDeviceToken(regid);
-                    msg = "Device registered, registration ID=" + regid;
-
-                } catch (IOException ex) {
-                    msg = "Error :" + ex.getMessage();
-
-                }
-                return msg;
-            }
-
-            @Override
-            protected void onPostExecute(String msg) {
-                Log.e("UTILS", "DEVICE_Token---> " + regid);
-            }
-
-        }.execute(null, null, null);
-        return regid;
-    }
 }

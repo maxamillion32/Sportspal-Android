@@ -24,6 +24,23 @@ public class AuthManager {
 
     private String deviceToken;
     private String userToken;
+    private String userId, email;
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public String getDeviceToken() {
         return deviceToken;
@@ -60,9 +77,14 @@ public class AuthManager {
                 SPLog.e(TAG, "onSuccess  --> " + response.toString());
 
                 try {
-                    String state = response.getString("status");
-                    if (state.equalsIgnoreCase("200")) {
+
+                    boolean state = response.getBoolean("success");
+                    if (state) {
                         Preferences.writeBoolean(activity, Preferences.LOGIN, true);
+                        Preferences.writeString(activity, Preferences.USER_ID, response.getJSONObject("message").getString("id"));
+                        Preferences.writeString(activity, Preferences.EMAIL, response.getJSONObject("message").getString("email"));
+                        setUserId(response.getJSONObject("message").getString("id"));
+                        setEmail(response.getJSONObject("message").getString("email"));
 
                         EventBus.getDefault().postSticky("Login True");
                     } else {

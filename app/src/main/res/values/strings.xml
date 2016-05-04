@@ -55,4 +55,12 @@
     <string name="sports">Sports</string>
     <string name="players">Players</string>
     <string name="teams">Teams</string>
+
+    <!-- Create New Game Screen-->
+    <string name="sports_name">SPORTS NAME</string>
+    <string name="team_name">TEAM NAME</string>
+    <string name="date_format">DD/MM/YYYY</string>
+    <string name="time_format">HH:MM</string>
+    <string name="create_new_game">CREATE NEW GAME</string>
+    <string name="pick_address">PICK ADDRESS</string>
 </resources>
