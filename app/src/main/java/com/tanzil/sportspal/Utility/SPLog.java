@@ -11,10 +11,10 @@ public class SPLog {
 
     private static final String LOG_TAG = "SportsPal";
 
-    /** @see <a href="http://stackoverflow.com/a/8899735" /> */
+    /**
+     * @see <a href="http://stackoverflow.com/a/8899735" />
+     */
     private static final int ENTRY_MAX_LEN = 4000;
-
-
 
 
     public static void i(String tag, String msg) {
@@ -48,6 +48,12 @@ public class SPLog {
         }
     }
 
+    public static void d(String tag, String msg) {
+        if (enableLogging) {
+            Log.d("" + tag, "" + msg);
+        }
+    }
+
     public static void w(String tag, String msg) {
         if (enableLogging) {
             Log.w("" + tag, "" + msg);
@@ -63,9 +69,9 @@ public class SPLog {
 
     private static void log(int priority, boolean ignoreLimit, String message, Object... args) {
         String print;
-        if (args != null && args.length > 0 && args[args.length-1] instanceof Throwable) {
+        if (args != null && args.length > 0 && args[args.length - 1] instanceof Throwable) {
             Object[] truncated = Arrays.copyOf(args, args.length - 1);
-            Throwable ex = (Throwable) args[args.length-1];
+            Throwable ex = (Throwable) args[args.length - 1];
             print = formatMessage(message, truncated) + '\n' + Log.getStackTraceString(ex);
         } else {
             print = formatMessage(message, args);
@@ -78,7 +84,7 @@ public class SPLog {
                 Log.println(priority, LOG_TAG, next);
                 if (lastNewLine != -1) {
                     // Don't print out the \n twice.
-                    print = print.substring(nextEnd+1);
+                    print = print.substring(nextEnd + 1);
                 } else {
                     print = print.substring(nextEnd);
                 }

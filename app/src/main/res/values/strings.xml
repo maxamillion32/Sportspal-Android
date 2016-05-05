@@ -19,23 +19,20 @@
     <string name="drawer_close">Close</string>
     <!-- navigation drawer item labels  -->
     <string-array name="nav_drawer_labels">
-        <item>Home</item>
-        <item>Prediction</item>
-        <item>LeaderBoard</item>
-        <item>Redeem LiveCoin</item>
-        <!--<item>Share</item>-->
-        <item>Redeem Rules</item>
-        <item>Change Password</item>
-        <item>Logout</item>
+        <item>NEWS</item>
+        <item>PLAY</item>
+        <item>ADD</item>
+        <item>CHAT</item>
+        <item>PROFILE</item>
+        <item>LOGOUT</item>
     </string-array>
 
-    <string name="title_stocoin">Redeem LiveCoin</string>
-    <string name="title_change_pass">Change Password</string>
-    <string name="title_weekly">LeaderBoard</string>
-    <string name="title_predict">Prediction</string>
-    <string name="title_home">Home</string>
-    <!--<string name="title_share">Share</string>-->
-    <string name="title_redeem">Redeem Rules</string>
+    <string name="title_play">PLAY</string>
+    <string name="title_add">ADD</string>
+    <string name="title_chat">CHAT</string>
+    <string name="title_profile">PROFILE</string>
+    <string name="title_news">NEWS</string>
+    <string name="title_logout">LOGOUT</string>
 
     <!-- Sign Up Screen-->
     <string name="please_enter_confirm_password">Please enter confirm Password</string>

@@ -195,7 +195,7 @@
                 android:padding="5dp"
                 android:src="@drawable/sports" />
 
-            <com.tanzil.sportspal.customUi.MyEditText
+            <com.tanzil.sportspal.customUi.CustomAutoCompleteTextView
                 android:id="@+id/txt_pick_address"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/drop_down_height"

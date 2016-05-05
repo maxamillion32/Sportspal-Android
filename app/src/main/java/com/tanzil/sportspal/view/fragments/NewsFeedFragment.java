@@ -85,11 +85,12 @@ public class NewsFeedFragment extends Fragment {
     public void onEventMainThread(String message) {
         Log.e(TAG, "-- " + message);
         if (message.equalsIgnoreCase("GetAllSports True")) {
+            Utils.dismissLoading();
             setData();
         } else if (message.equalsIgnoreCase("GetAllSports False")) {
-
+            Utils.dismissLoading();
         } else if (message.equalsIgnoreCase("GetAllSports Network Error")) {
-
+            Utils.dismissLoading();
         }
     }
 }

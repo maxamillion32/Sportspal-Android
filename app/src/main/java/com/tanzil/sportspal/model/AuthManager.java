@@ -81,10 +81,10 @@ public class AuthManager {
                     boolean state = response.getBoolean("success");
                     if (state) {
                         Preferences.writeBoolean(activity, Preferences.LOGIN, true);
-                        Preferences.writeString(activity, Preferences.USER_ID, response.getJSONObject("message").getString("id"));
-                        Preferences.writeString(activity, Preferences.EMAIL, response.getJSONObject("message").getString("email"));
-                        setUserId(response.getJSONObject("message").getString("id"));
-                        setEmail(response.getJSONObject("message").getString("email"));
+//                        Preferences.writeString(activity, Preferences.USER_ID, response.getJSONObject("message").getString("id"));
+//                        Preferences.writeString(activity, Preferences.EMAIL, response.getJSONObject("message").getString("email"));
+//                        setUserId(response.getJSONObject("message").getString("id"));
+//                        setEmail(response.getJSONObject("message").getString("email"));
 
                         EventBus.getDefault().postSticky("Login True");
                     } else {

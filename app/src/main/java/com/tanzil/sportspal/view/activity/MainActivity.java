@@ -4,23 +4,31 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Window;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.tanzil.sportspal.R;
 import com.tanzil.sportspal.Utility.Preferences;
+import com.tanzil.sportspal.customUi.MyTextView;
+import com.tanzil.sportspal.view.fragments.AddGameFragment;
 import com.tanzil.sportspal.view.fragments.FragmentDrawer;
 import com.tanzil.sportspal.view.fragments.NewsFeedFragment;
+import com.tanzil.sportspal.view.fragments.play.PlayMainFragment;
 
-public class MainActivity extends AppCompatActivity implements FragmentDrawer.FragmentDrawerListener {
+public class MainActivity extends AppCompatActivity implements FragmentDrawer.FragmentDrawerListener,
+        View.OnClickListener {
 
     private String TAG = MainActivity.class.getSimpleName();
 
@@ -28,6 +36,9 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     private FragmentDrawer drawerFragment;
     private FragmentManager fragmentManager;
     private boolean backer = false;
+    private LinearLayout newsFeedLayout, playLayout, addSportLayout, chatLayout, profileLayout;
+    private ImageView img_newsFeed, img_play, img_addSports, img_chat, img_profile;
+    private MyTextView txt_news, txt_play, txt_add, txt_chat, txt_profile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,11 +56,158 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), mToolbar);
         drawerFragment.setDrawerListener(this);
 
+        newsFeedLayout = (LinearLayout) findViewById(R.id.layout_news);
+        playLayout = (LinearLayout) findViewById(R.id.layout_play);
+        addSportLayout = (LinearLayout) findViewById(R.id.layout_add);
+        chatLayout = (LinearLayout) findViewById(R.id.layout_chat);
+        profileLayout = (LinearLayout) findViewById(R.id.layout_profile);
+
+        img_newsFeed = (ImageView) findViewById(R.id.img_news);
+        img_play = (ImageView) findViewById(R.id.img_play);
+        img_addSports = (ImageView) findViewById(R.id.img_add);
+        img_chat = (ImageView) findViewById(R.id.img_chat);
+        img_profile = (ImageView) findViewById(R.id.img_profile);
+
+        txt_news = (MyTextView) findViewById(R.id.news_text);
+        txt_play = (MyTextView) findViewById(R.id.play_text);
+        txt_add = (MyTextView) findViewById(R.id.add_text);
+        txt_chat = (MyTextView) findViewById(R.id.chat_text);
+        txt_profile = (MyTextView) findViewById(R.id.profile_text);
+
         // display the first navigation drawer view on app launch
         displayView(0);
+
+        newsFeedLayout.setOnClickListener(this);
+        playLayout.setOnClickListener(this);
+        addSportLayout.setOnClickListener(this);
+        chatLayout.setOnClickListener(this);
+        profileLayout.setOnClickListener(this);
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.layout_news:
+                displayView(0);
+                break;
+            case R.id.layout_play:
+                displayView(1);
+                break;
+            case R.id.layout_add:
+                displayView(2);
+                break;
+            case R.id.layout_chat:
+                displayView(3);
+                break;
+            case R.id.layout_profile:
+                displayView(4);
+                break;
+        }
+    }
 
+    private void setBackground(int position) {
+        if (position == 0) {
+            img_newsFeed.setImageResource(R.drawable.newsfeed);
+            img_play.setImageResource(R.drawable.play);
+            img_addSports.setImageResource(R.drawable.add);
+            img_chat.setImageResource(R.drawable.chat);
+            img_profile.setImageResource(R.drawable.profile);
+
+            if (android.os.Build.VERSION.SDK_INT < 23) {
+                txt_news.setTextColor(getResources().getColor(R.color.light_green));
+                txt_play.setTextColor(getResources().getColor(R.color.white));
+                txt_add.setTextColor(getResources().getColor(R.color.white));
+                txt_chat.setTextColor(getResources().getColor(R.color.white));
+                txt_profile.setTextColor(getResources().getColor(R.color.white));
+            } else {
+                txt_news.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.light_green));
+                txt_play.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.white));
+                txt_add.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.white));
+                txt_chat.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.white));
+                txt_profile.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.white));
+            }
+        } else if (position == 1) {
+            img_newsFeed.setImageResource(R.drawable.newsfeed);
+            img_play.setImageResource(R.drawable.play);
+            img_addSports.setImageResource(R.drawable.add);
+            img_chat.setImageResource(R.drawable.chat);
+            img_profile.setImageResource(R.drawable.profile);
+
+            if (android.os.Build.VERSION.SDK_INT < 23) {
+                txt_play.setTextColor(getResources().getColor(R.color.light_green));
+                txt_news.setTextColor(getResources().getColor(R.color.white));
+                txt_add.setTextColor(getResources().getColor(R.color.white));
+                txt_chat.setTextColor(getResources().getColor(R.color.white));
+                txt_profile.setTextColor(getResources().getColor(R.color.white));
+            } else {
+                txt_play.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.light_green));
+                txt_news.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.white));
+                txt_add.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.white));
+                txt_chat.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.white));
+                txt_profile.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.white));
+            }
+        } else if (position == 2) {
+            img_newsFeed.setImageResource(R.drawable.newsfeed);
+            img_play.setImageResource(R.drawable.play);
+            img_addSports.setImageResource(R.drawable.add);
+            img_chat.setImageResource(R.drawable.chat);
+            img_profile.setImageResource(R.drawable.profile);
+
+            if (android.os.Build.VERSION.SDK_INT < 23) {
+                txt_add.setTextColor(getResources().getColor(R.color.light_green));
+                txt_play.setTextColor(getResources().getColor(R.color.white));
+                txt_news.setTextColor(getResources().getColor(R.color.white));
+                txt_chat.setTextColor(getResources().getColor(R.color.white));
+                txt_profile.setTextColor(getResources().getColor(R.color.white));
+            } else {
+                txt_add.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.light_green));
+                txt_play.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.white));
+                txt_news.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.white));
+                txt_chat.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.white));
+                txt_profile.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.white));
+            }
+        } else if (position == 3) {
+            img_newsFeed.setImageResource(R.drawable.newsfeed);
+            img_play.setImageResource(R.drawable.play);
+            img_addSports.setImageResource(R.drawable.add);
+            img_chat.setImageResource(R.drawable.chat);
+            img_profile.setImageResource(R.drawable.profile);
+
+            if (android.os.Build.VERSION.SDK_INT < 23) {
+                txt_chat.setTextColor(getResources().getColor(R.color.light_green));
+                txt_play.setTextColor(getResources().getColor(R.color.white));
+                txt_add.setTextColor(getResources().getColor(R.color.white));
+                txt_news.setTextColor(getResources().getColor(R.color.white));
+                txt_profile.setTextColor(getResources().getColor(R.color.white));
+            } else {
+                txt_chat.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.light_green));
+                txt_play.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.white));
+                txt_add.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.white));
+                txt_news.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.white));
+                txt_profile.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.white));
+            }
+        } else if (position == 4) {
+            img_newsFeed.setImageResource(R.drawable.newsfeed);
+            img_play.setImageResource(R.drawable.play);
+            img_addSports.setImageResource(R.drawable.add);
+            img_chat.setImageResource(R.drawable.chat);
+            img_profile.setImageResource(R.drawable.profile);
+
+            if (android.os.Build.VERSION.SDK_INT < 23) {
+                txt_profile.setTextColor(getResources().getColor(R.color.light_green));
+                txt_play.setTextColor(getResources().getColor(R.color.white));
+                txt_add.setTextColor(getResources().getColor(R.color.white));
+                txt_chat.setTextColor(getResources().getColor(R.color.white));
+                txt_news.setTextColor(getResources().getColor(R.color.white));
+            } else {
+                txt_profile.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.light_green));
+                txt_play.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.white));
+                txt_add.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.white));
+                txt_chat.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.white));
+                txt_news.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.white));
+            }
+        }
+    }
 
     @Override
     public void onDrawerItemSelected(View view, int position) {
@@ -62,33 +220,29 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         switch (position) {
             case 0:
                 fragment = new NewsFeedFragment();
-                title = getString(R.string.title_home);
+                title = getString(R.string.title_news);
                 break;
             case 1:
-                fragment = new NewsFeedFragment();
-                title = getString(R.string.title_predict);
+                fragment = new PlayMainFragment();
+                title = getString(R.string.title_play);
                 break;
             case 2:
-                fragment = new NewsFeedFragment();
-                title = getString(R.string.title_weekly);
+                fragment = new AddGameFragment();
+                title = getString(R.string.title_add);
                 break;
             case 3:
                 fragment = new NewsFeedFragment();
-                title = getString(R.string.title_stocoin);
+                title = getString(R.string.title_chat);
                 break;
-//            case 4:
-//                fragment = new StocoinFragment();
-//                title = getString(R.string.title_stocoin);
-//                break;
             case 4:
                 fragment = new NewsFeedFragment();
-                title = getString(R.string.title_redeem);
+                title = getString(R.string.title_profile);
                 break;
+//            case 5:
+//                fragment = new NewsFeedFragment();
+//                title = getString(R.string.title_logout);
+//                break;
             case 5:
-                fragment = new NewsFeedFragment();
-                title = getString(R.string.title_change_pass);
-                break;
-            case 6:
                 showAlert(MainActivity.this, "Are you sure, you want to log out?");
                 break;
             default:
@@ -101,10 +255,12 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             fragmentTransaction.addToBackStack(title);
             fragmentTransaction.commit();
 
+            setBackground(position);
             // set the toolbar title
             getSupportActionBar().setTitle(title);
         }
     }
+
     public void showAlert(Activity activity, String msg) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
         alertDialogBuilder
@@ -156,22 +312,20 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         String title = "";
         Fragment f = fragmentManager.findFragmentById(R.id.container_body);
         try {
-//            if (f instanceof NewsFeedFragment) {
-//                title = getString(R.string.title_home);
-//            } else if (f instanceof NewsFeedFragment) {
-//                title = getString(R.string.title_change_pass);
-//            } else if (f instanceof NewsFeedFragment) {
-//                title = getString(R.string.title_predict);
-//            } else if (f instanceof NewsFeedFragment) {
-//                title = getString(R.string.title_redeem);
-//            } else if (f instanceof NewsFeedFragment) {
-//                title = getString(R.string.title_stocoin);
-//            } else if (f instanceof NewsFeedFragment) {
-                title = getString(R.string.title_weekly);
-//            }
+            if (f instanceof NewsFeedFragment) {
+                title = getString(R.string.title_news);
+            } else if (f instanceof NewsFeedFragment) {
+                title = getString(R.string.title_play);
+            } else if (f instanceof NewsFeedFragment) {
+                title = getString(R.string.title_add);
+            } else if (f instanceof NewsFeedFragment) {
+                title = getString(R.string.title_chat);
+            } else if (f instanceof NewsFeedFragment) {
+                title = getString(R.string.title_profile);
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            title = getString(R.string.title_home);
+            title = getString(R.string.title_news);
         }
         // set the toolbar title
         getSupportActionBar().setTitle(title);

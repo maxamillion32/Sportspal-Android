@@ -3,8 +3,10 @@
     xmlns:local="http://schemas.android.com/apk/res-auto"
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:minHeight="?attr/actionBarSize"
-    android:background="?attr/colorControlHighlight"
-    local:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-    local:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+    android:layout_height="@dimen/toolbar_height"
+    android:background="@color/black"
+    android:minHeight="@dimen/toolbar_height"
+    local:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+    <include layout="@layout/header_bar_layout" />
+</android.support.v7.widget.Toolbar>

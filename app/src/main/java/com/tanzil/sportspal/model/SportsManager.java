@@ -28,6 +28,7 @@ public class SportsManager {
             getSports(auth_token);
         return sportsList;
     }
+
     private void getSports(String auth_token) {
         SPRestClient.get(ServiceApi.GET_ALL_SPORTS, auth_token, new JsonHttpResponseHandler() {
             @Override
@@ -76,6 +77,17 @@ public class SportsManager {
                 super.onFailure(statusCode, headers, throwable, errorResponse);
                 if (errorResponse != null) {
                     Log.e(TAG, "onFailure  --> " + errorResponse.toString());
+                    EventBus.getDefault().post("GetAllSports False");
+                } else {
+                    EventBus.getDefault().post("GetAllSports Network Error");
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                super.onFailure(statusCode, headers, responseString, throwable);
+                if (responseString != null) {
+                    Log.e(TAG, "onFailure  --> " + responseString.toString());
                     EventBus.getDefault().post("GetAllSports False");
                 } else {
                     EventBus.getDefault().post("GetAllSports Network Error");

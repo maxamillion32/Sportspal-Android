@@ -39,6 +39,7 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
     private MyEditText et_Email, et_Password, et_ConfirmPassword, et_Name, et_LastName, et_DOB, et_Gender;
     private Calendar myCalendar;
     private AuthManager authManager;
+    private double lat, lng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +74,8 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
         // For animating background
         Utils.startAnimationBG(activity, mainView);
 
+        getLatLong();
+
         signUpBtn.setOnClickListener(this);
         img_back.setOnClickListener(this);
         et_DOB.setOnClickListener(this);
@@ -92,6 +95,20 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
 
     };
 
+    private void getLatLong() {
+        if (Utils.checkGPSEnabled(activity)) {
+            SingleShotLocationProvider.GPSCoordinates locations = Utils.getLocation(activity);
+            if (locations != null) {
+                lat = locations.latitude;
+                lng = locations.longitude;
+            } else {
+                lat = 0.000;
+                lng = 0.000;
+            }
+        }else {
+            Utils.showGPSDisabledAlertToUser(activity);
+        }
+    }
     private void updateLabel() {
 
         String myFormat = "dd/MM/yyyy"; //In which you need put here
@@ -127,36 +144,30 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
                     et_Gender.requestFocus();
                     Toast.makeText(getBaseContext(), getString(R.string.please_enter_sex), Toast.LENGTH_SHORT).show();
                 } else {
-                    SingleShotLocationProvider.GPSCoordinates locations = Utils.getLocation(activity);
-                    double lat, lng;
-                    if (locations != null) {
-                        lat = locations.latitude;
-                        lng = locations.longitude;
+                    if (lat == 0.000 || lng == 0.000) {
+                        getLatLong();
                     } else {
-                        lat = 0.000;
-                        lng = 0.000;
+                        Utils.showLoading(activity, getString(R.string.please_wait));
+
+                        JSONObject post_data = new JSONObject();
+                        try {
+                            post_data.put("email", et_Email.getText().toString().trim());
+                            post_data.put("password", et_Password.getText().toString().trim());
+                            post_data.put("first_name", et_Name.getText().toString().trim());
+                            post_data.put("last_name", et_LastName.getText().toString().trim());
+                            post_data.put("dob", et_DOB.getText().toString().trim());
+                            post_data.put("gender", et_Gender.getText().toString().trim());
+                            post_data.put("latitude", lat);
+                            post_data.put("longitude", lng);
+                            post_data.put("device_type", "Android");
+                            post_data.put("device_token", authManager.getDeviceToken());
+                            SPLog.e(TAG, "Data" + post_data.toString());
+
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                        }
+                        authManager.registerUser(SignUpScreen.this, post_data);
                     }
-
-                    Utils.showLoading(activity, getString(R.string.please_wait));
-
-                    JSONObject post_data = new JSONObject();
-                    try {
-                        post_data.put("email", et_Email.getText().toString().trim());
-                        post_data.put("password", et_Password.getText().toString().trim());
-                        post_data.put("first_name", et_Name.getText().toString().trim());
-                        post_data.put("last_name", et_LastName.getText().toString().trim());
-                        post_data.put("dob", et_DOB.getText().toString().trim());
-                        post_data.put("gender", et_Gender.getText().toString().trim());
-                        post_data.put("latitude", lat);
-                        post_data.put("longitude", lng);
-                        post_data.put("device_type", "Android");
-                        post_data.put("device_token", authManager.getDeviceToken());
-                        SPLog.e(TAG, "Data" + post_data.toString());
-
-                    } catch (Exception e1) {
-                        e1.printStackTrace();
-                    }
-                    authManager.registerUser(SignUpScreen.this, post_data);
                 }
                 break;
             case R.id.img_back:

@@ -104,7 +104,7 @@
 
     <fragment
         android:id="@+id/play_container"
-        class="com.tanzil.sportspal.view.fragments.play.PlayMainFragment"
+        class="com.tanzil.sportspal.view.fragments.play.SportsFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_gravity="start"
