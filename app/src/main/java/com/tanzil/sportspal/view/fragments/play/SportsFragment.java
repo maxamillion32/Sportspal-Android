@@ -16,8 +16,8 @@ import android.widget.ListView;
 import com.tanzil.sportspal.R;
 import com.tanzil.sportspal.Utility.Utils;
 import com.tanzil.sportspal.model.ModelManager;
-import com.tanzil.sportspal.model.bean.Sports;
-import com.tanzil.sportspal.view.adapters.NewsFeedAdapter;
+import com.tanzil.sportspal.model.bean.Games;
+import com.tanzil.sportspal.view.adapters.SportsFragmentAdapter;
 
 import java.util.ArrayList;
 
@@ -28,8 +28,8 @@ public class SportsFragment extends Fragment {
 
     private String TAG = SportsFragment.class.getSimpleName();
     private Activity activity;
-    private NewsFeedAdapter adapter;
-    private ArrayList<Sports> sportsArrayList;
+    private SportsFragmentAdapter adapter;
+    private ArrayList<Games> gamesArrayList;
     private ListView newsFeedListView;
 
     @Override
@@ -43,10 +43,10 @@ public class SportsFragment extends Fragment {
         newsFeedListView = (ListView) rootView.findViewById(R.id.news_feed_list);
         // Inflate the layout for this fragment
 
-        sportsArrayList = ModelManager.getInstance().getSportsManager().getAllSportsList(false, "");
-        if (sportsArrayList == null) {
+        gamesArrayList = ModelManager.getInstance().getSportsManager().getAllGames(false);
+        if (gamesArrayList == null) {
             Utils.showLoading(activity, activity.getString(R.string.please_wait));
-            ModelManager.getInstance().getSportsManager().getAllSportsList(true, "");
+            ModelManager.getInstance().getSportsManager().getAllGames(true);
         } else
             setData();
 
@@ -55,9 +55,9 @@ public class SportsFragment extends Fragment {
     }
 
     private void setData() {
-        sportsArrayList = ModelManager.getInstance().getSportsManager().getAllSportsList(false, "");
-        if (sportsArrayList.size() > 0) {
-            adapter = new NewsFeedAdapter(activity, sportsArrayList);
+        gamesArrayList = ModelManager.getInstance().getSportsManager().getAllGames(false);
+        if (gamesArrayList.size() > 0) {
+            adapter = new SportsFragmentAdapter(activity, gamesArrayList);
             newsFeedListView.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         } else

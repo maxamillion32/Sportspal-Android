@@ -21,11 +21,18 @@ import android.widget.Toast;
 
 import com.tanzil.sportspal.R;
 import com.tanzil.sportspal.Utility.Preferences;
+import com.tanzil.sportspal.Utility.SPLog;
+import com.tanzil.sportspal.Utility.Utils;
 import com.tanzil.sportspal.customUi.MyTextView;
+import com.tanzil.sportspal.model.ModelManager;
 import com.tanzil.sportspal.view.fragments.AddGameFragment;
 import com.tanzil.sportspal.view.fragments.FragmentDrawer;
 import com.tanzil.sportspal.view.fragments.NewsFeedFragment;
 import com.tanzil.sportspal.view.fragments.play.PlayMainFragment;
+
+import org.json.JSONObject;
+
+import de.greenrobot.event.EventBus;
 
 public class MainActivity extends AppCompatActivity implements FragmentDrawer.FragmentDrawerListener,
         View.OnClickListener {
@@ -39,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     private LinearLayout newsFeedLayout, playLayout, addSportLayout, chatLayout, profileLayout;
     private ImageView img_newsFeed, img_play, img_addSports, img_chat, img_profile;
     private MyTextView txt_news, txt_play, txt_add, txt_chat, txt_profile;
+    private Activity activity = MainActivity.this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -243,7 +251,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 //                title = getString(R.string.title_logout);
 //                break;
             case 5:
-                showAlert(MainActivity.this, "Are you sure, you want to log out?");
+                showAlert("Are you sure, you want to log out?");
                 break;
             default:
                 break;
@@ -261,7 +269,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         }
     }
 
-    public void showAlert(Activity activity, String msg) {
+    public void showAlert(String msg) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
         alertDialogBuilder
                 .setTitle("Logout!")
@@ -269,10 +277,19 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 .setCancelable(false)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Preferences.clearAllPreference(MainActivity.this);
+                        JSONObject post_data = new JSONObject();
+                        try {
+                            post_data.put("device_type", "Android");
+                            post_data.put("device_token", ModelManager.getInstance().getAuthManager().getDeviceToken());
+                            SPLog.e(TAG, "LoginData" + post_data.toString());
+
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                        }
+                        Utils.showLoading(activity, getString(R.string.please_wait));
+
+                        ModelManager.getInstance().getAuthManager().logout(activity, post_data);
                         dialog.cancel();
-                        startActivity(new Intent(MainActivity.this, LoginScreen.class));
-                        finish();
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -329,5 +346,38 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         }
         // set the toolbar title
         getSupportActionBar().setTitle(title);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+
+    }
+
+    public void onEventMainThread(String message) {
+        if (message.equalsIgnoreCase("Logout True")) {
+            Utils.dismissLoading();
+            SPLog.e(TAG, "Logout True");
+            Preferences.clearAllPreference(MainActivity.this);
+            startActivity(new Intent(MainActivity.this, LoginScreen.class));
+            finish();
+        } else if (message.contains("Logout False")) {
+            // showMatchHistoryList();
+            Utils.showMessage(activity, "Please try again");
+            SPLog.e(TAG, "Logout False");
+            Utils.dismissLoading();
+        } else if (message.equalsIgnoreCase("Logout Network Error")) {
+            Utils.showMessage(activity, "Network Error! Please try again");
+            SPLog.e(TAG, "Logout Network Error");
+            Utils.dismissLoading();
+        }
+
     }
 }

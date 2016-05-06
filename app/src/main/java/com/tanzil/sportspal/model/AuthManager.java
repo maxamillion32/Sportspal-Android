@@ -81,10 +81,12 @@ public class AuthManager {
                     boolean state = response.getBoolean("success");
                     if (state) {
                         Preferences.writeBoolean(activity, Preferences.LOGIN, true);
-//                        Preferences.writeString(activity, Preferences.USER_ID, response.getJSONObject("message").getString("id"));
-//                        Preferences.writeString(activity, Preferences.EMAIL, response.getJSONObject("message").getString("email"));
-//                        setUserId(response.getJSONObject("message").getString("id"));
-//                        setEmail(response.getJSONObject("message").getString("email"));
+                        if (response.getJSONObject("message").has("id")) {
+                            Preferences.writeString(activity, Preferences.USER_ID, response.getJSONObject("message").getString("id"));
+                            Preferences.writeString(activity, Preferences.EMAIL, response.getJSONObject("message").getString("email"));
+                            setUserId(response.getJSONObject("message").getString("id"));
+                            setEmail(response.getJSONObject("message").getString("email"));
+                        }
 
                         EventBus.getDefault().postSticky("Login True");
                     } else {
@@ -146,13 +148,13 @@ public class AuthManager {
                 SPLog.e(TAG, "onSuccess  --> " + response.toString());
 
                 try {
-                    String state = response.getString("status");
-                    if (state.equalsIgnoreCase("200")) {
+                    boolean state = response.getBoolean("success");
+                    if (state) {
                         Preferences.writeBoolean(activity, Preferences.REGISTRATION, true);
 
                         EventBus.getDefault().postSticky("Register True");
                     } else {
-                        EventBus.getDefault().postSticky("Register False@#@"+response.getString("msg"));
+                        EventBus.getDefault().postSticky("Register False@#@"+response.getString("message"));
                     }
                 } catch (JSONException e) {
                     EventBus.getDefault().postSticky("Register False");
@@ -168,7 +170,7 @@ public class AuthManager {
                     SPLog.e(TAG, "onFailure  --> " + errorResponse.toString());
                     try {
 
-                    EventBus.getDefault().postSticky("Register False@#@"+errorResponse.getString("msg"));
+                    EventBus.getDefault().postSticky("Register False@#@"+errorResponse.getString("message"));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -214,14 +216,14 @@ public class AuthManager {
                 SPLog.e(TAG, "onSuccess  --> " + response.toString());
 
                 try {
-                    String state = response.getString("status");
-                    if (state.equalsIgnoreCase("200")) {
+                    boolean state = response.getBoolean("success");
+                    if (state) {
                         Preferences.writeBoolean(activity, Preferences.LOGIN, true);
                         Preferences.writeBoolean(activity, Preferences.REGISTRATION, false);
 
                         EventBus.getDefault().postSticky("Verify True");
                     } else {
-                        EventBus.getDefault().postSticky("Verify False@#@"+response.getString("msg"));
+                        EventBus.getDefault().postSticky("Verify False@#@"+response.getString("message"));
                     }
                 } catch (JSONException e) {
                     EventBus.getDefault().postSticky("Verify False");
@@ -237,7 +239,7 @@ public class AuthManager {
                     SPLog.e(TAG, "onFailure  --> " + errorResponse.toString());
                     try {
 
-                        EventBus.getDefault().postSticky("Verify False@#@"+errorResponse.getString("msg"));
+                        EventBus.getDefault().postSticky("Verify False@#@"+errorResponse.getString("message"));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -289,7 +291,7 @@ public class AuthManager {
 
                         EventBus.getDefault().postSticky("ForgetPassword True@#@" + response.getString("message"));
                     } else {
-                        EventBus.getDefault().postSticky("ForgetPassword False@#@"+response.getString("msg"));
+                        EventBus.getDefault().postSticky("ForgetPassword False@#@"+response.getString("message"));
                     }
                 } catch (JSONException e) {
                     EventBus.getDefault().postSticky("ForgetPassword False");
@@ -305,7 +307,7 @@ public class AuthManager {
                     SPLog.e(TAG, "onFailure  --> " + errorResponse.toString());
                     try {
 
-                        EventBus.getDefault().postSticky("ForgetPassword False@#@"+errorResponse.getString("msg"));
+                        EventBus.getDefault().postSticky("ForgetPassword False@#@"+errorResponse.getString("message"));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -379,6 +381,74 @@ public class AuthManager {
                     }
                 } else {
                     EventBus.getDefault().postSticky("ChangePassword Network Error");
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+                SPLog.e(TAG, "onFinish  --> ");
+            }
+
+            @Override
+            public void onRetry(int retryNo) {
+                // called when request is retried
+                SPLog.e(TAG, "onRetry  --> ");
+            }
+
+        });
+
+    }
+    public void logout(final Activity activity, JSONObject jsonObject) {
+
+        SPLog.e(TAG, "VerifyData" + jsonObject.toString());
+
+        SPRestClient.delete(ServiceApi.LOGOUT, jsonObject.toString(), new JsonHttpResponseHandler() {
+            @Override
+            public void onStart() {
+                Log.e(TAG, "called before request is started");
+            }
+
+            @Override
+            public void onCancel() {
+                super.onCancel();
+                SPLog.e(TAG, "onCancel  --> ");
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+                SPLog.e(TAG, "onSuccess  --> " + response.toString());
+
+                try {
+                    boolean state = response.getBoolean("success");
+                    if (state) {
+                        Preferences.writeBoolean(activity, Preferences.FORGET_PASS, true);
+
+                        EventBus.getDefault().postSticky("Logout True@#@" + response.getString("message"));
+                    } else {
+                        EventBus.getDefault().postSticky("Logout False@#@"+response.getString("message"));
+                    }
+                } catch (JSONException e) {
+                    EventBus.getDefault().postSticky("Logout False");
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+                if (errorResponse != null) {
+                    SPLog.e(TAG, "onFailure  --> " + errorResponse.toString());
+                    try {
+
+                        EventBus.getDefault().postSticky("Logout False@#@"+errorResponse.getString("message"));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    EventBus.getDefault().postSticky("Logout Network Error");
                 }
             }
 

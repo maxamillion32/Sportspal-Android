@@ -60,4 +60,9 @@
     <string name="time_format">HH:MM</string>
     <string name="create_new_game">CREATE NEW GAME</string>
     <string name="pick_address">PICK ADDRESS</string>
+
+    <!-- Create New Team Screen-->
+    <string name="team_sport">TEAM SPORT</string>
+    <string name="corporate_group">CORPORATE GROUP</string>
+    <string name="private_text">PRIVATE</string>
 </resources>

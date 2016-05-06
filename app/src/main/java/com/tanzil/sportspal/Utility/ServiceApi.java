@@ -5,7 +5,7 @@ package com.tanzil.sportspal.Utility;
  */
 public class ServiceApi {
 
-    public static final String baseurl = "http://youthtalking.com/sportspal/users"; //staging..
+    public static final String baseurl = "http://sportspal.in/api/"; //staging..
 
     public static String GCM_PROJECT_NUMBER = "317594767865";
 
@@ -15,14 +15,19 @@ public class ServiceApi {
     public static String BROWSER_KEY = "AIzaSyBXCTk5VPL1NFwQIxvj2kPJx54L_jb9OdE";
 
     // Users Family
-    public static final String LOGIN = baseurl + "/login";
-    public static final String REGISTER = baseurl + "/add";
+    public static final String LOGIN = baseurl + "users/login";
+    public static final String LOGOUT = baseurl + "users/logout";
+    public static final String REGISTER = baseurl + "users/add";
     public static final String VERIFY_USER = baseurl + "/verifyuser.php";
     public static final String FORGOT_PASSWORD = baseurl + "/forgetpassword.php";
     public static final String CHANGE_PASSWORD = baseurl + "/changepassword.php";
-    public static final String GET_USER_SPORTS = baseurl + "/sports/";
+    public static final String GET_USER_SPORTS = baseurl + "users/sports/";
     public static final String GET_ALL_SPORTS = baseurl + "/sports";
-    public static final String ADD_USER_SPORT = baseurl + "/selectedusers.php";
+    public static final String ADD_USER_SPORT = baseurl + "/selectedusers";
+    public static final String GET_ALL_GAMES = baseurl + "/games";
+    public static final String ADD_USER_GAME = baseurl + "/games";
+    public static final String GET_ALL_TEAMS = baseurl + "/teams";
+    public static final String ADD_TEAM = baseurl + "/teams";
 
 
 }
