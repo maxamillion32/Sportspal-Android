@@ -43,10 +43,10 @@ public class NewsFeedFragment extends Fragment {
         newsFeedListView = (ListView) rootView.findViewById(R.id.news_feed_list);
         // Inflate the layout for this fragment
 
-        sportsArrayList = ModelManager.getInstance().getSportsManager().getAllSportsList(false, "");
+        sportsArrayList = ModelManager.getInstance().getSportsManager().getAllSportsList(false);
         if (sportsArrayList == null) {
             Utils.showLoading(activity, activity.getString(R.string.please_wait));
-            ModelManager.getInstance().getSportsManager().getAllSportsList(true, "");
+            ModelManager.getInstance().getSportsManager().getAllSportsList(true);
         } else
             setData();
 
@@ -55,7 +55,7 @@ public class NewsFeedFragment extends Fragment {
     }
 
     private void setData() {
-        sportsArrayList = ModelManager.getInstance().getSportsManager().getAllSportsList(false, "");
+        sportsArrayList = ModelManager.getInstance().getSportsManager().getAllSportsList(false);
         if (sportsArrayList.size() > 0) {
             adapter = new NewsFeedAdapter(activity, sportsArrayList);
             newsFeedListView.setAdapter(adapter);

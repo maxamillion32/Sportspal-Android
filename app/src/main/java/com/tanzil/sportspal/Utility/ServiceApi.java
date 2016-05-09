@@ -24,10 +24,10 @@ public class ServiceApi {
     public static final String GET_USER_SPORTS = baseurl + "users/sports/";
     public static final String GET_ALL_SPORTS = baseurl + "/sports";
     public static final String ADD_USER_SPORT = baseurl + "/selectedusers";
-    public static final String GET_ALL_GAMES = baseurl + "/games";
-    public static final String ADD_USER_GAME = baseurl + "/games";
-    public static final String GET_ALL_TEAMS = baseurl + "/teams";
-    public static final String ADD_TEAM = baseurl + "/teams";
+    public static final String GET_ALL_GAMES = baseurl + "games";
+    public static final String ADD_USER_GAME = baseurl + "games";
+    public static final String GET_ALL_TEAMS = baseurl + "teams";
+    public static final String ADD_TEAM = baseurl + "teams";
 
 
 }

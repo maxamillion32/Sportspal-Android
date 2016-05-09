@@ -7,9 +7,7 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.SyncHttpClient;
 import com.tanzil.sportspal.Utility.SPLog;
 
-import java.io.UnsupportedEncodingException;
 import java.net.SocketTimeoutException;
-import java.net.URLEncoder;
 
 import cz.msebera.android.httpclient.entity.StringEntity;
 import cz.msebera.android.httpclient.message.BasicHeader;
@@ -28,17 +26,30 @@ public class SPRestClient {
 
 
     public static void get(String url, String post_data, AsyncHttpResponseHandler responseHandler) {
-        String uri =(url);
-
-        try {
-            uri= URLEncoder.encode(uri, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+//        String uri =(url);
+//
+//        try {
+//            uri= URLEncoder.encode(uri, "UTF-8");
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        }
 
 
         getClient().get(url, responseHandler);
-       // getClient().get(url, responseHandler);
+        // getClient().get(url, responseHandler);
+    }
+
+    public static void loginPost(String url, String post_data, AsyncHttpResponseHandler responseHandler) {
+        SPLog.e(TAG, "POST-URL---> " + url + " <-> POST-DATA---> " + post_data.toString());
+        try {
+            se = null;
+            se = new StringEntity(post_data);
+            se.setContentType("application/json");
+            getClient().post(null, url, se, "application/json", responseHandler);
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+
     }
 
     public static void post(String url, String post_data, AsyncHttpResponseHandler responseHandler) {
@@ -47,6 +58,7 @@ public class SPRestClient {
             se = null;
             se = new StringEntity(post_data);
             se.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+//            getClient().addHeader("Content-Type", "application/json");
             getClient().post(null, url, se, "application/json", responseHandler);
         } catch (Exception e1) {
             e1.printStackTrace();

@@ -2,7 +2,9 @@ package com.tanzil.sportspal.view.fragments;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,9 +12,11 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
@@ -29,7 +33,13 @@ import com.tanzil.sportspal.Utility.ServiceApi;
 import com.tanzil.sportspal.Utility.Utils;
 import com.tanzil.sportspal.customUi.MyEditText;
 import com.tanzil.sportspal.customUi.MyTextView;
+import com.tanzil.sportspal.model.ModelManager;
 import com.tanzil.sportspal.model.bean.PlaceJSONParser;
+import com.tanzil.sportspal.model.bean.Players;
+import com.tanzil.sportspal.model.bean.Sports;
+import com.tanzil.sportspal.model.bean.Teams;
+import com.tanzil.sportspal.view.adapters.SportsDialogAdapter;
+import com.tanzil.sportspal.view.adapters.TeamsDialogAdapter;
 
 import org.json.JSONObject;
 
@@ -42,16 +52,20 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by arun.sharma on 5/4/2016.
  */
 public class AddGameFragment extends Fragment implements View.OnClickListener {
 
+    private String TAG = AddGameFragment.class.getSimpleName();
     private Activity activity;
     private ImageView addGame, img_sports, img_team;
     private MyTextView game_sportsName, game_teamName, txt_Date, txt_Time;
@@ -61,12 +75,18 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
     private LinearLayout gameLayout, teamLayout;
     private ParserTask parserTask;
     private PlacesTask placesTask;
-    private String type = "game";
+    private String type = "game", sportsId = "", teamId = "";
     private ListView membersList;
     private View headerView, footerView;
 
     private MyEditText teamName, corporateGroup, privateText;
     private MyTextView teamSport;
+    private ArrayList<Teams> teamsArrayList;
+    private ArrayList<Sports> sportsArrayList;
+    private Dialog sportsDialog, teamDialog;
+    private SportsDialogAdapter sportsDialogAdapter;
+    private TeamsDialogAdapter teamsDialogAdapter;
+    private ArrayList<Players> playersArrayList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -103,6 +123,20 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         txt_Address.setOnClickListener(this);
         img_team.setOnClickListener(this);
         img_sports.setOnClickListener(this);
+
+
+        teamsArrayList = ModelManager.getInstance().getTeamsManager().getAllTeams(false);
+        if (teamsArrayList == null) {
+            Utils.showLoading(activity, activity.getString(R.string.please_wait));
+            ModelManager.getInstance().getTeamsManager().getAllTeams(true);
+        } else {
+            sportsArrayList = ModelManager.getInstance().getSportsManager().getAllSportsList(false);
+            if (sportsArrayList == null) {
+                Utils.showLoading(activity, activity.getString(R.string.please_wait));
+                ModelManager.getInstance().getSportsManager().getAllSportsList(true);
+            }
+        }
+
 
         txt_Address.addTextChangedListener(new TextWatcher() {
 
@@ -172,6 +206,76 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         membersList.addFooterView(footerView);
     }
 
+    private void showTeamDialog() {
+        teamDialog = new Dialog(activity);
+        teamDialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+        teamDialog.setContentView(R.layout.alert_dialog_custom_view);
+        teamDialog.getWindow().setBackgroundDrawable(
+                new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        MyTextView titleView = (MyTextView) teamDialog.findViewById(R.id.title_name);
+        titleView.setText(activity.getString(R.string.select_team));
+
+        ListView listView = (ListView) teamDialog.findViewById(R.id.items_list);
+        teamsArrayList = ModelManager.getInstance().getTeamsManager().getAllTeams(false);
+        if (teamsArrayList.size() > 0) {
+            teamsDialogAdapter = new TeamsDialogAdapter(activity,
+                    teamsArrayList);
+            listView.setAdapter(teamsDialogAdapter);
+            teamsDialogAdapter.notifyDataSetChanged();
+            teamDialog.show();
+        } else {
+            listView.setAdapter(null);
+        }
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                // TODO Auto-generated method stub
+                // setData(position);
+                game_teamName.setText(teamsArrayList.get(position).getTeam_name());
+                teamId = teamsArrayList.get(position).getId();
+                teamDialog.dismiss();
+            }
+        });
+    }
+
+    private void showSportsDialog() {
+        sportsDialog = new Dialog(activity);
+        sportsDialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+        sportsDialog.setContentView(R.layout.alert_dialog_custom_view);
+        sportsDialog.getWindow().setBackgroundDrawable(
+                new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        MyTextView titleView = (MyTextView) sportsDialog.findViewById(R.id.title_name);
+        titleView.setText(activity.getString(R.string.select_sports));
+
+        ListView listView = (ListView) sportsDialog.findViewById(R.id.items_list);
+        if (sportsArrayList.size() > 0) {
+            sportsDialogAdapter = new SportsDialogAdapter(activity,
+                    sportsArrayList);
+            listView.setAdapter(sportsDialogAdapter);
+            sportsDialogAdapter.notifyDataSetChanged();
+            sportsDialog.show();
+        } else {
+            listView.setAdapter(null);
+        }
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                // TODO Auto-generated method stub
+                // setData(position);
+                game_sportsName.setText(sportsArrayList.get(position).getName());
+                sportsId = sportsArrayList.get(position).getId();
+                sportsDialog.dismiss();
+            }
+        });
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -207,12 +311,18 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
                 gameLayout.setVisibility(View.GONE);
                 teamLayout.setVisibility(View.VISIBLE);
                 type = "team";
-                break;
+                teamsArrayList = ModelManager.getInstance().getTeamsManager().getAllTeams(false);
+                if (teamsArrayList == null) {
+                    Utils.showLoading(activity, activity.getString(R.string.please_wait));
+                    ModelManager.getInstance().getTeamsManager().getAllTeams(true);
+                }                break;
 
             case R.id.txt_sports_name:
+                showSportsDialog();
                 break;
 
             case R.id.txt_team_name:
+                showTeamDialog();
                 break;
 
             case R.id.txt_pick_address:
@@ -410,4 +520,45 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        //gpDatabase.setConversation(chatManager.getConversations());
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    public void onEventMainThread(String message) {
+        Log.e(TAG, "-- " + message);
+        if (message.equalsIgnoreCase("GetAllTeams True")) {
+            Utils.dismissLoading();
+            teamsArrayList = ModelManager.getInstance().getTeamsManager().getAllTeams(false);
+            sportsArrayList = ModelManager.getInstance().getSportsManager().getAllSportsList(false);
+            if (sportsArrayList == null) {
+                Utils.showLoading(activity, activity.getString(R.string.please_wait));
+                ModelManager.getInstance().getSportsManager().getAllSportsList(true);
+            }
+        } else if (message.equalsIgnoreCase("GetAllTeams False")) {
+            Utils.dismissLoading();
+        } else if (message.equalsIgnoreCase("GetAllTeams Network Error")) {
+            Utils.dismissLoading();
+        } else if (message.equalsIgnoreCase("GetAllSports True")) {
+            Utils.dismissLoading();
+            sportsArrayList = ModelManager.getInstance().getSportsManager().getAllSportsList(false);
+        } else if (message.equalsIgnoreCase("GetAllSports False")) {
+            Utils.dismissLoading();
+        } else if (message.equalsIgnoreCase("GetAllSports Network Error")) {
+            Utils.dismissLoading();
+        }
+    }
 }

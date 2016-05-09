@@ -7,28 +7,25 @@ package com.tanzil.sportspal.view.adapters;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 
-import com.pkmmte.view.CircularImageView;
 import com.tanzil.sportspal.R;
 import com.tanzil.sportspal.customUi.MyTextView;
-import com.tanzil.sportspal.model.bean.Games;
 import com.tanzil.sportspal.model.bean.Sports;
+import com.tanzil.sportspal.model.bean.Teams;
 
 import java.util.ArrayList;
 
 
-public class SportsFragmentAdapter extends BaseAdapter {
-    private ArrayList<Games> list;
+public class TeamsDialogAdapter extends BaseAdapter {
+    private ArrayList<Teams> list;
     private Activity activity;
 
-    public SportsFragmentAdapter(final Activity context,
-                                 ArrayList<Games> list) {
+    public TeamsDialogAdapter(final Activity context,
+                              ArrayList<Teams> list) {
         this.list = list;
         this.activity = context;
     }
@@ -60,7 +57,7 @@ public class SportsFragmentAdapter extends BaseAdapter {
         if (convertView == null) {
             LayoutInflater li = (LayoutInflater) activity
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = li.inflate(R.layout.sports_listview_row, null);
+            v = li.inflate(R.layout.alert_dialog_custom_view, null);
 
             viewHolder = new CompleteListViewHolder(v);
             v.setTag(viewHolder);
@@ -70,10 +67,7 @@ public class SportsFragmentAdapter extends BaseAdapter {
 
         try {
 
-            viewHolder.distance_text.setText(list.get(position).getAddress());
-            viewHolder.descriptionText.setText(list.get(position).getSports_name());
-            viewHolder.dayText.setText(list.get(position).getDate());
-            viewHolder.timeText.setText(list.get(position).getTime());
+            viewHolder.item_name.setText(list.get(position).getTeam_name());
 
 
         } catch (Exception ex) {
@@ -83,20 +77,15 @@ public class SportsFragmentAdapter extends BaseAdapter {
     }
 
     class CompleteListViewHolder {
-        public MyTextView distance_text, descriptionText, dayText, timeText;
-        public ImageView img_team;
+        public MyTextView item_name;
+//        public ImageView img_team;
 
         public CompleteListViewHolder(View convertview) {
-            distance_text = (MyTextView) convertview
-                    .findViewById(R.id.distance_text);
-            descriptionText = (MyTextView) convertview
-                    .findViewById(R.id.description_text);
-            dayText = (MyTextView) convertview
-                    .findViewById(R.id.day_text);
-            timeText = (MyTextView) convertview
-                    .findViewById(R.id.time_text);
-            img_team = (ImageView) convertview
-                    .findViewById(R.id.img_team);
+            item_name = (MyTextView) convertview
+                    .findViewById(R.id.item_name);
+
+//            img_team = (ImageView) convertview
+//                    .findViewById(R.id.img_team);
         }
     }
 }

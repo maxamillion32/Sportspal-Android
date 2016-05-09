@@ -55,6 +55,9 @@ public class PlayMainFragment extends Fragment implements View.OnClickListener {
         playersLayout.setOnClickListener(this);
         teamsLayout.setOnClickListener(this);
 
+        setBackground(0);
+        setFragment(0);
+
         return rootView;
     }
 
@@ -122,7 +125,7 @@ public class PlayMainFragment extends Fragment implements View.OnClickListener {
         else if (position == 1)
             fragment = new SportsFragment();
         else
-            fragment = new SportsFragment();
+            fragment = new TeamsFragment();
 
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.play_container, fragment, fragment.getClass().getSimpleName());

@@ -74,7 +74,9 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
         // For animating background
         Utils.startAnimationBG(activity, mainView);
 
-        getLatLong();
+//        getLatLong();
+        lat = 0.000;
+        lng = 0.000;
 
         signUpBtn.setOnClickListener(this);
         img_back.setOnClickListener(this);
@@ -144,9 +146,9 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
                     et_Gender.requestFocus();
                     Toast.makeText(getBaseContext(), getString(R.string.please_enter_sex), Toast.LENGTH_SHORT).show();
                 } else {
-                    if (lat == 0.000 || lng == 0.000) {
-                        getLatLong();
-                    } else {
+//                    if (lat == 0.000 || lng == 0.000) {
+//                        getLatLong();
+//                    } else {
                         Utils.showLoading(activity, getString(R.string.please_wait));
 
                         JSONObject post_data = new JSONObject();
@@ -167,7 +169,7 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
                             e1.printStackTrace();
                         }
                         authManager.registerUser(SignUpScreen.this, post_data);
-                    }
+//                    }
                 }
                 break;
             case R.id.img_back:

@@ -3,16 +3,15 @@
     android:id="@+id/row_layout"
     android:layout_width="match_parent"
     android:layout_height="@dimen/row_height"
-    android:background="@color/black"
-    android:baselineAligned="false"
-    android:gravity="center_vertical"
-    android:orientation="horizontal">
+    android:minHeight="@dimen/row_height"
+    android:background="@color/colorAccent">
 
     <ImageView
         android:id="@+id/img_team"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center_horizontal|center_vertical"
+        android:background="@color/colorAccent"
         android:contentDescription="@string/app_name" />
 
     <LinearLayout
@@ -33,7 +32,7 @@
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
             android:contentDescription="@string/app_name"
-            android:src="@drawable/team" />
+            android:src="@drawable/km" />
 
         <com.tanzil.sportspal.customUi.MyTextView
             android:id="@+id/distance_text"
@@ -41,6 +40,8 @@
             android:layout_height="wrap_content"
             android:gravity="bottom"
             android:text="@string/news"
+            android:maxLength="7"
+            android:ellipsize="end"
             android:textColor="@color/white"
             android:textSize="@dimen/medium_text_size" />
     </LinearLayout>
