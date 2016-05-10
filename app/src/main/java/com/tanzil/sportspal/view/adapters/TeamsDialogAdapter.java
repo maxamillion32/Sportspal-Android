@@ -57,7 +57,7 @@ public class TeamsDialogAdapter extends BaseAdapter {
         if (convertView == null) {
             LayoutInflater li = (LayoutInflater) activity
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = li.inflate(R.layout.alert_dialog_custom_view, null);
+            v = li.inflate(R.layout.row_alert_view, null);
 
             viewHolder = new CompleteListViewHolder(v);
             v.setTag(viewHolder);

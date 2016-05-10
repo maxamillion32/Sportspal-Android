@@ -38,6 +38,7 @@ import com.tanzil.sportspal.model.bean.PlaceJSONParser;
 import com.tanzil.sportspal.model.bean.Players;
 import com.tanzil.sportspal.model.bean.Sports;
 import com.tanzil.sportspal.model.bean.Teams;
+import com.tanzil.sportspal.view.adapters.MembersListAdapter;
 import com.tanzil.sportspal.view.adapters.SportsDialogAdapter;
 import com.tanzil.sportspal.view.adapters.TeamsDialogAdapter;
 
@@ -87,6 +88,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
     private SportsDialogAdapter sportsDialogAdapter;
     private TeamsDialogAdapter teamsDialogAdapter;
     private ArrayList<Players> playersArrayList;
+    private MembersListAdapter membersListAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -125,17 +127,17 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         img_sports.setOnClickListener(this);
 
 
-        teamsArrayList = ModelManager.getInstance().getTeamsManager().getAllTeams(false);
-        if (teamsArrayList == null) {
-            Utils.showLoading(activity, activity.getString(R.string.please_wait));
-            ModelManager.getInstance().getTeamsManager().getAllTeams(true);
-        } else {
-            sportsArrayList = ModelManager.getInstance().getSportsManager().getAllSportsList(false);
-            if (sportsArrayList == null) {
-                Utils.showLoading(activity, activity.getString(R.string.please_wait));
-                ModelManager.getInstance().getSportsManager().getAllSportsList(true);
-            }
-        }
+//        teamsArrayList = ModelManager.getInstance().getTeamsManager().getAllTeams(false);
+//        if (teamsArrayList == null) {
+//            Utils.showLoading(activity, activity.getString(R.string.please_wait));
+//            ModelManager.getInstance().getTeamsManager().getAllTeams(true);
+//        } else {
+//            sportsArrayList = ModelManager.getInstance().getSportsManager().getAllSportsList(false);
+//            if (sportsArrayList == null) {
+//                Utils.showLoading(activity, activity.getString(R.string.please_wait));
+//                ModelManager.getInstance().getSportsManager().getAllSportsList(true);
+//            }
+//        }
 
 
         txt_Address.addTextChangedListener(new TextWatcher() {
@@ -171,6 +173,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
     }
 
     private void setHeader() {
+        SPLog.e("headerView Data : ", "Setting headerView to List data");
         headerView = View
                 .inflate(activity, R.layout.add_team_header_layout, null);
 
@@ -184,6 +187,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
     }
 
     private void setFooter() {
+        SPLog.e("footerView Data : ", "Setting footerView to List data");
         footerView = View
                 .inflate(activity, R.layout.row_members_list, null);
 
@@ -315,7 +319,22 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
                 if (teamsArrayList == null) {
                     Utils.showLoading(activity, activity.getString(R.string.please_wait));
                     ModelManager.getInstance().getTeamsManager().getAllTeams(true);
-                }                break;
+                } else {
+                    sportsArrayList = ModelManager.getInstance().getSportsManager().getAllSportsList(false);
+                    if (sportsArrayList == null) {
+                        Utils.showLoading(activity, activity.getString(R.string.please_wait));
+                        ModelManager.getInstance().getSportsManager().getAllSportsList(true);
+                    } else {
+                        playersArrayList = ModelManager.getInstance().getPlayersManager().getAllPlayers(false);
+                        if (playersArrayList == null) {
+                            Utils.showLoading(activity, activity.getString(R.string.please_wait));
+                            ModelManager.getInstance().getPlayersManager().getAllPlayers(true);
+                        } else
+                            setData();
+                    }
+                }
+
+                break;
 
             case R.id.txt_sports_name:
                 showSportsDialog();
@@ -344,6 +363,24 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
                 break;
         }
+    }
+
+    private void setData() {
+        gameLayout.setVisibility(View.GONE);
+        teamLayout.setVisibility(View.VISIBLE);
+        type = "team";
+        SPLog.e("Setting Data : ", "Setting List data");
+        setHeader();
+        setFooter();
+        if (playersArrayList != null)
+            if (playersArrayList.size() > 0) {
+                membersListAdapter = new MembersListAdapter(activity, playersArrayList);
+                membersList.setAdapter(membersListAdapter);
+                membersListAdapter.notifyDataSetChanged();
+            } else
+                membersList.setAdapter(null);
+        else
+            membersList.setAdapter(null);
     }
 
     // date picker diaSPLog for date Text
@@ -547,6 +584,13 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
             if (sportsArrayList == null) {
                 Utils.showLoading(activity, activity.getString(R.string.please_wait));
                 ModelManager.getInstance().getSportsManager().getAllSportsList(true);
+            } else {
+                playersArrayList = ModelManager.getInstance().getPlayersManager().getAllPlayers(false);
+                if (playersArrayList == null) {
+                    Utils.showLoading(activity, activity.getString(R.string.please_wait));
+                    ModelManager.getInstance().getPlayersManager().getAllPlayers(true);
+                } else
+                    setData();
             }
         } else if (message.equalsIgnoreCase("GetAllTeams False")) {
             Utils.dismissLoading();
@@ -555,9 +599,23 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         } else if (message.equalsIgnoreCase("GetAllSports True")) {
             Utils.dismissLoading();
             sportsArrayList = ModelManager.getInstance().getSportsManager().getAllSportsList(false);
+            playersArrayList = ModelManager.getInstance().getPlayersManager().getAllPlayers(false);
+            if (playersArrayList == null) {
+                Utils.showLoading(activity, activity.getString(R.string.please_wait));
+                ModelManager.getInstance().getPlayersManager().getAllPlayers(true);
+            } else
+                setData();
         } else if (message.equalsIgnoreCase("GetAllSports False")) {
             Utils.dismissLoading();
         } else if (message.equalsIgnoreCase("GetAllSports Network Error")) {
+            Utils.dismissLoading();
+        } else if (message.equalsIgnoreCase("GetAllPlayers True")) {
+            Utils.dismissLoading();
+            playersArrayList = ModelManager.getInstance().getPlayersManager().getAllPlayers(false);
+            setData();
+        } else if (message.equalsIgnoreCase("GetAllPlayers False")) {
+            Utils.dismissLoading();
+        } else if (message.equalsIgnoreCase("GetAllPlayers Network Error")) {
             Utils.dismissLoading();
         }
     }

@@ -7,26 +7,29 @@ package com.tanzil.sportspal.view.adapters;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
+import com.pkmmte.view.CircularImageView;
 import com.tanzil.sportspal.R;
+import com.tanzil.sportspal.Utility.SPLog;
 import com.tanzil.sportspal.customUi.MyTextView;
+import com.tanzil.sportspal.model.bean.Players;
 import com.tanzil.sportspal.model.bean.Sports;
-import com.tanzil.sportspal.model.bean.Teams;
 
 import java.util.ArrayList;
 
 
-public class SportsDialogAdapter extends BaseAdapter {
-    private ArrayList<Sports> list;
+public class MembersListAdapter extends BaseAdapter {
+    private ArrayList<Players> list;
     private Activity activity;
 
-    public SportsDialogAdapter(final Activity context,
-                               ArrayList<Sports> list) {
+    public MembersListAdapter(final Activity context,
+                              ArrayList<Players> list) {
         this.list = list;
         this.activity = context;
     }
@@ -58,7 +61,7 @@ public class SportsDialogAdapter extends BaseAdapter {
         if (convertView == null) {
             LayoutInflater li = (LayoutInflater) activity
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = li.inflate(R.layout.row_alert_view, null);
+            v = li.inflate(R.layout.row_members_list, null);
 
             viewHolder = new CompleteListViewHolder(v);
             v.setTag(viewHolder);
@@ -67,9 +70,19 @@ public class SportsDialogAdapter extends BaseAdapter {
         }
 
         try {
+            SPLog.e("Name :", "" + list.get(position).getName());
+            viewHolder.userNameText.setText(list.get(position).getName());
 
-            viewHolder.item_name.setText(list.get(position).getName());
-
+            if (android.os.Build.VERSION.SDK_INT < 23) {
+                viewHolder.userPic.setBorderColor(activity.getResources().getColor(R.color.white));
+                viewHolder.userPic.setSelectorColor(activity.getResources().getColor(R.color.circular_image_border_color));
+            } else {
+                viewHolder.userPic.setBorderColor(ContextCompat.getColor(activity, R.color.white));
+                viewHolder.userPic.setSelectorStrokeColor(ContextCompat.getColor(activity, R.color.circular_image_border_color));
+            }
+            viewHolder.userPic.setBorderWidth(5);
+            viewHolder.userPic.setSelectorStrokeWidth(5);
+            viewHolder.userPic.addShadow();
 
         } catch (Exception ex) {
         }
@@ -78,15 +91,17 @@ public class SportsDialogAdapter extends BaseAdapter {
     }
 
     class CompleteListViewHolder {
-        public MyTextView item_name;
-//        public ImageView img_team;
+        public MyTextView userNameText;
+        public CircularImageView userPic;
+        public ImageView sportsType;
 
         public CompleteListViewHolder(View convertview) {
-            item_name = (MyTextView) convertview
-                    .findViewById(R.id.item_name);
-
-//            img_team = (ImageView) convertview
-//                    .findViewById(R.id.img_team);
+            userNameText = (MyTextView) convertview
+                    .findViewById(R.id.txt_user_name);
+            userPic = (CircularImageView) convertview
+                    .findViewById(R.id.img_profile);
+            sportsType = (ImageView) convertview
+                    .findViewById(R.id.img_sport_type);
         }
     }
 }

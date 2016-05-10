@@ -84,28 +84,26 @@
         android:background="@color/black">
 
         <LinearLayout
+            android:id="@+id/create_new_game_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/black"
-            android:baselineAligned="false"
             android:gravity="center_vertical"
             android:orientation="vertical">
 
             <include
-                android:id="@+id/create_new_game_layout"
                 layout="@layout/new_game_layout" />
 
             <LinearLayout
+                android:id="@+id/create_new_team_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/black"
-                android:baselineAligned="false"
                 android:gravity="center"
                 android:orientation="horizontal"
                 android:visibility="gone">
 
                 <include
-                    android:id="@+id/create_new_team_layout"
                     layout="@layout/new_team_layout" />
             </LinearLayout>
         </LinearLayout>

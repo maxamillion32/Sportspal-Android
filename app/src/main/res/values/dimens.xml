@@ -5,6 +5,7 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="splash_margin">19dp</dimen>
     <dimen name="button_height">42dp</dimen>
+    <dimen name="normal_button_height">37dp</dimen>
 
     <dimen name="logo_top_margin">70dp</dimen>
 
