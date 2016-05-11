@@ -20,16 +20,17 @@ import com.tanzil.sportspal.Utility.SPLog;
 import com.tanzil.sportspal.customUi.MyTextView;
 import com.tanzil.sportspal.model.bean.Players;
 import com.tanzil.sportspal.model.bean.Sports;
+import com.tanzil.sportspal.model.bean.Users;
 
 import java.util.ArrayList;
 
 
 public class MembersListAdapter extends BaseAdapter {
-    private ArrayList<Players> list;
+    private ArrayList<Users> list;
     private Activity activity;
 
     public MembersListAdapter(final Activity context,
-                              ArrayList<Players> list) {
+                              ArrayList<Users> list) {
         this.list = list;
         this.activity = context;
     }
@@ -70,8 +71,8 @@ public class MembersListAdapter extends BaseAdapter {
         }
 
         try {
-            SPLog.e("Name :", "" + list.get(position).getName());
-            viewHolder.userNameText.setText(list.get(position).getName());
+            SPLog.e("Name :", "" + list.get(position).getFirst_name());
+            viewHolder.userNameText.setText(list.get(position).getFirst_name());
 
             if (android.os.Build.VERSION.SDK_INT < 23) {
                 viewHolder.userPic.setBorderColor(activity.getResources().getColor(R.color.white));

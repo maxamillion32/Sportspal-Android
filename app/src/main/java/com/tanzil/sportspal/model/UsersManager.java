@@ -1,12 +1,15 @@
-package com.tanzil.sportspal.model.bean;
+package com.tanzil.sportspal.model;
 
 import android.util.Log;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.tanzil.sportspal.Utility.ServiceApi;
 import com.tanzil.sportspal.httprequest.SPRestClient;
-import com.tanzil.sportspal.model.ModelManager;
-import com.tanzil.sportspal.model.SportsManager;
+import com.tanzil.sportspal.model.bean.Games;
+import com.tanzil.sportspal.model.bean.Players;
+import com.tanzil.sportspal.model.bean.Sports;
+import com.tanzil.sportspal.model.bean.Teams;
+import com.tanzil.sportspal.model.bean.Users;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,135 +23,21 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by arun.sharma on 5/3/2016.
  */
-public class Users {
-
+public class UsersManager {
     private ArrayList<Users> usersList;
     private final String TAG = SportsManager.class.getSimpleName();
 
-    String id, gender, dob;
-    String first_name, last_name, email, image, social_platform, social_id, latitude, longitude;
-
-    ArrayList<Sports> sports_preferences;
-    ArrayList<Games> gamesArrayList;
-    ArrayList<Teams> teamsArrayList;
-
-    public String getId() {
-        return id;
+    public ArrayList<Users> getNearUsers(boolean shouldRefresh) {
+        if (shouldRefresh)
+            getUsers();
+        return usersList;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getFirst_name() {
-        return first_name;
-    }
-
-    public void setFirst_name(String first_name) {
-        this.first_name = first_name;
-    }
-
-    public String getLast_name() {
-        return last_name;
-    }
-
-    public void setLast_name(String last_name) {
-        this.last_name = last_name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public String getDob() {
-        return dob;
-    }
-
-    public void setDob(String dob) {
-        this.dob = dob;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public String getSocial_platform() {
-        return social_platform;
-    }
-
-    public void setSocial_platform(String social_platform) {
-        this.social_platform = social_platform;
-    }
-
-    public String getSocial_id() {
-        return social_id;
-    }
-
-    public void setSocial_id(String social_id) {
-        this.social_id = social_id;
-    }
-
-    public String getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(String latitude) {
-        this.latitude = latitude;
-    }
-
-    public String getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(String longitude) {
-        this.longitude = longitude;
-    }
-
-    public ArrayList<Sports> getSports_preferences() {
-        return sports_preferences;
-    }
-
-    public void setSports_preferences(ArrayList<Sports> sports_preferences) {
-        this.sports_preferences = sports_preferences;
-    }
-
-    public ArrayList<Games> getGamesArrayList() {
-        return gamesArrayList;
-    }
-
-    public void setGamesArrayList(ArrayList<Games> gamesArrayList) {
-        this.gamesArrayList = gamesArrayList;
-    }
-
-    public ArrayList<Teams> getTeamsArrayList() {
-        return teamsArrayList;
-    }
-
-    public void setTeamsArrayList(ArrayList<Teams> teamsArrayList) {
-        this.teamsArrayList = teamsArrayList;
-    }
-
-    public ArrayList<Users> getUserDetails(){
+    private void getUsers() {
         SPRestClient.get(ServiceApi.GET_USERS + "/" + ModelManager.getInstance().getAuthManager().getUserId(), null, new JsonHttpResponseHandler() {
             @Override
             public void onStart() {
-                Log.e(TAG, "GetUserDetails called before request is started");
+                Log.e(TAG, "GetNearUsers called before request is started");
             }
 
             @Override
@@ -163,24 +52,60 @@ public class Users {
                 Log.e(TAG, "onSuccess  --> " + response.toString());
 
                 try {
-//                    "id": 13
-//                    "first_name": "Arun"
-//                    "last_name": "Sharma"
-//                    "email": "arun@yahoo.com"
-//                    "dob": "14/08/1988"
-//                    "gender": "Male"
-//                    "modified": "2016-05-09T06:13:53+0000"
-//                    "created": "2016-05-09T06:13:53+0000"
-//                    "image": ""
-//                    "social_platform": ""
-//                    "social_id": ""
-//                    "latitude": "0"
-//                    "longitude": "0"
-//                    "games": [0]
-//                    "favourite_users": [0]
-//                    "teams": [0]
-//                    "user_fav_locations": [0]
-
+//                    "id": 2,
+//                            "first_name": "14/9/2014",
+//                            "last_name": "kinger",
+//                            "email": "abc@gmail.com",
+//                            "dob": "15/12/1999",
+//                            "gender": "male",
+//                            "modified": "2016-05-05T18:47:17+0000",
+//                            "created": "2016-04-16T16:01:43+0000",
+//                            "image": "",
+//                            "social_platform": "",
+//                            "social_id": "",
+//                            "latitude": "30.7333",
+//                            "longitude": "76.7794",
+//                            "sports_preferences": [
+//                    {
+//                        "id": 17,
+//                            "user_id": 2,
+//                            "sport_id": 1,
+//                            "created": null,
+//                            "modified": null
+//                    }
+//                    ],
+//                    "games": [
+//                    {
+//                        "id": 1,
+//                            "sport_id": 1,
+//                            "user_id": 2,
+//                            "game_type": "indivisual",
+//                            "team_id": 0,
+//                            "date": "15/12/1999",
+//                            "time": "10:20 PM",
+//                            "latitude": "1234555",
+//                            "longitude": "1234555",
+//                            "address": "Android",
+//                            "modified": "2016-04-30T05:58:35+0000",
+//                            "created": "2016-04-30T05:58:35+0000"
+//                    }
+//                    ],
+//                    "teams": [
+//                    {
+//                        "id": 1,
+//                            "sport_id": 1,
+//                            "team_name": "KKR",
+//                            "team_type": "private",
+//                            "members_limit": 11,
+//                            "latitude": "1234555",
+//                            "longitude": "1234555",
+//                            "address": "Android",
+//                            "creator_id": 2,
+//                            "created": "2016-04-30T07:27:12+0000",
+//                            "modified": "2016-04-30T07:27:12+0000"
+//                    },
+//                   ]
+//                },
                     int state = response.getInt("status");
                     if (state == 200) {
                         JSONArray jsonArray = response.getJSONArray("message");
@@ -201,6 +126,19 @@ public class Users {
                                 users.setLatitude(jsonArray.getJSONObject(i).getString("latitude"));
                                 users.setLongitude(jsonArray.getJSONObject(i).getString("longitude"));
 
+                                if (jsonArray.getJSONObject(i).has("sports_preferences")) {
+                                    JSONArray jsonArray1 = jsonArray.getJSONObject(i).getJSONArray("sports_preferences");
+                                    if (jsonArray1 != null) {
+                                        ArrayList<Sports> sportsArrayList = new ArrayList<Sports>();
+                                        for (int j = 0; j < jsonArray1.length(); j++) {
+                                            Sports sports = new Sports();
+                                            sports.setId(jsonArray1.getJSONObject(j).getString("sport_id"));
+                                            sports.setUserId(jsonArray1.getJSONObject(j).getString("user_id"));
+                                            sportsArrayList.add(sports);
+                                        }
+                                        users.setSports_preferences(sportsArrayList);
+                                    }
+                                }
                                 if (jsonArray.getJSONObject(i).has("games")) {
                                     JSONArray jsonArray1 = jsonArray.getJSONObject(i).getJSONArray("games");
                                     if (jsonArray1 != null) {
@@ -243,12 +181,12 @@ public class Users {
                                 }
                                 usersList.add(users);
                             }
-                        EventBus.getDefault().post("GetUserDetails True");
+                        EventBus.getDefault().post("GetNearUsers True");
                     } else {
-                        EventBus.getDefault().post("GetUserDetails False");
+                        EventBus.getDefault().post("GetNearUsers False");
                     }
                 } catch (JSONException e) {
-                    EventBus.getDefault().post("GetUserDetails False");
+                    EventBus.getDefault().post("GetNearUsers False");
                 }
 
 
@@ -259,9 +197,9 @@ public class Users {
                 super.onFailure(statusCode, headers, throwable, errorResponse);
                 if (errorResponse != null) {
                     Log.e(TAG, "onFailure  --> " + errorResponse.toString());
-                    EventBus.getDefault().post("GetUserDetails False");
+                    EventBus.getDefault().post("GetNearUsers False");
                 } else {
-                    EventBus.getDefault().post("GetUserDetails Network Error");
+                    EventBus.getDefault().post("GetNearUsers Network Error");
                 }
             }
 
@@ -270,9 +208,9 @@ public class Users {
                 super.onFailure(statusCode, headers, responseString, throwable);
                 if (responseString != null) {
                     Log.e(TAG, "onFailure  --> " + responseString.toString());
-                    EventBus.getDefault().post("GetUserDetails False");
+                    EventBus.getDefault().post("GetNearUsers False");
                 } else {
-                    EventBus.getDefault().post("GetUserDetails Network Error");
+                    EventBus.getDefault().post("GetNearUsers Network Error");
                 }
             }
 
@@ -289,8 +227,6 @@ public class Users {
             }
 
         });
-        return usersList;
     }
+
 }
-
-

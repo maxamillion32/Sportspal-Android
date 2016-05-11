@@ -10,7 +10,7 @@ public class ModelManager {
 
     private AuthManager authMgr;
     private SportsManager sportsManager;
-    private PlayersManager playersManager;
+    private UsersManager usersManager;
     private TeamsManager teamsManager;
     private UserPreferredSportsManager userPreferredSportsManager;
 
@@ -18,7 +18,7 @@ public class ModelManager {
 
         authMgr = new AuthManager();
         sportsManager = new SportsManager();
-        playersManager = new PlayersManager();
+        usersManager = new UsersManager();
         teamsManager = new TeamsManager();
         userPreferredSportsManager = new UserPreferredSportsManager();
 
@@ -28,7 +28,7 @@ public class ModelManager {
 
         this.authMgr = null;
         this.sportsManager = null;
-        this.playersManager = null;
+        this.usersManager = null;
         this.teamsManager = null;
         this.userPreferredSportsManager = null;
     }
@@ -57,8 +57,8 @@ public class ModelManager {
         return sportsManager;
     }
 
-    public PlayersManager getPlayersManager() {
-        return playersManager;
+    public UsersManager getUsersManager() {
+        return usersManager;
     }
 
     public TeamsManager getTeamsManager() {

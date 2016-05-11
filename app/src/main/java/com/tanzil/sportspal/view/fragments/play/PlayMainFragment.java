@@ -123,7 +123,7 @@ public class PlayMainFragment extends Fragment implements View.OnClickListener {
         if (position == 0)
             fragment = new SportsFragment();
         else if (position == 1)
-            fragment = new SportsFragment();
+            fragment = new PlayersFragment();
         else
             fragment = new TeamsFragment();
 

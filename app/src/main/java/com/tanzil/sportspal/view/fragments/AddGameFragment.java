@@ -38,6 +38,7 @@ import com.tanzil.sportspal.model.bean.PlaceJSONParser;
 import com.tanzil.sportspal.model.bean.Players;
 import com.tanzil.sportspal.model.bean.Sports;
 import com.tanzil.sportspal.model.bean.Teams;
+import com.tanzil.sportspal.model.bean.Users;
 import com.tanzil.sportspal.view.adapters.MembersListAdapter;
 import com.tanzil.sportspal.view.adapters.SportsDialogAdapter;
 import com.tanzil.sportspal.view.adapters.TeamsDialogAdapter;
@@ -87,7 +88,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
     private Dialog sportsDialog, teamDialog;
     private SportsDialogAdapter sportsDialogAdapter;
     private TeamsDialogAdapter teamsDialogAdapter;
-    private ArrayList<Players> playersArrayList;
+    private ArrayList<Users> playersArrayList;
     private MembersListAdapter membersListAdapter;
 
     @Override
@@ -325,10 +326,10 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
                         Utils.showLoading(activity, activity.getString(R.string.please_wait));
                         ModelManager.getInstance().getSportsManager().getAllSportsList(true);
                     } else {
-                        playersArrayList = ModelManager.getInstance().getPlayersManager().getAllPlayers(false);
+                        playersArrayList = ModelManager.getInstance().getUsersManager().getNearUsers(false);
                         if (playersArrayList == null) {
                             Utils.showLoading(activity, activity.getString(R.string.please_wait));
-                            ModelManager.getInstance().getPlayersManager().getAllPlayers(true);
+                            ModelManager.getInstance().getUsersManager().getNearUsers(true);
                         } else
                             setData();
                     }
@@ -585,10 +586,10 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
                 Utils.showLoading(activity, activity.getString(R.string.please_wait));
                 ModelManager.getInstance().getSportsManager().getAllSportsList(true);
             } else {
-                playersArrayList = ModelManager.getInstance().getPlayersManager().getAllPlayers(false);
+                playersArrayList = ModelManager.getInstance().getUsersManager().getNearUsers(false);
                 if (playersArrayList == null) {
                     Utils.showLoading(activity, activity.getString(R.string.please_wait));
-                    ModelManager.getInstance().getPlayersManager().getAllPlayers(true);
+                    ModelManager.getInstance().getUsersManager().getNearUsers(true);
                 } else
                     setData();
             }
@@ -599,10 +600,10 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         } else if (message.equalsIgnoreCase("GetAllSports True")) {
             Utils.dismissLoading();
             sportsArrayList = ModelManager.getInstance().getSportsManager().getAllSportsList(false);
-            playersArrayList = ModelManager.getInstance().getPlayersManager().getAllPlayers(false);
+            playersArrayList = ModelManager.getInstance().getUsersManager().getNearUsers(false);
             if (playersArrayList == null) {
                 Utils.showLoading(activity, activity.getString(R.string.please_wait));
-                ModelManager.getInstance().getPlayersManager().getAllPlayers(true);
+                ModelManager.getInstance().getUsersManager().getNearUsers(true);
             } else
                 setData();
         } else if (message.equalsIgnoreCase("GetAllSports False")) {
@@ -611,7 +612,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
             Utils.dismissLoading();
         } else if (message.equalsIgnoreCase("GetAllPlayers True")) {
             Utils.dismissLoading();
-            playersArrayList = ModelManager.getInstance().getPlayersManager().getAllPlayers(false);
+            playersArrayList = ModelManager.getInstance().getUsersManager().getNearUsers(false);
             setData();
         } else if (message.equalsIgnoreCase("GetAllPlayers False")) {
             Utils.dismissLoading();

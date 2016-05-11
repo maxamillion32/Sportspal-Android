@@ -10,6 +10,7 @@ import com.tanzil.sportspal.R;
 import com.tanzil.sportspal.Utility.Preferences;
 import com.tanzil.sportspal.Utility.Utils;
 import com.tanzil.sportspal.customUi.MyButton;
+import com.tanzil.sportspal.model.ModelManager;
 
 /**
  * Created by arun.sharma on 4/19/2016.
@@ -24,6 +25,9 @@ public class SplashScreen extends Activity implements View.OnClickListener {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_screen);
+
+        // set User Id to model
+        ModelManager.getInstance().getAuthManager().setUserId(Preferences.readString(SplashScreen.this, Preferences.USER_ID, ""));
 
         if (Utils.isConnectingToInternet(SplashScreen.this)) {
             /** Starts new activity */
