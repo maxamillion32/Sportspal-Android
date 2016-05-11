@@ -28,6 +28,7 @@ import com.tanzil.sportspal.model.ModelManager;
 import com.tanzil.sportspal.view.fragments.AddGameFragment;
 import com.tanzil.sportspal.view.fragments.FragmentDrawer;
 import com.tanzil.sportspal.view.fragments.NewsFeedFragment;
+import com.tanzil.sportspal.view.fragments.ProfileFragment;
 import com.tanzil.sportspal.view.fragments.play.PlayMainFragment;
 
 import org.json.JSONObject;
@@ -243,7 +244,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 title = getString(R.string.title_chat);
                 break;
             case 4:
-                fragment = new NewsFeedFragment();
+                fragment = new ProfileFragment();
                 title = getString(R.string.title_profile);
                 break;
 //            case 5:
@@ -331,13 +332,13 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         try {
             if (f instanceof NewsFeedFragment) {
                 title = getString(R.string.title_news);
-            } else if (f instanceof NewsFeedFragment) {
+            } else if (f instanceof PlayMainFragment) {
                 title = getString(R.string.title_play);
-            } else if (f instanceof NewsFeedFragment) {
+            } else if (f instanceof AddGameFragment) {
                 title = getString(R.string.title_add);
             } else if (f instanceof NewsFeedFragment) {
                 title = getString(R.string.title_chat);
-            } else if (f instanceof NewsFeedFragment) {
+            } else if (f instanceof ProfileFragment) {
                 title = getString(R.string.title_profile);
             }
         } catch (Exception e) {

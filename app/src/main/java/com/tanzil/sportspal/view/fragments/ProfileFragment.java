@@ -37,7 +37,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         this.activity = super.getActivity();
-        View rootView = inflater.inflate(R.layout.fragment_create_new_game, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
 
         myCalendar = Calendar.getInstance();
 
@@ -67,6 +67,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                     break;
                 }
             }
+        } else {
+            Utils.showLoading(activity, activity.getString(R.string.please_wait));
+            ModelManager.getInstance().getUsersManager().getNearUsers(true);
         }
 
         return rootView;
@@ -121,7 +124,23 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     public void onEventMainThread(String message) {
         Log.e(TAG, "-- " + message);
-        if (message.equalsIgnoreCase("GetUserDetails True")) {
+        if (message.equalsIgnoreCase("GetNearUsers True")) {
+            Utils.dismissLoading();
+            usersArrayList = ModelManager.getInstance().getUsersManager().getNearUsers(false);
+            if (usersArrayList != null) {
+                for (int i = 0; i < usersArrayList.size(); i++) {
+                    if (usersArrayList.get(i).getId().equalsIgnoreCase(ModelManager.getInstance().getAuthManager().getUserId())) {
+                        Utils.showLoading(activity, activity.getString(R.string.please_wait));
+                        usersArrayList.get(i).getUserDetails();
+                        break;
+                    }
+                }
+            }
+        } else if (message.equalsIgnoreCase("GetNearUsers False")) {
+            Utils.dismissLoading();
+        } else if (message.equalsIgnoreCase("GetNearUsers Network Error")) {
+            Utils.dismissLoading();
+        } else if (message.equalsIgnoreCase("GetUserDetails True")) {
             Utils.dismissLoading();
             setData();
         } else if (message.equalsIgnoreCase("GetUserDetails False")) {
