@@ -69,19 +69,19 @@ public class PlayersFragmentAdapter extends BaseAdapter {
             viewHolder = (CompleteListViewHolder) v.getTag();
         }
 
-        try {
+//        try {
 
             String name = list.get(position).getFirst_name() + " " + list.get(position).getLast_name();
             viewHolder.player_text.setText(name.trim());
             String sports_name = "";
-            if (list.get(position).getGamesArrayList() != null)
-                if (list.get(position).getGamesArrayList().size() > 0) {
-                    for (int i = 0; i < list.get(position).getGamesArrayList().size(); i++) {
+            if (list.get(position).getSports_preferences() != null)
+                if (list.get(position).getSports_preferences().size() > 0) {
+                    for (int i = 0; i < list.get(position).getSports_preferences().size(); i++) {
                         ArrayList<Sports> sportsArrayList = ModelManager.getInstance().getSportsManager().getAllSportsList(false);
                         if (sportsArrayList != null) {
                             for (int j = 0; j < sportsArrayList.size(); j++) {
-                                if (list.get(position).getGamesArrayList().get(i).getSportsId().equalsIgnoreCase(sportsArrayList.get(j).getId())) {
-                                    sports_name += "# " + sportsArrayList.get(j).getName() + " ";
+                                if (list.get(position).getSports_preferences().get(i).getId().equalsIgnoreCase(sportsArrayList.get(j).getId())) {
+                                    sports_name += "#" + sportsArrayList.get(j).getName() + " ";
                                     break;
                                 }
                             }
@@ -91,9 +91,9 @@ public class PlayersFragmentAdapter extends BaseAdapter {
             SPLog.e("Sports names : ", "" + sports_name.trim());
             viewHolder.game_text.setText(sports_name.trim());
 
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//        }
 
         return v;
     }

@@ -224,6 +224,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     }
 
     private void displayView(int position) {
+        setBackground(position);
         Fragment fragment = null;
         String title = getString(R.string.app_name);
         switch (position) {
@@ -264,7 +265,6 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             fragmentTransaction.addToBackStack(title);
             fragmentTransaction.commit();
 
-            setBackground(position);
             // set the toolbar title
             getSupportActionBar().setTitle(title);
         }
