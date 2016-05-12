@@ -24,13 +24,14 @@
     </LinearLayout>
 
     <ImageView
+        android:id="@+id/img_user_pic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|center_vertical"
         android:background="@android:color/transparent"
         android:contentDescription="@string/app_name"
-        android:padding="10dp"
-        android:src="@drawable/sports_pic" />
+        android:layout_margin="10dp"
+        android:src="@drawable/customer_img" />
 
     <View
         android:layout_width="match_parent"

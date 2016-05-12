@@ -26,6 +26,7 @@ public class SPRestClient {
 
 
     public static void get(String url, String post_data, AsyncHttpResponseHandler responseHandler) {
+        SPLog.e(TAG, "POST-URL---> " + url + " <-> POST-DATA---> " + post_data);
 //        String uri =(url);
 //
 //        try {
@@ -40,7 +41,7 @@ public class SPRestClient {
     }
 
     public static void loginPost(String url, String post_data, AsyncHttpResponseHandler responseHandler) {
-        SPLog.e(TAG, "POST-URL---> " + url + " <-> POST-DATA---> " + post_data.toString());
+        SPLog.e(TAG, "POST-URL---> " + url + " <-> POST-DATA---> " + post_data);
         try {
             se = null;
             se = new StringEntity(post_data);
@@ -53,7 +54,7 @@ public class SPRestClient {
     }
 
     public static void post(String url, String post_data, AsyncHttpResponseHandler responseHandler) {
-        SPLog.e(TAG, "POST-URL---> " + url + " <-> POST-DATA---> " + post_data.toString());
+        SPLog.e(TAG, "POST-URL---> " + url + " <-> POST-DATA---> " + post_data);
         try {
             se = null;
             se = new StringEntity(post_data);
@@ -83,7 +84,7 @@ public class SPRestClient {
     public static void put(String url, String post_data, AsyncHttpResponseHandler responseHandler) {
 
         try {
-            SPLog.e(TAG, "POST-URL---> " + url + " <-> POST-DATA---> " + post_data.toString());
+            SPLog.e(TAG, "POST-URL---> " + url + " <-> POST-DATA---> " + post_data);
             se = null;
             se = new StringEntity(post_data);
             getClient().put(null, url, se, "application/json", responseHandler);

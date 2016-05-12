@@ -13,6 +13,8 @@ import com.tanzil.sportspal.model.bean.Users;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 import cz.msebera.android.httpclient.Header;
 import de.greenrobot.event.EventBus;
 
@@ -27,6 +29,7 @@ public class AuthManager {
     private String userToken;
     private String userId, email;
     private Users users;
+    private ArrayList<Users> userInfo;
 
     public String getUserId() {
         return userId;
@@ -68,6 +71,14 @@ public class AuthManager {
         this.users = users;
     }
 
+    public ArrayList<Users> getUserInfo() {
+        return userInfo;
+    }
+
+    public void setUserInfo(ArrayList<Users> userInfo) {
+        this.userInfo = userInfo;
+    }
+
     public void logIn(final Activity activity, JSONObject post_data) {
 
         SPRestClient.loginPost(ServiceApi.LOGIN, post_data.toString(), new JsonHttpResponseHandler() {
@@ -93,6 +104,7 @@ public class AuthManager {
                     if (state) {
                         Preferences.writeBoolean(activity, Preferences.LOGIN, true);
                         if (response.getJSONObject("message").has("id")) {
+                            userInfo = new ArrayList<Users>();
                             Preferences.writeString(activity, Preferences.USER_ID, response.getJSONObject("message").getString("id"));
                             Preferences.writeString(activity, Preferences.EMAIL, response.getJSONObject("message").getString("email"));
                             Users users = new Users();
@@ -107,6 +119,8 @@ public class AuthManager {
                             users.setSocial_platform(response.getJSONObject("message").getString("social_platform"));
                             users.setLatitude(response.getJSONObject("message").getString("latitude"));
                             users.setLongitude(response.getJSONObject("message").getString("longitude"));
+                            userInfo.add(users);
+                            setUserInfo(userInfo);
                         }
 
                         EventBus.getDefault().postSticky("Login True");

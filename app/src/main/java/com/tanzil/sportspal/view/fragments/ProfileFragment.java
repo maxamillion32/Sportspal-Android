@@ -58,39 +58,34 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         btn_location.setOnClickListener(this);
         img_update.setOnClickListener(this);
 
-        usersArrayList = ModelManager.getInstance().getUsersManager().getNearUsers(false);
-        if (usersArrayList != null) {
-            for (int i = 0; i < usersArrayList.size(); i++) {
-                if (usersArrayList.get(i).getId().equalsIgnoreCase(ModelManager.getInstance().getAuthManager().getUserId())) {
-                    Utils.showLoading(activity, activity.getString(R.string.please_wait));
-                    usersArrayList.get(i).getUserDetails();
-                    break;
-                }
-            }
-        } else {
+        usersArrayList = ModelManager.getInstance().getUsersManager().getMyDetails(false);
+        if (usersArrayList == null) {
             Utils.showLoading(activity, activity.getString(R.string.please_wait));
-            ModelManager.getInstance().getUsersManager().getNearUsers(true);
+            ModelManager.getInstance().getUsersManager().getMyDetails(true);
+        } else {
+            setData();
         }
 
         return rootView;
     }
 
     private void setData() {
-        usersArrayList = ModelManager.getInstance().getUsersManager().getNearUsers(false);
+        usersArrayList = ModelManager.getInstance().getUsersManager().getMyDetails(false);
         if (usersArrayList != null) {
             if (usersArrayList.size() > 0) {
-                for (int i = 0; i < usersArrayList.size(); i++) {
-                    if (usersArrayList.get(i).getId().equalsIgnoreCase(ModelManager.getInstance().getAuthManager().getUserId())) {
-                        et_email.setText(usersArrayList.get(i).getEmail());
-                        et_firstName.setText(usersArrayList.get(i).getFirst_name());
-                        et_lastName.setText(usersArrayList.get(i).getLast_name());
-                        et_dob.setText(usersArrayList.get(i).getDob());
-                        break;
-                    }
-                }
+//                for (int i = 0; i < usersArrayList.size(); i++) {
+//                    if (i == 0) {
+                int i = 0;
+                et_email.setText(usersArrayList.get(i).getEmail());
+                et_firstName.setText(usersArrayList.get(i).getFirst_name());
+                et_lastName.setText(usersArrayList.get(i).getLast_name());
+                et_dob.setText(usersArrayList.get(i).getDob());
+//                    }
+//                }
             }
         }
     }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -104,6 +99,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 break;
         }
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -124,23 +120,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     public void onEventMainThread(String message) {
         Log.e(TAG, "-- " + message);
-        if (message.equalsIgnoreCase("GetNearUsers True")) {
-            Utils.dismissLoading();
-            usersArrayList = ModelManager.getInstance().getUsersManager().getNearUsers(false);
-            if (usersArrayList != null) {
-                for (int i = 0; i < usersArrayList.size(); i++) {
-                    if (usersArrayList.get(i).getId().equalsIgnoreCase(ModelManager.getInstance().getAuthManager().getUserId())) {
-                        Utils.showLoading(activity, activity.getString(R.string.please_wait));
-                        usersArrayList.get(i).getUserDetails();
-                        break;
-                    }
-                }
-            }
-        } else if (message.equalsIgnoreCase("GetNearUsers False")) {
-            Utils.dismissLoading();
-        } else if (message.equalsIgnoreCase("GetNearUsers Network Error")) {
-            Utils.dismissLoading();
-        } else if (message.equalsIgnoreCase("GetUserDetails True")) {
+        if (message.equalsIgnoreCase("GetUserDetails True")) {
             Utils.dismissLoading();
             setData();
         } else if (message.equalsIgnoreCase("GetUserDetails False")) {

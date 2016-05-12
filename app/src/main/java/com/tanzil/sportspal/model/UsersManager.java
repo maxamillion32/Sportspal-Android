@@ -6,7 +6,6 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.tanzil.sportspal.Utility.ServiceApi;
 import com.tanzil.sportspal.httprequest.SPRestClient;
 import com.tanzil.sportspal.model.bean.Games;
-import com.tanzil.sportspal.model.bean.Players;
 import com.tanzil.sportspal.model.bean.Sports;
 import com.tanzil.sportspal.model.bean.Teams;
 import com.tanzil.sportspal.model.bean.Users;
@@ -25,6 +24,7 @@ import de.greenrobot.event.EventBus;
  */
 public class UsersManager {
     private ArrayList<Users> usersList;
+    private ArrayList<Users> selfInfoList;
     private final String TAG = SportsManager.class.getSimpleName();
 
     public ArrayList<Users> getNearUsers(boolean shouldRefresh) {
@@ -52,60 +52,6 @@ public class UsersManager {
                 Log.e(TAG, "onSuccess  --> " + response.toString());
 
                 try {
-//                    "id": 2,
-//                            "first_name": "14/9/2014",
-//                            "last_name": "kinger",
-//                            "email": "abc@gmail.com",
-//                            "dob": "15/12/1999",
-//                            "gender": "male",
-//                            "modified": "2016-05-05T18:47:17+0000",
-//                            "created": "2016-04-16T16:01:43+0000",
-//                            "image": "",
-//                            "social_platform": "",
-//                            "social_id": "",
-//                            "latitude": "30.7333",
-//                            "longitude": "76.7794",
-//                            "sports_preferences": [
-//                    {
-//                        "id": 17,
-//                            "user_id": 2,
-//                            "sport_id": 1,
-//                            "created": null,
-//                            "modified": null
-//                    }
-//                    ],
-//                    "games": [
-//                    {
-//                        "id": 1,
-//                            "sport_id": 1,
-//                            "user_id": 2,
-//                            "game_type": "indivisual",
-//                            "team_id": 0,
-//                            "date": "15/12/1999",
-//                            "time": "10:20 PM",
-//                            "latitude": "1234555",
-//                            "longitude": "1234555",
-//                            "address": "Android",
-//                            "modified": "2016-04-30T05:58:35+0000",
-//                            "created": "2016-04-30T05:58:35+0000"
-//                    }
-//                    ],
-//                    "teams": [
-//                    {
-//                        "id": 1,
-//                            "sport_id": 1,
-//                            "team_name": "KKR",
-//                            "team_type": "private",
-//                            "members_limit": 11,
-//                            "latitude": "1234555",
-//                            "longitude": "1234555",
-//                            "address": "Android",
-//                            "creator_id": 2,
-//                            "created": "2016-04-30T07:27:12+0000",
-//                            "modified": "2016-04-30T07:27:12+0000"
-//                    },
-//                   ]
-//                },
                     int state = response.getInt("status");
                     if (state == 200) {
                         JSONArray jsonArray = response.getJSONArray("message");
@@ -228,5 +174,159 @@ public class UsersManager {
 
         });
     }
+    public ArrayList<Users> getMyDetails(boolean shouldRefresh) {
+        if (shouldRefresh)
+            getDetails();
+        return selfInfoList;
+    }
 
+
+    public ArrayList<Users> getDetails(){
+        SPRestClient.get(ServiceApi.GET_USER_DETAILS + "/" + ModelManager.getInstance().getAuthManager().getUserId(), null, new JsonHttpResponseHandler() {
+            @Override
+            public void onStart() {
+                Log.e(TAG, "GetUserDetails called before request is started");
+            }
+
+            @Override
+            public void onCancel() {
+                super.onCancel();
+                Log.e(TAG, "onCancel  --> ");
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+                Log.e(TAG, "onSuccess  --> " + response.toString());
+
+                try {
+//                    "id": 13
+//                    "first_name": "Arun"
+//                    "last_name": "Sharma"
+//                    "email": "arun@yahoo.com"
+//                    "dob": "14/08/1988"
+//                    "gender": "Male"
+//                    "modified": "2016-05-09T06:13:53+0000"
+//                    "created": "2016-05-09T06:13:53+0000"
+//                    "image": ""
+//                    "social_platform": ""
+//                    "social_id": ""
+//                    "latitude": "0"
+//                    "longitude": "0"
+//                    "games": [0]
+//                    "favourite_users": [0]
+//                    "teams": [0]
+//                    "user_fav_locations": [0]
+
+                    int state = response.getInt("status");
+                    if (state == 200) {
+                        JSONObject jsonObject = response.getJSONObject("message");
+                        int count = jsonObject.length();
+                        selfInfoList = new ArrayList<Users>();
+                        if (count > 0)
+                            for (int i = 0; i < count; i++) {
+                                Users users = new Users();
+                                users.setId(jsonObject.getString("id"));
+                                users.setFirst_name(jsonObject.getString("first_name"));
+                                users.setLast_name(jsonObject.getString("last_name"));
+                                users.setEmail(jsonObject.getString("email"));
+                                users.setDob(jsonObject.getString("dob"));
+                                users.setGender(jsonObject.getString("gender"));
+                                users.setImage(jsonObject.getString("image"));
+                                users.setSocial_platform(jsonObject.getString("social_platform"));
+                                users.setSocial_id(jsonObject.getString("social_id"));
+                                users.setLatitude(jsonObject.getString("latitude"));
+                                users.setLongitude(jsonObject.getString("longitude"));
+
+                                if (jsonObject.has("games")) {
+                                    JSONArray jsonArray1 = jsonObject.getJSONArray("games");
+                                    if (jsonArray1.length() > 0) {
+                                        ArrayList<Games> gamesArrayList = new ArrayList<Games>();
+                                        for (int j = 0; j < jsonArray1.length(); j++) {
+                                            Games games = new Games();
+                                            games.setId(jsonArray1.getJSONObject(j).getString("id"));
+                                            games.setSportsId(jsonArray1.getJSONObject(j).getString("sport_id"));
+                                            games.setUserId(jsonArray1.getJSONObject(j).getString("user_id"));
+                                            games.setGameType(jsonArray1.getJSONObject(j).getString("game_type"));
+                                            games.setTeamId(jsonArray1.getJSONObject(j).getString("team_id"));
+                                            games.setDate(jsonArray1.getJSONObject(j).getString("date"));
+                                            games.setTime(jsonArray1.getJSONObject(j).getString("time"));
+                                            games.setLatitude(jsonArray1.getJSONObject(j).getString("latitude"));
+                                            games.setLongitude(jsonArray1.getJSONObject(j).getString("longitude"));
+                                            games.setAddress(jsonArray1.getJSONObject(j).getString("address"));
+                                            gamesArrayList.add(games);
+                                        }
+                                        users.setGamesArrayList(gamesArrayList);
+                                    }
+                                }
+                                if (jsonObject.has("teams")) {
+                                    JSONArray jsonArray1 = jsonObject.getJSONArray("teams");
+                                    if (jsonArray1.length() > 0) {
+                                        ArrayList<Teams> teamsArrayList = new ArrayList<Teams>();
+                                        for (int j = 0; j < jsonArray1.length(); j++) {
+                                            Teams teams = new Teams();
+                                            teams.setId(jsonArray1.getJSONObject(j).getString("id"));
+                                            teams.setSport_id(jsonArray1.getJSONObject(j).getString("sport_id"));
+                                            teams.setTeam_name(jsonArray1.getJSONObject(j).getString("team_name"));
+                                            teams.setTeam_type(jsonArray1.getJSONObject(j).getString("team_type"));
+                                            teams.setMembers_limit(jsonArray1.getJSONObject(j).getString("members_limit"));
+                                            teams.setLatitude(jsonArray1.getJSONObject(j).getString("latitude"));
+                                            teams.setLongitude(jsonArray1.getJSONObject(j).getString("longitude"));
+                                            teams.setAddress(jsonArray1.getJSONObject(j).getString("address"));
+                                            teamsArrayList.add(teams);
+                                        }
+                                        users.setTeamsArrayList(teamsArrayList);
+                                    }
+                                }
+                                selfInfoList.add(users);
+                            }
+                        EventBus.getDefault().post("GetUserDetails True");
+                    } else {
+                        EventBus.getDefault().post("GetUserDetails False");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    EventBus.getDefault().post("GetUserDetails False");
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+                if (errorResponse != null) {
+                    Log.e(TAG, "onFailure  --> " + errorResponse.toString());
+                    EventBus.getDefault().post("GetUserDetails False");
+                } else {
+                    EventBus.getDefault().post("GetUserDetails Network Error");
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                super.onFailure(statusCode, headers, responseString, throwable);
+                if (responseString != null) {
+                    Log.e(TAG, "onFailure  --> " + responseString.toString());
+                    EventBus.getDefault().post("GetUserDetails False");
+                } else {
+                    EventBus.getDefault().post("GetUserDetails Network Error");
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+                Log.e(TAG, "onFinish  --> ");
+            }
+
+            @Override
+            public void onRetry(int retryNo) {
+                // called when request is retried
+                Log.e(TAG, "onRetry  --> ");
+            }
+
+        });
+        return selfInfoList;
+    }
 }
