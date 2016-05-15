@@ -79,8 +79,8 @@ public class LoginScreen extends Activity implements View.OnClickListener {
                     try {
                         post_data.put("email", et_Email.getText().toString().trim());
                         post_data.put("password", et_Password.getText().toString().trim());
-                        post_data.put("device_type", "Android");
-                        post_data.put("device_token", authManager.getDeviceToken());
+                        post_data.put("device_type", "ios");
+                        post_data.put("device_token", "");
                         SPLog.e(TAG, "LoginData" + post_data.toString());
 
                     } catch (Exception e1) {
