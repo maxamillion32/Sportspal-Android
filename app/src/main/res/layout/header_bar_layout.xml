@@ -18,7 +18,7 @@
         <!--android:src="@drawable/menu" />-->
 
     <com.tanzil.sportspal.customUi.MyTextView
-        android:id="@+id/news_text"
+        android:id="@+id/header_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"

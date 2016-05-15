@@ -42,14 +42,14 @@ public class SportsManager {
         this.game_id = game_id;
     }
 
-    public ArrayList<Sports> getAllSportsList(boolean shouldRefresh, String auth_token) {
+    public ArrayList<Sports> getAllSportsList(boolean shouldRefresh) {
         if (shouldRefresh)
-            getSports(auth_token);
+            getSports();
         return sportsList;
     }
 
-    private void getSports(String auth_token) {
-        SPRestClient.get(ServiceApi.GET_ALL_SPORTS, auth_token, new JsonHttpResponseHandler() {
+    private void getSports() {
+        SPRestClient.get(ServiceApi.GET_ALL_SPORTS, null, new JsonHttpResponseHandler() {
             @Override
             public void onStart() {
                 Log.e(TAG, "GetAllSports called before request is started");
@@ -171,6 +171,14 @@ public class SportsManager {
                                 games.setLatitude(jsonArray.getJSONObject(i).getString("latitude"));
                                 games.setLongitude(jsonArray.getJSONObject(i).getString("longitude"));
                                 games.setAddress(jsonArray.getJSONObject(i).getString("address"));
+
+                                if (jsonArray.getJSONObject(i).has("sport"))
+                                    games.setSports_name(jsonArray.getJSONObject(i).getJSONObject("sport").getString("name"));
+//                                if (jsonArray.getJSONObject(i).has("user")) {
+//                                    games.setUser_first_name(jsonArray.getJSONObject(i).getJSONObject("user").getString("first_name"));
+//                                    games.setUser_last_name(jsonArray.getJSONObject(i).getJSONObject("user").getString("last_name"));
+//                                    games.setUser_email(jsonArray.getJSONObject(i).getJSONObject("user").getString("email"));
+//                                }
 
                                 gamesList.add(games);
                             }

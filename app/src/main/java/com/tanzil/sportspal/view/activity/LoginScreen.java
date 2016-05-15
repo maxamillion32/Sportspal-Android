@@ -79,8 +79,8 @@ public class LoginScreen extends Activity implements View.OnClickListener {
                     try {
                         post_data.put("email", et_Email.getText().toString().trim());
                         post_data.put("password", et_Password.getText().toString().trim());
-                        post_data.put("device_type", "ios");
-                        post_data.put("device_token", "");
+                        post_data.put("device_type", "Android");
+                        post_data.put("device_token", /*authManager.getDeviceToken()*/"");
                         SPLog.e(TAG, "LoginData" + post_data.toString());
 
                     } catch (Exception e1) {
@@ -118,6 +118,8 @@ public class LoginScreen extends Activity implements View.OnClickListener {
             Preferences.writeString(activity, Preferences.EMAIL, et_Email.getText().toString());
             Preferences.writeString(activity, Preferences.PASSWORD, et_Password.getText().toString());
             SPLog.e(TAG, "Login True");
+            SPLog.e("user id : ", Preferences.readString(getApplicationContext(), Preferences.USER_ID, ""));
+            authManager.setUserId(Preferences.readString(getApplicationContext(), Preferences.USER_ID, ""));
             startActivity(new Intent(activity, MainActivity.class));
             finish();
         } else if (message.contains("Login False")) {

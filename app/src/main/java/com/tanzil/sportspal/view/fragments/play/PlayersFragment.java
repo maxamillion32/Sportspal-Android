@@ -16,20 +16,20 @@ import android.widget.ListView;
 import com.tanzil.sportspal.R;
 import com.tanzil.sportspal.Utility.Utils;
 import com.tanzil.sportspal.model.ModelManager;
-import com.tanzil.sportspal.model.bean.Games;
-import com.tanzil.sportspal.view.adapters.SportsFragmentAdapter;
+import com.tanzil.sportspal.model.bean.Users;
+import com.tanzil.sportspal.view.adapters.PlayersFragmentAdapter;
 
 import java.util.ArrayList;
 
 import de.greenrobot.event.EventBus;
 
 
-public class SportsFragment extends Fragment {
+public class PlayersFragment extends Fragment {
 
-    private String TAG = SportsFragment.class.getSimpleName();
+    private String TAG = PlayersFragment.class.getSimpleName();
     private Activity activity;
-    private SportsFragmentAdapter adapter;
-    private ArrayList<Games> gamesArrayList;
+    private PlayersFragmentAdapter adapter;
+    private ArrayList<Users> gamesArrayList;
     private ListView sportsListView;
 
     @Override
@@ -43,10 +43,10 @@ public class SportsFragment extends Fragment {
         sportsListView = (ListView) rootView.findViewById(R.id.news_feed_list);
         // Inflate the layout for this fragment
 
-        gamesArrayList = ModelManager.getInstance().getSportsManager().getAllGames(false);
+        gamesArrayList = ModelManager.getInstance().getUsersManager().getNearUsers(false);
         if (gamesArrayList == null) {
             Utils.showLoading(activity, activity.getString(R.string.please_wait));
-            ModelManager.getInstance().getSportsManager().getAllGames(true);
+            ModelManager.getInstance().getUsersManager().getNearUsers(true);
         } else
             setData();
 
@@ -55,9 +55,9 @@ public class SportsFragment extends Fragment {
     }
 
     private void setData() {
-        gamesArrayList = ModelManager.getInstance().getSportsManager().getAllGames(false);
+        gamesArrayList = ModelManager.getInstance().getUsersManager().getNearUsers(false);
         if (gamesArrayList.size() > 0) {
-            adapter = new SportsFragmentAdapter(activity, gamesArrayList);
+            adapter = new PlayersFragmentAdapter(activity, gamesArrayList);
             sportsListView.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         } else
@@ -84,12 +84,12 @@ public class SportsFragment extends Fragment {
 
     public void onEventMainThread(String message) {
         Log.e(TAG, "-- " + message);
-        if (message.equalsIgnoreCase("GetAllGames True")) {
+        if (message.equalsIgnoreCase("GetNearUsers True")) {
             Utils.dismissLoading();
             setData();
-        } else if (message.equalsIgnoreCase("GetAllGames False")) {
+        } else if (message.equalsIgnoreCase("GetNearUsers False")) {
             Utils.dismissLoading();
-        } else if (message.equalsIgnoreCase("GetAllGames Network Error")) {
+        } else if (message.equalsIgnoreCase("GetNearUsers Network Error")) {
             Utils.dismissLoading();
         }
     }

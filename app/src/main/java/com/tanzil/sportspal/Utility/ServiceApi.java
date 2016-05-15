@@ -28,6 +28,6 @@ public class ServiceApi {
     public static final String ADD_USER_GAME = baseurl + "games";
     public static final String GET_ALL_TEAMS = baseurl + "teams";
     public static final String ADD_TEAM = baseurl + "teams";
-
-
+    public static final String GET_USERS = baseurl + "users/getuser";
+    public static final String GET_USER_DETAILS = baseurl + "users/index";
 }

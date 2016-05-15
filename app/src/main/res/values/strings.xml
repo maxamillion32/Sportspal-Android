@@ -65,4 +65,10 @@
     <string name="team_sport">TEAM SPORT</string>
     <string name="corporate_group">CORPORATE GROUP</string>
     <string name="private_text">PRIVATE</string>
+    <string name="select_sports">Select Sports</string>
+    <string name="select_team">Select Team</string>
+
+    <!-- Profile Screen-->
+    <string name="preferences">Prefrences</string>
+    <string name="location">Location</string>
 </resources>

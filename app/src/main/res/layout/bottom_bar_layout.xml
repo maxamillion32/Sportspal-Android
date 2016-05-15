@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/news"
-            android:textColor="@color/light_green"
+            android:textColor="@color/white"
             android:textSize="@dimen/bottomTextsize" />
     </LinearLayout>
 

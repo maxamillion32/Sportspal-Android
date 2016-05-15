@@ -3,10 +3,8 @@
     android:id="@+id/row_layout"
     android:layout_width="match_parent"
     android:layout_height="@dimen/row_height"
-    android:background="@color/black"
-    android:baselineAligned="false"
-    android:gravity="center_vertical"
-    android:orientation="horizontal">
+    android:minHeight="@dimen/row_height"
+    android:background="@color/colorAccent">
 
     <ImageView
         android:id="@+id/img_team"
