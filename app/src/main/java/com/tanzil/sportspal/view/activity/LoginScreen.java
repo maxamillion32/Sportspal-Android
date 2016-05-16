@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.tanzil.sportspal.R;
+import com.tanzil.sportspal.Utility.GPSTracker;
 import com.tanzil.sportspal.Utility.Preferences;
 import com.tanzil.sportspal.Utility.SPLog;
 import com.tanzil.sportspal.Utility.Utils;
@@ -63,6 +64,7 @@ public class LoginScreen extends Activity implements View.OnClickListener {
         img_forget_password.setOnClickListener(this);
         img_back.setOnClickListener(this);
     }
+
 
     @Override
     public void onClick(View v) {

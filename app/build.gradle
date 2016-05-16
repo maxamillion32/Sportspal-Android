@@ -30,4 +30,5 @@ dependencies {
     compile 'com.pubnub:pubnub-android:3.7.8'
     compile "com.google.android.gms:play-services-gcm:8.4.0"
     compile 'com.pkmmte.view:circularimageview:1.1'
+    compile 'com.google.android.gms:play-services:8.4.0'
 }

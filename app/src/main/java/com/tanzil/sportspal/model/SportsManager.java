@@ -230,7 +230,7 @@ public class SportsManager {
         });
     }
 
-    private void addGame(JSONObject jsonObject) {
+    public void addGame(JSONObject jsonObject) {
         SPRestClient.post(ServiceApi.ADD_TEAM, jsonObject.toString(), new JsonHttpResponseHandler() {
             @Override
             public void onStart() {

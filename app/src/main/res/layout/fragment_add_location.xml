@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/map_view_add_venue"
+        class="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:id="@+id/ll_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="20dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/map_address_search_bg"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/edt_searchview_add_venue"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="3dp"
+                android:layout_marginStart="3dp"
+                android:layout_weight="1"
+                android:background="@color/white"
+                android:drawableLeft="@drawable/search_icon"
+                android:drawablePadding="10dp"
+                android:drawableStart="@drawable/search_icon"
+                android:hint="@string/search"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/grey_text" />
+
+            <ImageView
+                android:id="@+id/clear_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginEnd="10dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/clear_text_search"
+                android:contentDescription="@string/app_name"
+                android:padding="6dp" />
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/location_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:scrollbars="none"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/add_venue_mylocation"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="20dp"
+        android:background="@drawable/ic_mv_mylocation"
+        android:contentDescription="@string/app_name" />
+
+    <ImageView
+        android:id="@+id/add_venue_drop_pin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="20dp"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/droppin_marker" />
+
+</RelativeLayout>

@@ -39,7 +39,6 @@ public class Utils {
     private static ProgressDialog progressDialog;
     private static GoogleCloudMessaging gcm;
     private static String regid;
-    private static SingleShotLocationProvider.GPSCoordinates locations;
 
 
     public static void showLoading(Activity act, String msg) {
@@ -67,19 +66,6 @@ public class Utils {
         return value;
     }
 
-    public static SingleShotLocationProvider.GPSCoordinates getLocation(Context context) {
-        // when you need location
-        // if inside activity context = this;
-
-        SingleShotLocationProvider.requestSingleUpdate(context,
-                new SingleShotLocationProvider.LocationCallback() {
-                    @Override public void onNewLocationAvailable(SingleShotLocationProvider.GPSCoordinates location) {
-                        Log.d("Location", "my location is " + location.toString());
-                        locations = location;
-                    }
-                });
-        return locations;
-    }
 
     public static void startAnimationBG(Activity activity, ImageView mainView) {
         AnimationDrawable animationDrawable = (AnimationDrawable) mainView
@@ -185,6 +171,7 @@ public class Utils {
     public static String getRegId(final Activity contex) {
         new AsyncTask<Void, Void, String>() {
             ProgressDialog progressDialog;
+
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
@@ -225,6 +212,7 @@ public class Utils {
         }.execute(null, null, null);
         return regid;
     }
+
     public static boolean checkGPSEnabled(Activity activity) {
         final LocationManager manager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
         return manager.isProviderEnabled(LocationManager.GPS_PROVIDER);

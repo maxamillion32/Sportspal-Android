@@ -10,9 +10,9 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.tanzil.sportspal.R;
+import com.tanzil.sportspal.Utility.GPSTracker;
 import com.tanzil.sportspal.Utility.Preferences;
 import com.tanzil.sportspal.Utility.SPLog;
-import com.tanzil.sportspal.Utility.SingleShotLocationProvider;
 import com.tanzil.sportspal.Utility.Utils;
 import com.tanzil.sportspal.customUi.MyButton;
 import com.tanzil.sportspal.customUi.MyEditText;
@@ -39,13 +39,16 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
     private MyEditText et_Email, et_Password, et_ConfirmPassword, et_Name, et_LastName, et_DOB, et_Gender;
     private Calendar myCalendar;
     private AuthManager authManager;
-    private double lat, lng;
+    private double lat = 0.000, lng = 0.000;
+    private GPSTracker gps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sign_up_screen);
+
+        gps = new GPSTracker(activity);
 
         authManager = ModelManager.getInstance().getAuthManager();
         String deviceId = Preferences.readString(getApplicationContext(), Preferences.DEVICE_ID, "");
@@ -74,9 +77,8 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
         // For animating background
         Utils.startAnimationBG(activity, mainView);
 
-//        getLatLong();
-        lat = 0.000;
-        lng = 0.000;
+        if (lat == 0.000 || lng == 0.000)
+            getLatLong();
 
         signUpBtn.setOnClickListener(this);
         img_back.setOnClickListener(this);
@@ -98,19 +100,15 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
     };
 
     private void getLatLong() {
-        if (Utils.checkGPSEnabled(activity)) {
-            SingleShotLocationProvider.GPSCoordinates locations = Utils.getLocation(activity);
-            if (locations != null) {
-                lat = locations.latitude;
-                lng = locations.longitude;
-            } else {
-                lat = 0.000;
-                lng = 0.000;
-            }
-        }else {
-            Utils.showGPSDisabledAlertToUser(activity);
+        if (gps.canGetLocation()) {
+            lat = gps.getLatitude();
+            lng = gps.getLongitude();
+        } else {
+            gps.showSettingsAlert();
         }
+
     }
+
     private void updateLabel() {
 
         String myFormat = "dd/MM/yyyy"; //In which you need put here
@@ -124,6 +122,9 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.sign_up_btn:
+                if (lat == 0.000 || lng == 0.000) {
+                    getLatLong();
+                }
                 if (et_Name.getText().toString().trim().length() == 0) {
                     et_Name.requestFocus();
                     Toast.makeText(getBaseContext(), getString(R.string.please_enter_name), Toast.LENGTH_SHORT).show();
@@ -146,30 +147,26 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
                     et_Gender.requestFocus();
                     Toast.makeText(getBaseContext(), getString(R.string.please_enter_sex), Toast.LENGTH_SHORT).show();
                 } else {
-//                    if (lat == 0.000 || lng == 0.000) {
-//                        getLatLong();
-//                    } else {
-                        Utils.showLoading(activity, getString(R.string.please_wait));
+                    Utils.showLoading(activity, getString(R.string.please_wait));
 
-                        JSONObject post_data = new JSONObject();
-                        try {
-                            post_data.put("email", et_Email.getText().toString().trim());
-                            post_data.put("password", et_Password.getText().toString().trim());
-                            post_data.put("first_name", et_Name.getText().toString().trim());
-                            post_data.put("last_name", et_LastName.getText().toString().trim());
-                            post_data.put("dob", et_DOB.getText().toString().trim());
-                            post_data.put("gender", et_Gender.getText().toString().trim());
-                            post_data.put("latitude", lat);
-                            post_data.put("longitude", lng);
-                            post_data.put("device_type", "Android");
-                            post_data.put("device_token", authManager.getDeviceToken());
-                            SPLog.e(TAG, "Data" + post_data.toString());
+                    JSONObject post_data = new JSONObject();
+                    try {
+                        post_data.put("email", et_Email.getText().toString().trim());
+                        post_data.put("password", et_Password.getText().toString().trim());
+                        post_data.put("first_name", et_Name.getText().toString().trim());
+                        post_data.put("last_name", et_LastName.getText().toString().trim());
+                        post_data.put("dob", et_DOB.getText().toString().trim());
+                        post_data.put("gender", et_Gender.getText().toString().trim());
+                        post_data.put("latitude", lat);
+                        post_data.put("longitude", lng);
+                        post_data.put("device_type", "Android");
+                        post_data.put("device_token", authManager.getDeviceToken());
+                        SPLog.e(TAG, "Data" + post_data.toString());
 
-                        } catch (Exception e1) {
-                            e1.printStackTrace();
-                        }
-                        authManager.registerUser(SignUpScreen.this, post_data);
-//                    }
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
+                    authManager.registerUser(SignUpScreen.this, post_data);
                 }
                 break;
             case R.id.img_back:

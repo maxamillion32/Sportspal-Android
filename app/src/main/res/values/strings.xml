@@ -14,6 +14,7 @@
     <string name="name">Name</string>
     <string name="last_name">Last Name</string>
     <string name="confirm_password">Confirm Password</string>
+    <string name="something_went_wrong">Something went wrong!</string>
 
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
@@ -33,6 +34,8 @@
     <string name="title_profile">PROFILE</string>
     <string name="title_news">NEWS</string>
     <string name="title_logout">LOGOUT</string>
+
+    <string name="search">Search</string>
 
     <!-- Sign Up Screen-->
     <string name="please_enter_confirm_password">Please enter confirm Password</string>
@@ -55,6 +58,7 @@
 
     <!-- Create New Game Screen-->
     <string name="sports_name">SPORTS NAME</string>
+    <string name="team_type">TEAM TYPE</string>
     <string name="team_name">TEAM NAME</string>
     <string name="date_format">DD/MM/YYYY</string>
     <string name="time_format">HH:MM</string>
@@ -67,6 +71,7 @@
     <string name="private_text">PRIVATE</string>
     <string name="select_sports">Select Sports</string>
     <string name="select_team">Select Team</string>
+    <string name="select_team_type">Select Team Type</string>
 
     <!-- Profile Screen-->
     <string name="preferences">Prefrences</string>

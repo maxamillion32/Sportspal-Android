@@ -4,12 +4,16 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.RecyclerView;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -28,6 +32,7 @@ import android.widget.TimePicker;
 
 import com.pkmmte.view.CircularImageView;
 import com.tanzil.sportspal.R;
+import com.tanzil.sportspal.Utility.GPSTracker;
 import com.tanzil.sportspal.Utility.SPLog;
 import com.tanzil.sportspal.Utility.ServiceApi;
 import com.tanzil.sportspal.Utility.Utils;
@@ -35,14 +40,15 @@ import com.tanzil.sportspal.customUi.MyEditText;
 import com.tanzil.sportspal.customUi.MyTextView;
 import com.tanzil.sportspal.model.ModelManager;
 import com.tanzil.sportspal.model.bean.PlaceJSONParser;
-import com.tanzil.sportspal.model.bean.Players;
 import com.tanzil.sportspal.model.bean.Sports;
 import com.tanzil.sportspal.model.bean.Teams;
 import com.tanzil.sportspal.model.bean.Users;
 import com.tanzil.sportspal.view.adapters.MembersListAdapter;
 import com.tanzil.sportspal.view.adapters.SportsDialogAdapter;
+import com.tanzil.sportspal.view.adapters.TeamTypeDialogAdapter;
 import com.tanzil.sportspal.view.adapters.TeamsDialogAdapter;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -70,14 +76,14 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
     private String TAG = AddGameFragment.class.getSimpleName();
     private Activity activity;
     private ImageView addGame, img_sports, img_team;
-    private MyTextView game_sportsName, game_teamName, txt_Date, txt_Time;
+    private MyTextView game_sportsName, game_teamName, txt_Date, txt_Time, txt_teamType;
     private AutoCompleteTextView txt_Address;
     private Calendar myCalendar;
     //    private LinearLayout upperLayout;
     private LinearLayout gameLayout, teamLayout;
     private ParserTask parserTask;
     private PlacesTask placesTask;
-    private String type = "game", sportsId = "", teamId = "";
+    private String type = "game", sportsId = "", teamId = "", latitude = "0.00", longitude = "0.00";
     private ListView membersList;
     private View headerView, footerView;
 
@@ -90,12 +96,21 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
     private TeamsDialogAdapter teamsDialogAdapter;
     private ArrayList<Users> playersArrayList;
     private MembersListAdapter membersListAdapter;
+    private TeamTypeDialogAdapter teamTypeDialogAdapter;
+    private ArrayList<String> teamsType = new ArrayList<String>();
+    private double lat = 0.000, lng = 0.000;
+    private GPSTracker gps;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         this.activity = super.getActivity();
         View rootView = inflater.inflate(R.layout.fragment_create_new_game, container, false);
+
+        LocalBroadcastManager.getInstance(activity).registerReceiver(
+                mAddressReciever, new IntentFilter("Address"));
+
+        gps = new GPSTracker(activity);
 
         myCalendar = Calendar.getInstance();
 
@@ -105,6 +120,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
 
         game_sportsName = (MyTextView) rootView.findViewById(R.id.txt_sports_name);
         game_teamName = (MyTextView) rootView.findViewById(R.id.txt_team_name);
+        txt_teamType = (MyTextView) rootView.findViewById(R.id.txt_team_type);
         txt_Date = (MyTextView) rootView.findViewById(R.id.txt_date);
         txt_Time = (MyTextView) rootView.findViewById(R.id.txt_time);
 //        txt_Address = (MyEditText) rootView.findViewById(R.id.txt_pick_address);
@@ -121,12 +137,15 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         addGame.setOnClickListener(this);
         game_sportsName.setOnClickListener(this);
         game_teamName.setOnClickListener(this);
+        txt_teamType.setOnClickListener(this);
         txt_Date.setOnClickListener(this);
         txt_Time.setOnClickListener(this);
         txt_Address.setOnClickListener(this);
         img_team.setOnClickListener(this);
         img_sports.setOnClickListener(this);
 
+        if (lat == 0.000 || lng == 0.000)
+            getLatLong();
 
 //        teamsArrayList = ModelManager.getInstance().getTeamsManager().getAllTeams(false);
 //        if (teamsArrayList == null) {
@@ -172,6 +191,30 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         });
         return rootView;
     }
+
+    private void getLatLong() {
+        if (gps.canGetLocation()) {
+            lat = gps.getLatitude();
+            lng = gps.getLongitude();
+        } else {
+            gps.showSettingsAlert();
+        }
+
+    }
+
+    private final BroadcastReceiver mAddressReciever = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get extra data included in the Intent
+            String[] message = intent.getStringExtra("message").split("@#@");
+            if (message.length > 2) {
+                txt_Address.setText(message[0]);
+                latitude = message[1];
+                longitude = message[2];
+            }
+            Log.d("receiver", "Got message: " + message);
+        }
+    };
 
     private void setHeader() {
         SPLog.e("headerView Data : ", "Setting headerView to List data");
@@ -281,12 +324,97 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         });
     }
 
+    private void showTeamType() {
+        final Dialog teamDialog = new Dialog(activity);
+        teamDialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+        teamDialog.setContentView(R.layout.alert_dialog_custom_view);
+        teamDialog.getWindow().setBackgroundDrawable(
+                new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        MyTextView titleView = (MyTextView) teamDialog.findViewById(R.id.title_name);
+        titleView.setText(activity.getString(R.string.select_team_type));
+
+        ListView listView = (ListView) teamDialog.findViewById(R.id.items_list);
+
+        teamsType.add("Individual");
+        teamsType.add("Team");
+        teamTypeDialogAdapter = new TeamTypeDialogAdapter(activity,
+                teamsType);
+        listView.setAdapter(teamTypeDialogAdapter);
+        teamTypeDialogAdapter.notifyDataSetChanged();
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                // TODO Auto-generated method stub
+                // setData(position);
+                if (position == 0)
+                    game_teamName.setVisibility(View.GONE);
+                else
+                    game_teamName.setVisibility(View.VISIBLE);
+
+                txt_teamType.setText(teamsType.get(position));
+                teamDialog.dismiss();
+            }
+        });
+        teamDialog.show();
+    }
+
+    private boolean isGameValidate() {
+        if (lat == 0.000 || lng == 0.000) {
+            getLatLong();
+        }
+        boolean isValidate = false;
+        if (game_sportsName.getText().toString().length() == 0) {
+            isValidate = false;
+            Utils.showMessage(activity, "Please select a sport name");
+        } else if (txt_teamType.getText().toString().length() == 0) {
+            isValidate = false;
+            Utils.showMessage(activity, "Please select a team type");
+        } else if (txt_teamType.getText().toString().equalsIgnoreCase("Team")
+                && game_teamName.getText().toString().length() == 0) {
+            isValidate = false;
+            Utils.showMessage(activity, "Please select a team name");
+        } else if (txt_Date.getText().toString().length() == 0) {
+            isValidate = false;
+            Utils.showMessage(activity, "Please select date");
+        } else if (txt_Time.getText().toString().length() == 0) {
+            isValidate = false;
+            Utils.showMessage(activity, "Please select time");
+        } else if (txt_Address.getText().toString().length() == 0) {
+            isValidate = false;
+            Utils.showMessage(activity, "Please select address");
+        } else
+            isValidate = true;
+        return isValidate;
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.add_game:
                 if (type.equalsIgnoreCase("game")) {
-
+                    if (isGameValidate()) {
+                        JSONObject jsonObject = new JSONObject();
+                        try {
+                            jsonObject.put("sport_id", sportsId);
+                            jsonObject.put("name", game_sportsName.getText().toString());
+                            jsonObject.put("user_id", ModelManager.getInstance().getAuthManager().getUserId());
+                            jsonObject.put("game_type", txt_teamType.getText().toString());
+                            jsonObject.put("team_id", teamId);
+                            jsonObject.put("date", txt_Date.getText().toString());
+                            jsonObject.put("time", txt_Date.getText().toString());
+                            jsonObject.put("latitude", latitude);
+                            jsonObject.put("longitude", longitude);
+                            jsonObject.put("address", txt_Address.getText().toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        Utils.showLoading(activity, activity.getString(R.string.please_wait));
+                        ModelManager.getInstance().getSportsManager().addGame(jsonObject);
+                    }
                 } else {
 
                 }
@@ -363,6 +491,10 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
                 break;
+            case R.id.txt_team_type:
+                showTeamType();
+                break;
+
         }
     }
 
@@ -571,6 +703,14 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         EventBus.getDefault().unregister(this);
     }
 
+    private void clearData() {
+        game_sportsName.setText("");
+        game_teamName.setText("");
+        txt_Address.setText("");
+        txt_Date.setText("");
+        txt_Time.setText("");
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -595,8 +735,10 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
             }
         } else if (message.equalsIgnoreCase("GetAllTeams False")) {
             Utils.dismissLoading();
+            Utils.showMessage(activity, activity.getString(R.string.something_went_wrong));
         } else if (message.equalsIgnoreCase("GetAllTeams Network Error")) {
             Utils.dismissLoading();
+            Utils.showMessage(activity, activity.getString(R.string.something_went_wrong));
         } else if (message.equalsIgnoreCase("GetAllSports True")) {
             Utils.dismissLoading();
             sportsArrayList = ModelManager.getInstance().getSportsManager().getAllSportsList(false);
@@ -608,8 +750,10 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
                 setData();
         } else if (message.equalsIgnoreCase("GetAllSports False")) {
             Utils.dismissLoading();
+            Utils.showMessage(activity, activity.getString(R.string.something_went_wrong));
         } else if (message.equalsIgnoreCase("GetAllSports Network Error")) {
             Utils.dismissLoading();
+            Utils.showMessage(activity, activity.getString(R.string.something_went_wrong));
         } else if (message.equalsIgnoreCase("GetAllPlayers True")) {
             Utils.dismissLoading();
             playersArrayList = ModelManager.getInstance().getUsersManager().getNearUsers(false);
@@ -618,6 +762,26 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
             Utils.dismissLoading();
         } else if (message.equalsIgnoreCase("GetAllPlayers Network Error")) {
             Utils.dismissLoading();
+        } else if (message.equalsIgnoreCase("AddGame True")) {
+            Utils.showMessage(activity, "Game added successfully");
+            Utils.dismissLoading();
+            clearData();
+        } else if (message.equalsIgnoreCase("AddGame False")) {
+            Utils.dismissLoading();
+            Utils.showMessage(activity, activity.getString(R.string.something_went_wrong));
+        } else if (message.equalsIgnoreCase("AddGame Network Error")) {
+            Utils.dismissLoading();
+            Utils.showMessage(activity, activity.getString(R.string.something_went_wrong));
+        } else if (message.equalsIgnoreCase("GetAllPlayers True")) {
+            Utils.dismissLoading();
+            playersArrayList = ModelManager.getInstance().getUsersManager().getNearUsers(false);
+            setData();
+        } else if (message.equalsIgnoreCase("GetAllPlayers False")) {
+            Utils.dismissLoading();
+            Utils.showMessage(activity, activity.getString(R.string.something_went_wrong));
+        } else if (message.equalsIgnoreCase("GetAllPlayers Network Error")) {
+            Utils.dismissLoading();
+            Utils.showMessage(activity, activity.getString(R.string.something_went_wrong));
         }
     }
 }
