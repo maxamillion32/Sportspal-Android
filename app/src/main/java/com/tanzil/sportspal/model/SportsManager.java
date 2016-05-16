@@ -231,7 +231,7 @@ public class SportsManager {
     }
 
     public void addGame(JSONObject jsonObject) {
-        SPRestClient.post(ServiceApi.ADD_TEAM, jsonObject.toString(), new JsonHttpResponseHandler() {
+        SPRestClient.post(ServiceApi.ADD_USER_GAME, jsonObject.toString(), new JsonHttpResponseHandler() {
             @Override
             public void onStart() {
                 Log.e(TAG, "AddGame called before request is started");

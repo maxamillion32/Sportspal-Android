@@ -9,6 +9,7 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -23,8 +24,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -33,6 +34,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.tanzil.sportspal.R;
+import com.tanzil.sportspal.Utility.GPSTracker;
 import com.tanzil.sportspal.Utility.Utils;
 
 import java.io.IOException;
@@ -62,8 +64,8 @@ public class AddLocationFragment extends Fragment implements View.OnClickListene
     private boolean geoTaskRunning = true;
     private double latitudeValue;
     private double longitudeValue;
-    private LinearLayout showAddress;
     private boolean isSearched = true;
+    private GPSTracker gps;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.activity = super.getActivity();
@@ -78,6 +80,9 @@ public class AddLocationFragment extends Fragment implements View.OnClickListene
         } catch (InflateException e) {
         /* just return view as it is */
         }
+
+        gps = new GPSTracker(activity);
+
         myLocationButton = (ImageView) rootView.findViewById(R.id.add_venue_mylocation);
         searchView = (EditText) rootView.findViewById(R.id.edt_searchview_add_venue);
         searchView.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
@@ -121,7 +126,8 @@ public class AddLocationFragment extends Fragment implements View.OnClickListene
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
+                ((FragmentActivity) activity).getSupportFragmentManager()
+                        .popBackStack();
             }
         });
 
@@ -133,7 +139,6 @@ public class AddLocationFragment extends Fragment implements View.OnClickListene
                                                      if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                                                          String searchStr = searchView.getText().toString();
                                                          if (Utils.checkGPSEnabled(getActivity())) {
-                                                             showAddress.setVisibility(View.GONE);
                                                              Utils.closeKeyboard(getActivity(), searchView.getWindowToken());
                                                              if (geoTaskRunning) {
                                                                  geoTaskRunning = false;
@@ -193,6 +198,33 @@ public class AddLocationFragment extends Fragment implements View.OnClickListene
 
                 new GetCurrentAddress().execute();
                 break;
+            case R.id.add_venue_mylocation:
+                latitudeValue = gps.getLatitude();
+                longitudeValue = gps.getLongitude();
+                LatLng latLng = new LatLng(latitudeValue, longitudeValue);
+                if (googleMap != null)
+                    googleMap.clear();
+
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14.0f));
+                getMapView();
+
+                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                layoutParams.setMargins(30, 20, 30, 30);
+                myLocationButton.setLayoutParams(layoutParams);
+
+                break;
+        }
+    }
+
+    private void getMapView() {
+        if (gps.canGetLocation()) {
+            latitudeValue = gps.getLatitude();
+            longitudeValue = gps.getLongitude();
+            Log.e("AddLocation :", "latitude --> " + latitudeValue + ",,,,longitude---> " + longitudeValue);
+        } else {
+            gps.showSettingsAlert();
         }
     }
 
@@ -275,7 +307,8 @@ public class AddLocationFragment extends Fragment implements View.OnClickListene
                     resultString + "@#@" + latitudeValue + "@#@" + longitudeValue);
 
             LocalBroadcastManager.getInstance(activity).sendBroadcast(intent);
-
+            ((FragmentActivity) activity).getSupportFragmentManager()
+                    .popBackStack();
         }
     }
 

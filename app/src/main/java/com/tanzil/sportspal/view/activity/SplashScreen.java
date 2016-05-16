@@ -31,10 +31,13 @@ public class SplashScreen extends Activity implements View.OnClickListener {
 
         if (Utils.isConnectingToInternet(SplashScreen.this)) {
             /** Starts new activity */
-            if (Preferences.readBoolean(SplashScreen.this, Preferences.LOGIN, false))
+            if (Preferences.readBoolean(SplashScreen.this, Preferences.LOGIN, false)) {
                 startActivity(new Intent(SplashScreen.this, MainActivity.class));
-            else if (Preferences.readBoolean(SplashScreen.this, Preferences.REGISTRATION, false))
+                finish();
+            } else if (Preferences.readBoolean(SplashScreen.this, Preferences.REGISTRATION, false)) {
                 startActivity(new Intent(SplashScreen.this, LoginScreen.class));
+                finish();
+            }
         } else {
             Utils.showMessage(SplashScreen.this, "Your Internet connection is unavailable");
         }

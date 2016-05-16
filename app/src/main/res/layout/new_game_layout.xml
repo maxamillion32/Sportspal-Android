@@ -70,6 +70,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/layout_team_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -185,7 +186,7 @@
             android:padding="5dp"
             android:src="@drawable/sports" />
 
-        <com.tanzil.sportspal.customUi.CustomAutoCompleteTextView
+        <com.tanzil.sportspal.customUi.MyTextView
             android:id="@+id/txt_pick_address"
             android:layout_width="0dp"
             android:layout_height="@dimen/drop_down_height"
@@ -197,9 +198,12 @@
             android:drawableEnd="@drawable/down"
             android:drawableRight="@drawable/down"
             android:gravity="center_vertical"
+            android:focusable="false"
             android:hint="@string/pick_address"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
+            android:maxLines="2"
+            android:ellipsize="end"
             android:textColor="@color/edit_text_color"
             android:textColorHint="@color/hint_color"
             android:textSize="@dimen/small_text_size" />
