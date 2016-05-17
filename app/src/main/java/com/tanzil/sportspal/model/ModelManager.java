@@ -13,6 +13,7 @@ public class ModelManager {
     private UsersManager usersManager;
     private TeamsManager teamsManager;
     private UserPreferredSportsManager userPreferredSportsManager;
+    private AddressManager addressManager;
 
     private ModelManager() {
 
@@ -21,6 +22,7 @@ public class ModelManager {
         usersManager = new UsersManager();
         teamsManager = new TeamsManager();
         userPreferredSportsManager = new UserPreferredSportsManager();
+        addressManager = new AddressManager();
 
     }
 
@@ -31,6 +33,7 @@ public class ModelManager {
         this.usersManager = null;
         this.teamsManager = null;
         this.userPreferredSportsManager = null;
+        this.addressManager = null;
     }
 
     public static ModelManager getInstance() {
@@ -67,5 +70,9 @@ public class ModelManager {
 
     public UserPreferredSportsManager getUserPreferredSportsManager() {
         return userPreferredSportsManager;
+    }
+
+    public AddressManager getAddressManager() {
+        return addressManager;
     }
 }

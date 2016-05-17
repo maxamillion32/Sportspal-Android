@@ -1,21 +1,20 @@
 package com.tanzil.sportspal.view.fragments;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +34,7 @@ import com.tanzil.sportspal.Utility.Utils;
 import com.tanzil.sportspal.customUi.MyEditText;
 import com.tanzil.sportspal.customUi.MyTextView;
 import com.tanzil.sportspal.model.ModelManager;
+import com.tanzil.sportspal.model.bean.Address;
 import com.tanzil.sportspal.model.bean.Sports;
 import com.tanzil.sportspal.model.bean.Teams;
 import com.tanzil.sportspal.model.bean.Users;
@@ -62,7 +62,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
     private Activity activity;
     private ImageView addGame, img_sports, img_team;
     private MyTextView game_sportsName, game_teamName, txt_Date, txt_Time, txt_teamType, txt_Address;
-//    private AutoCompleteTextView txt_Address;
+    //    private AutoCompleteTextView txt_Address;
     private Calendar myCalendar;
     //    private LinearLayout upperLayout;
     private LinearLayout gameLayout, teamLayout, layout_TeamName;
@@ -83,20 +83,30 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
     private ArrayList<String> teamsType = new ArrayList<String>();
     private double lat = 0.000, lng = 0.000;
     private GPSTracker gps;
+    private boolean mAlreadyLoaded = false;
+    private View rootView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         this.activity = super.getActivity();
-        View rootView = inflater.inflate(R.layout.fragment_create_new_game, container, false);
+        if (rootView != null) {
+            ViewGroup parent = (ViewGroup) rootView.getParent();
+            if (parent != null)
+                parent.removeView(rootView);
+        }
+        try {
+            rootView = inflater.inflate(R.layout.fragment_create_new_game, container, false);
+        } catch (InflateException e) {
+        /* just return view as it is */
+        }
 
-        LocalBroadcastManager.getInstance(activity).registerReceiver(
-                mAddressReciever, new IntentFilter("Address"));
+//        LocalBroadcastManager.getInstance(activity).registerReceiver(
+//                mAddressReciever, new IntentFilter("Address"));
 
         gps = new GPSTracker(activity);
 
         myCalendar = Calendar.getInstance();
-
         addGame = (ImageView) rootView.findViewById(R.id.add_game);
         img_sports = (ImageView) rootView.findViewById(R.id.img_sports);
         img_team = (ImageView) rootView.findViewById(R.id.img_team);
@@ -129,21 +139,33 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         img_team.setOnClickListener(this);
         img_sports.setOnClickListener(this);
 
-        if (lat == 0.000 || lng == 0.000)
-            getLatLong();
 
-        teamsArrayList = ModelManager.getInstance().getTeamsManager().getAllTeams(false);
-        if (teamsArrayList == null) {
-            Utils.showLoading(activity, activity.getString(R.string.please_wait));
-            ModelManager.getInstance().getTeamsManager().getAllTeams(true);
-        } else {
-            sportsArrayList = ModelManager.getInstance().getSportsManager().getAllSportsList(false);
-            if (sportsArrayList == null) {
-                Utils.showLoading(activity, activity.getString(R.string.please_wait));
-                ModelManager.getInstance().getSportsManager().getAllSportsList(true);
+        if (!canAccessLocation()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(Utils.INITIAL_PERMS, Utils.INITIAL_REQUEST);
             }
         }
 
+
+        if (savedInstanceState == null && !mAlreadyLoaded) {
+//            ModelManager.getInstance().getAddressManager().clearData();
+            mAlreadyLoaded = true;
+            teamsArrayList = ModelManager.getInstance().getTeamsManager().getAllTeams(false);
+            if (teamsArrayList == null) {
+                Utils.showLoading(activity, activity.getString(R.string.please_wait));
+                ModelManager.getInstance().getTeamsManager().getAllTeams(true);
+            } else {
+                sportsArrayList = ModelManager.getInstance().getSportsManager().getAllSportsList(false);
+                if (sportsArrayList == null) {
+                    Utils.showLoading(activity, activity.getString(R.string.please_wait));
+                    ModelManager.getInstance().getSportsManager().getAllSportsList(true);
+                }
+            }
+        } else {
+            getLatLong();
+        }
+
+        setValues();
 
 //        txt_Address.addTextChangedListener(new TextWatcher() {
 //
@@ -177,6 +199,48 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         return rootView;
     }
 
+    private void setValues() {
+
+        ArrayList<Address> addressArrayList = ModelManager.getInstance().getAddressManager().getAddresses();
+        if (addressArrayList != null)
+        if (addressArrayList.size() > 0) {
+            game_teamName.setText(addressArrayList.get(0).getTeam_name());
+            game_sportsName.setText(addressArrayList.get(0).getTeam_name());
+            txt_Date.setText(addressArrayList.get(0).getTeam_name());
+            txt_teamType.setText(addressArrayList.get(0).getTeam_name());
+            txt_Time.setText(addressArrayList.get(0).getTeam_name());
+            txt_Address.setText(addressArrayList.get(0).getAddress());
+            sportsId = addressArrayList.get(0).getSports_id();
+            teamId = addressArrayList.get(0).getTeam_id();
+            latitude = String.valueOf(addressArrayList.get(0).getLatitude());
+            longitude = String.valueOf(addressArrayList.get(0).getLongitude());
+        }
+
+    }
+    public boolean canAccessLocation() {
+        return(hasPermission(Manifest.permission.ACCESS_FINE_LOCATION));
+    }
+    public boolean hasPermission(String perm) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return(PackageManager.PERMISSION_GRANTED==activity.checkSelfPermission(perm));
+        } else
+            return true;
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch(requestCode) {
+
+            case Utils.LOCATION_REQUEST:
+                if (canAccessLocation()) {
+                    getLatLong();
+                }
+                else {
+                    gps.showSettingsAlert();
+                }
+                break;
+        }
+    }
+
     private void getLatLong() {
         if (gps.canGetLocation()) {
             lat = gps.getLatitude();
@@ -187,19 +251,19 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    private final BroadcastReceiver mAddressReciever = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // Get extra data included in the Intent
-            String[] message = intent.getStringExtra("message").split("@#@");
-            if (message.length > 2) {
-                txt_Address.setText(message[0]);
-                latitude = message[1];
-                longitude = message[2];
-            }
-            Log.d("receiver", "Got message: " + message);
-        }
-    };
+//    private final BroadcastReceiver mAddressReciever = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            // Get extra data included in the Intent
+//            String[] message = intent.getStringExtra("message").split("@#@");
+//            if (message.length > 2) {
+//                txt_Address.setText(message[0]);
+//                latitude = message[1];
+//                longitude = message[2];
+//            }
+//            Log.d("receiver", "Got message: " + message[0]);
+//        }
+//    };
 
     private void setHeader() {
         SPLog.e("headerView Data : ", "Setting headerView to List data");
@@ -465,6 +529,15 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
                 FragmentManager fm = getActivity().getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fm.beginTransaction();
                 Fragment fragment = new AddLocationFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("sports_name", game_sportsName.getText().toString());
+                bundle.putString("sports_id", sportsId);
+                bundle.putString("team_type", txt_teamType.getText().toString());
+                bundle.putString("team_name", game_teamName.getText().toString());
+                bundle.putString("team_id", teamId);
+                bundle.putString("date", txt_Date.getText().toString());
+                bundle.putString("time", txt_Time.getText().toString());
+                fragment.setArguments(bundle);
                 fragmentTransaction.replace(R.id.container_body, fragment, "AddLocationFragment");
                 fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 fragmentTransaction.addToBackStack("AddLocationFragment");

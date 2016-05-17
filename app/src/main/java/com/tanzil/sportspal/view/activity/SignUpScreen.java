@@ -1,8 +1,11 @@
 package com.tanzil.sportspal.view.activity;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.DatePicker;
@@ -49,6 +52,12 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
         setContentView(R.layout.sign_up_screen);
 
         gps = new GPSTracker(activity);
+        if (!canAccessLocation()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(Utils.INITIAL_PERMS, Utils.INITIAL_REQUEST);
+            }
+        }
+
 
         authManager = ModelManager.getInstance().getAuthManager();
         String deviceId = Preferences.readString(getApplicationContext(), Preferences.DEVICE_ID, "");
@@ -108,6 +117,30 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
         }
 
     }
+    public boolean canAccessLocation() {
+        return(hasPermission(Manifest.permission.ACCESS_FINE_LOCATION));
+    }
+    public boolean hasPermission(String perm) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return(PackageManager.PERMISSION_GRANTED==activity.checkSelfPermission(perm));
+        } else
+            return true;
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch(requestCode) {
+
+            case Utils.LOCATION_REQUEST:
+                if (canAccessLocation()) {
+                    getLatLong();
+                }
+                else {
+                    gps.showSettingsAlert();
+                }
+                break;
+        }
+    }
+
 
     private void updateLabel() {
 

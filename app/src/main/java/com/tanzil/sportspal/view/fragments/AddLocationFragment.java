@@ -1,7 +1,6 @@
 package com.tanzil.sportspal.view.fragments;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
@@ -10,7 +9,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -36,6 +34,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.tanzil.sportspal.R;
 import com.tanzil.sportspal.Utility.GPSTracker;
 import com.tanzil.sportspal.Utility.Utils;
+import com.tanzil.sportspal.model.ModelManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,7 +48,7 @@ public class AddLocationFragment extends Fragment implements View.OnClickListene
 
     private GoogleMap googleMap;
     private Double mDropedPinLat, mDropedPinLong;
-    private String mVenueId;
+    private String sports_name, sports_id, team_type, team_name, date, time, team_id;
     private Activity activity;
     private boolean check = false;
     private LocationManager locationManagerd;
@@ -83,6 +82,17 @@ public class AddLocationFragment extends Fragment implements View.OnClickListene
 
         gps = new GPSTracker(activity);
 
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            sports_id = bundle.getString("sports_id");
+            sports_name = bundle.getString("sports_name");
+            team_type = bundle.getString("team_type");
+            team_name = bundle.getString("team_name");
+            team_id = bundle.getString("team_id");
+            date = bundle.getString("date");
+            time = bundle.getString("time");
+        }
+
         myLocationButton = (ImageView) rootView.findViewById(R.id.add_venue_mylocation);
         searchView = (EditText) rootView.findViewById(R.id.edt_searchview_add_venue);
         searchView.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
@@ -111,11 +121,25 @@ public class AddLocationFragment extends Fragment implements View.OnClickListene
                 latitudeValue = tempa.latitude;
                 longitudeValue = tempa.longitude;
 
-                Intent intent = new Intent("Address");
-                intent.putExtra("message",
-                        searchLocations.get(position) + "@#@" + latitudeValue + "@#@" + longitudeValue);
+//                Intent intent = new Intent("Address");
+//                intent.putExtra("message",
+//                        searchLocations.get(position) + "@#@" + latitudeValue + "@#@" + longitudeValue);
 
-                LocalBroadcastManager.getInstance(activity).sendBroadcast(intent);
+//                LocalBroadcastManager.getInstance(activity).sendBroadcast(intent);
+                ArrayList<com.tanzil.sportspal.model.bean.Address> addressArrayList = new ArrayList<>();
+                com.tanzil.sportspal.model.bean.Address address = new com.tanzil.sportspal.model.bean.Address();
+                address.setAddress(searchLocations.get(position));
+                address.setLatitude(latitudeValue);
+                address.setLongitude(longitudeValue);
+                address.setSports_name(sports_name);
+                address.setSports_id(sports_id);
+                address.setTeam_type(team_type);
+                address.setTeam_name(team_name);
+                address.setTeam_id(team_id);
+                address.setDate(date);
+                address.setTime(time);
+                addressArrayList.add(address);
+                ModelManager.getInstance().getAddressManager().setAddresses(addressArrayList);
 
                 searchLocations.clear();
                 searchcor.clear();
@@ -302,11 +326,27 @@ public class AddLocationFragment extends Fragment implements View.OnClickListene
 
         @Override
         protected void onPostExecute(String resultString) {
-            Intent intent = new Intent("Address");
-            intent.putExtra("message",
-                    resultString + "@#@" + latitudeValue + "@#@" + longitudeValue);
 
-            LocalBroadcastManager.getInstance(activity).sendBroadcast(intent);
+            ArrayList<com.tanzil.sportspal.model.bean.Address> addressArrayList = new ArrayList<>();
+            com.tanzil.sportspal.model.bean.Address address = new com.tanzil.sportspal.model.bean.Address();
+            address.setAddress(resultString);
+            address.setLatitude(latitudeValue);
+            address.setLongitude(longitudeValue);
+            address.setSports_name(sports_name);
+            address.setSports_id(sports_id);
+            address.setTeam_type(team_type);
+            address.setTeam_name(team_name);
+            address.setTeam_id(team_id);
+            address.setDate(date);
+            address.setTime(time);
+            addressArrayList.add(address);
+            ModelManager.getInstance().getAddressManager().setAddresses(addressArrayList);
+
+//            Intent intent = new Intent("Address");
+//            intent.putExtra("message",
+//                    resultString + "@#@" + latitudeValue + "@#@" + longitudeValue);
+//
+//            LocalBroadcastManager.getInstance(activity).sendBroadcast(intent);
             ((FragmentActivity) activity).getSupportFragmentManager()
                     .popBackStack();
         }

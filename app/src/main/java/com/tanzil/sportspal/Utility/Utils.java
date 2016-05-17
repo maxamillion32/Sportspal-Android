@@ -1,5 +1,6 @@
 package com.tanzil.sportspal.Utility;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -39,6 +40,12 @@ public class Utils {
     private static ProgressDialog progressDialog;
     private static GoogleCloudMessaging gcm;
     private static String regid;
+    public static final String[] INITIAL_PERMS={
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.READ_CONTACTS
+    };
+    public static final int INITIAL_REQUEST=1337;
+    public static final int LOCATION_REQUEST=INITIAL_REQUEST+3;
 
 
     public static void showLoading(Activity act, String msg) {
