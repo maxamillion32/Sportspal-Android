@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     private FragmentManager fragmentManager;
     private boolean backer = false;
     private LinearLayout newsFeedLayout, playLayout, addSportLayout, chatLayout, profileLayout;
-    private ImageView img_newsFeed, img_play, img_addSports, img_chat, img_profile;
+    private ImageView img_newsFeed, img_play, img_addSports, img_chat, img_profile, img_right;
     private MyTextView txt_news, txt_play, txt_add, txt_chat, txt_profile;
     private Activity activity = MainActivity.this;
 

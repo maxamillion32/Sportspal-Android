@@ -14,10 +14,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.tanzil.sportspal.R;
-import com.tanzil.sportspal.Utility.SPLog;
+import com.tanzil.sportspal.Utility.DrawableImages;
 import com.tanzil.sportspal.customUi.MyTextView;
 import com.tanzil.sportspal.model.ModelManager;
-import com.tanzil.sportspal.model.bean.Games;
 import com.tanzil.sportspal.model.bean.Sports;
 import com.tanzil.sportspal.model.bean.Users;
 
@@ -69,31 +68,43 @@ public class PlayersFragmentAdapter extends BaseAdapter {
             viewHolder = (CompleteListViewHolder) v.getTag();
         }
 
-//        try {
-
-            String name = list.get(position).getFirst_name() + " " + list.get(position).getLast_name();
-            viewHolder.player_text.setText(name.trim());
-            String sports_name = "";
-            if (list.get(position).getSports_preferences() != null)
-                if (list.get(position).getSports_preferences().size() > 0) {
-                    for (int i = 0; i < list.get(position).getSports_preferences().size(); i++) {
-                        ArrayList<Sports> sportsArrayList = ModelManager.getInstance().getSportsManager().getAllSportsList(false);
-                        if (sportsArrayList != null) {
-                            for (int j = 0; j < sportsArrayList.size(); j++) {
-                                if (list.get(position).getSports_preferences().get(i).getId().equalsIgnoreCase(sportsArrayList.get(j).getId())) {
-                                    sports_name += "#" + sportsArrayList.get(j).getName() + " ";
-                                    break;
-                                }
+        String name = list.get(position).getFirst_name() + " " + list.get(position).getLast_name();
+        viewHolder.player_text.setText(name.trim());
+        String sports_name = "";
+        if (list.get(position).getSports_preferences() != null)
+            if (list.get(position).getSports_preferences().size() > 0) {
+                for (int i = 0; i < list.get(position).getSports_preferences().size(); i++) {
+                    ArrayList<Sports> sportsArrayList = ModelManager.getInstance().getSportsManager().getAllSportsList(false);
+                    if (sportsArrayList != null) {
+                        for (int j = 0; j < sportsArrayList.size(); j++) {
+                            if (list.get(position).getSports_preferences().get(i).getId().equalsIgnoreCase(sportsArrayList.get(j).getId())) {
+                                sports_name += "#" + sportsArrayList.get(j).getName() + " ";
+                                break;
                             }
                         }
                     }
                 }
-            SPLog.e("Sports names : ", "" + sports_name.trim());
-            viewHolder.game_text.setText(sports_name.trim());
+            }
+//        SPLog.e("Sports names : ", "" + sports_name.trim());
+        viewHolder.game_text.setText(sports_name.trim());
 
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//        }
+        String sp_name[], nm = "";
+        if (sports_name.length() > 0) {
+            sp_name = sports_name.split(" ");
+            if (sp_name[0] != null)
+                if (sp_name[0].length() > 0)
+                    nm = sp_name[0].substring(1, sp_name[0].length());
+        }
+        String userPic;
+        if (list.get(position).getImage() == null)
+            userPic = "";
+        else
+        userPic = list.get(position).getImage();
+
+        if (userPic.length() == 0)
+        viewHolder.img_user.setImageResource(DrawableImages.setImage(nm));
+        else
+            viewHolder.img_user.setImageResource(DrawableImages.setImage(nm));
 
         return v;
     }

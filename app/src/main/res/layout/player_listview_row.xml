@@ -9,9 +9,10 @@
     <ImageView
         android:id="@+id/img_team"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/row_height"
         android:layout_gravity="center_horizontal|center_vertical"
-        android:background="@color/colorAccent"
+        android:background="@android:color/transparent"
+        android:scaleType="fitXY"
         android:contentDescription="@string/app_name" />
 
     <LinearLayout

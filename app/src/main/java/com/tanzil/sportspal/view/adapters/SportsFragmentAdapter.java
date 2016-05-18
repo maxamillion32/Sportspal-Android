@@ -7,18 +7,16 @@ package com.tanzil.sportspal.view.adapters;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
-import com.pkmmte.view.CircularImageView;
 import com.tanzil.sportspal.R;
+import com.tanzil.sportspal.Utility.DrawableImages;
 import com.tanzil.sportspal.customUi.MyTextView;
 import com.tanzil.sportspal.model.bean.Games;
-import com.tanzil.sportspal.model.bean.Sports;
 
 import java.util.ArrayList;
 
@@ -76,6 +74,7 @@ public class SportsFragmentAdapter extends BaseAdapter {
             viewHolder.timeText.setText(list.get(position).getTime());
 
 
+            viewHolder.img_team.setImageResource(DrawableImages.setImage(list.get(position).getSports_name()));
         } catch (Exception ex) {
         }
 

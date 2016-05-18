@@ -14,8 +14,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.tanzil.sportspal.R;
+import com.tanzil.sportspal.Utility.DrawableImages;
 import com.tanzil.sportspal.customUi.MyTextView;
-import com.tanzil.sportspal.model.bean.Games;
 import com.tanzil.sportspal.model.bean.Teams;
 
 import java.util.ArrayList;
@@ -72,6 +72,11 @@ public class TeamsFragmentAdapter extends BaseAdapter {
             viewHolder.dayText.setText(list.get(position).getSports_name());
             viewHolder.timeText.setText(list.get(position).getMembers_limit());
 
+            String name = list.get(position).getSports_name();
+            if (name == null)
+                name = "";
+
+            viewHolder.img_team.setImageResource(DrawableImages.setImage(name));
 
         } catch (Exception ex) {
         }

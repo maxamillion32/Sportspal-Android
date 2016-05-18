@@ -26,7 +26,7 @@ public class PlayMainFragment extends Fragment implements View.OnClickListener {
     private String TAG = PlayMainFragment.class.getSimpleName();
     private Activity activity;
     private LinearLayout sportsLayout, playersLayout, teamsLayout;
-    private ImageView img_sports, img_players, img_teams;
+    private ImageView img_sports, img_players, img_teams, img_right;
     private MyTextView txt_sports, txt_players, txt_teams;
     private FragmentManager fragmentManager;
 
@@ -36,6 +36,9 @@ public class PlayMainFragment extends Fragment implements View.OnClickListener {
 
         this.activity = super.getActivity();
         View rootView = inflater.inflate(R.layout.fragment_play, container, false);
+
+        img_right = (ImageView) activity.findViewById(R.id.img_right);
+        img_right.setVisibility(View.VISIBLE);
 
         fragmentManager = ((FragmentActivity) activity).getSupportFragmentManager();
 
@@ -59,6 +62,24 @@ public class PlayMainFragment extends Fragment implements View.OnClickListener {
         setFragment(0);
 
         return rootView;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        img_right.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        img_right.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        img_right.setVisibility(View.GONE);
     }
 
     @Override
