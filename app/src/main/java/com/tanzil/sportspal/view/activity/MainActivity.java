@@ -25,9 +25,11 @@ import com.tanzil.sportspal.Utility.Utils;
 import com.tanzil.sportspal.customUi.MyTextView;
 import com.tanzil.sportspal.model.ModelManager;
 import com.tanzil.sportspal.view.fragments.AddGameFragment;
+import com.tanzil.sportspal.view.fragments.ChatFragment;
 import com.tanzil.sportspal.view.fragments.FragmentDrawer;
 import com.tanzil.sportspal.view.fragments.NewsFeedFragment;
 import com.tanzil.sportspal.view.fragments.ProfileFragment;
+import com.tanzil.sportspal.view.fragments.SettingsFragment;
 import com.tanzil.sportspal.view.fragments.play.PlayMainFragment;
 
 import org.json.JSONObject;
@@ -248,11 +250,11 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 fragment = new ProfileFragment();
                 title = getString(R.string.title_profile);
                 break;
-//            case 5:
-//                fragment = new NewsFeedFragment();
-//                title = getString(R.string.title_logout);
-//                break;
             case 5:
+                fragment = new SettingsFragment();
+                title = getString(R.string.title_settings);
+                break;
+            case 6:
                 showAlert("Are you sure, you want to log out?");
                 break;
             default:
@@ -336,10 +338,12 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 title = getString(R.string.title_play);
             } else if (f instanceof AddGameFragment) {
                 title = getString(R.string.title_add);
-            } else if (f instanceof NewsFeedFragment) {
+            } else if (f instanceof ChatFragment) {
                 title = getString(R.string.title_chat);
             } else if (f instanceof ProfileFragment) {
                 title = getString(R.string.title_profile);
+            } else if (f instanceof SettingsFragment) {
+                title = getString(R.string.title_settings);
             }
         } catch (Exception e) {
             e.printStackTrace();

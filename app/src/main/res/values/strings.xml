@@ -25,6 +25,7 @@
         <item>ADD</item>
         <item>CHAT</item>
         <item>PROFILE</item>
+        <item>SETTINGS</item>
         <item>LOGOUT</item>
     </string-array>
 
@@ -33,6 +34,7 @@
     <string name="title_chat">CHAT</string>
     <string name="title_profile">PROFILE</string>
     <string name="title_news">NEWS</string>
+    <string name="title_settings">SETTINGS</string>
     <string name="title_logout">LOGOUT</string>
 
     <string name="search">Search</string>
@@ -76,4 +78,5 @@
     <!-- Profile Screen-->
     <string name="preferences">Prefrences</string>
     <string name="location">Location</string>
+    <string name="advanced">Advanced</string>
 </resources>
