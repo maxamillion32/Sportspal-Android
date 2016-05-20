@@ -6,7 +6,7 @@
     android:orientation="vertical">
 
     <ImageView
-        android:id="@+id/img_team"
+        android:id="@+id/img_user_pic"
         android:layout_width="match_parent"
         android:layout_height="@dimen/row_height"
         android:layout_gravity="center_horizontal|center_vertical"
@@ -146,19 +146,19 @@
                     android:textColor="@color/white"
                     android:textSize="@dimen/small_text_size" />
 
-                <com.tanzil.sportspal.customUi.MyTextView
-                    android:id="@+id/occupation_text"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:drawableLeft="@drawable/team"
-                    android:drawablePadding="5dp"
-                    android:drawableStart="@drawable/occupation"
-                    android:gravity="bottom"
-                    android:padding="5dp"
-                    android:text="@string/advanced"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/small_text_size" />
+                <!--<com.tanzil.sportspal.customUi.MyTextView-->
+                    <!--android:id="@+id/occupation_text"-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:drawableLeft="@drawable/team"-->
+                    <!--android:drawablePadding="5dp"-->
+                    <!--android:drawableStart="@drawable/occupation"-->
+                    <!--android:gravity="bottom"-->
+                    <!--android:padding="5dp"-->
+                    <!--android:text="@string/advanced"-->
+                    <!--android:textColor="@color/white"-->
+                    <!--android:textSize="@dimen/small_text_size" />-->
             </LinearLayout>
 
             <LinearLayout
@@ -171,13 +171,13 @@
                 android:orientation="horizontal"
                 android:padding="10dp">
 
-                <com.tanzil.sportspal.customUi.MyTextView
-                    android:id="@+id/game_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/news"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/small_text_size" />
+                <!--<com.tanzil.sportspal.customUi.MyTextView-->
+                    <!--android:id="@+id/game_text"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="@string/news"-->
+                    <!--android:textColor="@color/white"-->
+                    <!--android:textSize="@dimen/small_text_size" />-->
             </LinearLayout>
 
             <com.tanzil.sportspal.customUi.MyTextView

@@ -57,9 +57,9 @@
             android:layout_marginRight="5dp"
             android:layout_weight="1"
             android:background="@drawable/edittext_transparent_bg"
-            android:inputType="text"
             android:gravity="center_vertical"
             android:hint="@string/team_name"
+            android:inputType="text"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:textColor="@color/edit_text_color"
@@ -83,16 +83,16 @@
             android:padding="5dp"
             android:src="@drawable/date" />
 
-        <com.tanzil.sportspal.customUi.MyEditText
-            android:id="@+id/et_corporate"
+        <com.tanzil.sportspal.customUi.MyTextView
+            android:id="@+id/txt_team_type"
             android:layout_width="0dp"
             android:layout_height="@dimen/drop_down_height"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:background="@drawable/edittext_transparent_bg"
-            android:inputType="text"
             android:gravity="center_vertical"
-            android:hint="@string/corporate_group"
+            android:hint="@string/team_type"
+            android:inputType="text"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:textColor="@color/edit_text_color"
@@ -107,7 +107,8 @@
             android:layout_marginStart="10dp"
             android:contentDescription="@string/app_name"
             android:padding="5dp"
-            android:src="@drawable/time" />
+            android:src="@drawable/time"
+            android:visibility="invisible" />
 
         <com.tanzil.sportspal.customUi.MyEditText
             android:id="@+id/et_private"
@@ -125,7 +126,8 @@
             android:paddingRight="10dp"
             android:textColor="@color/edit_text_color"
             android:textColorHint="@color/hint_color"
-            android:textSize="@dimen/small_text_size" />
+            android:textSize="@dimen/small_text_size"
+            android:visibility="invisible" />
     </LinearLayout>
 
     <View

@@ -18,6 +18,7 @@
 
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
+    <string name="submit">Submit</string>
     <!-- navigation drawer item labels  -->
     <string-array name="nav_drawer_labels">
         <item>NEWS</item>

@@ -27,51 +27,73 @@
             android:src="@drawable/check" />
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/add_row_height"
         android:layout_gravity="center"
-        android:layout_margin="20dp"
-        android:background="@color/white"
-        android:baselineAligned="false"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:padding="2dp">
+        android:background="@color/black"
+        android:baselineAligned="false">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/layout_add_type"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/black"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:background="@color/white"
             android:baselineAligned="false"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="2dp">
 
-            <ImageView
-                android:id="@+id/img_sports"
-                android:layout_width="wrap_content"
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|center_vertical"
-                android:background="@color/grey_text"
-                android:contentDescription="@string/app_name"
-                android:padding="10dp"
-                android:src="@drawable/sports_pic" />
+                android:background="@color/black"
+                android:baselineAligned="false"
+                android:gravity="center"
+                android:orientation="horizontal">
 
-            <View
-                android:layout_width="2dp"
-                android:layout_height="match_parent"
-                android:background="@color/white" />
+                <ImageView
+                    android:id="@+id/img_sports"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:background="@color/grey_text"
+                    android:contentDescription="@string/app_name"
+                    android:padding="10dp"
+                    android:src="@drawable/sports_pic" />
 
-            <ImageView
-                android:id="@+id/img_team"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|center_vertical"
-                android:background="@android:color/transparent"
-                android:contentDescription="@string/app_name"
-                android:padding="10dp"
-                android:src="@drawable/team_pic" />
+                <View
+                    android:layout_width="2dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/white" />
+
+                <ImageView
+                    android:id="@+id/img_team"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/app_name"
+                    android:padding="10dp"
+                    android:src="@drawable/team_pic" />
+            </LinearLayout>
+
         </LinearLayout>
-    </LinearLayout>
+
+        <ImageView
+            android:id="@+id/img_specific"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/app_name"
+            android:scaleType="fitXY"
+            android:src="@drawable/team_pic"
+            android:visibility="gone" />
+    </RelativeLayout>
 
     <View
         android:layout_width="match_parent"
@@ -91,8 +113,7 @@
             android:gravity="center_vertical"
             android:orientation="vertical">
 
-            <include
-                layout="@layout/new_game_layout" />
+            <include layout="@layout/new_game_layout" />
 
             <LinearLayout
                 android:id="@+id/create_new_team_layout"
@@ -103,8 +124,7 @@
                 android:orientation="horizontal"
                 android:visibility="gone">
 
-                <include
-                    layout="@layout/new_team_layout" />
+                <include layout="@layout/new_team_layout" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

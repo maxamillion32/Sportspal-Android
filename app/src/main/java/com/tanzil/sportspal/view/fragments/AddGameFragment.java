@@ -70,8 +70,8 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
     private ListView membersList;
     private View headerView, footerView;
 
-    private MyEditText teamName, corporateGroup, privateText;
-    private MyTextView teamSport;
+    private MyEditText teamName /*corporateGroup, privateText*/;
+    private MyTextView teamSport, txt_teamType;
     private ArrayList<Teams> teamsArrayList;
     private ArrayList<Sports> sportsArrayList;
     private Dialog sportsDialog, teamDialog;
