@@ -185,7 +185,7 @@ public class UsersManager {
         SPRestClient.get(ServiceApi.GET_USER_DETAILS + "/" + ModelManager.getInstance().getAuthManager().getUserId(), null, new JsonHttpResponseHandler() {
             @Override
             public void onStart() {
-                Log.e(TAG, "GetUserDetails called before request is started");
+                Log.e(TAG, "GetMyDetails called before request is started");
             }
 
             @Override
@@ -200,23 +200,6 @@ public class UsersManager {
                 Log.e(TAG, "onSuccess  --> " + response.toString());
 
                 try {
-//                    "id": 13
-//                    "first_name": "Arun"
-//                    "last_name": "Sharma"
-//                    "email": "arun@yahoo.com"
-//                    "dob": "14/08/1988"
-//                    "gender": "Male"
-//                    "modified": "2016-05-09T06:13:53+0000"
-//                    "created": "2016-05-09T06:13:53+0000"
-//                    "image": ""
-//                    "social_platform": ""
-//                    "social_id": ""
-//                    "latitude": "0"
-//                    "longitude": "0"
-//                    "games": [0]
-//                    "favourite_users": [0]
-//                    "teams": [0]
-//                    "user_fav_locations": [0]
 
                     int state = response.getInt("status");
                     if (state == 200) {
@@ -280,13 +263,13 @@ public class UsersManager {
                                 }
                                 selfInfoList.add(users);
                             }
-                        EventBus.getDefault().post("GetUserDetails True");
+                        EventBus.getDefault().post("GetMyDetails True");
                     } else {
-                        EventBus.getDefault().post("GetUserDetails False");
+                        EventBus.getDefault().post("GetMyDetails False");
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    EventBus.getDefault().post("GetUserDetails False");
+                    EventBus.getDefault().post("GetMyDetails False");
                 }
 
 
@@ -297,9 +280,9 @@ public class UsersManager {
                 super.onFailure(statusCode, headers, throwable, errorResponse);
                 if (errorResponse != null) {
                     Log.e(TAG, "onFailure  --> " + errorResponse.toString());
-                    EventBus.getDefault().post("GetUserDetails False");
+                    EventBus.getDefault().post("GetMyDetails False");
                 } else {
-                    EventBus.getDefault().post("GetUserDetails Network Error");
+                    EventBus.getDefault().post("GetMyDetails Network Error");
                 }
             }
 
@@ -308,9 +291,9 @@ public class UsersManager {
                 super.onFailure(statusCode, headers, responseString, throwable);
                 if (responseString != null) {
                     Log.e(TAG, "onFailure  --> " + responseString.toString());
-                    EventBus.getDefault().post("GetUserDetails False");
+                    EventBus.getDefault().post("GetMyDetails False");
                 } else {
-                    EventBus.getDefault().post("GetUserDetails Network Error");
+                    EventBus.getDefault().post("GetMyDetails Network Error");
                 }
             }
 

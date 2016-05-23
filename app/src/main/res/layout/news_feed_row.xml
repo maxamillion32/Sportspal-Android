@@ -4,60 +4,72 @@
     android:id="@+id/row_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/black"
+    android:background="@color/bg"
     android:baselineAligned="false"
     android:gravity="center_vertical"
     android:orientation="horizontal">
 
-    <com.pkmmte.view.CircularImageView
+    <!--<com.pkmmte.view.CircularImageView-->
+    <!--android:id="@+id/img_profile"-->
+    <!--android:layout_width="40dp"-->
+    <!--android:layout_height="40dp"-->
+    <!--android:layout_gravity="center_horizontal|center_vertical"-->
+    <!--android:padding="5dp"-->
+    <!--android:layout_marginLeft="5dp"-->
+    <!--android:layout_marginRight="5dp"-->
+    <!--app:border="true"-->
+    <!--app:border_color="@color/circular_image_border_color"-->
+    <!--app:border_width="1dp"-->
+    <!--app:shadow="true" />-->
+    <ImageView
         android:id="@+id/img_profile"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_gravity="center_horizontal|center_vertical"
-        android:padding="5dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        app:border="true"
-        app:border_color="@color/circular_image_border_color"
-        app:border_width="1dp"
-        app:shadow="true" />
+        android:contentDescription="@string/app_name"
+        android:padding="5dp"
+        android:src="@drawable/team" />
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="1"
-        android:background="@color/black"
-        android:padding="10dp"
-        android:gravity="center_vertical"
-        android:orientation="vertical">
+    <!--<LinearLayout-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center_vertical"-->
+        <!--android:layout_weight="1"-->
+        <!--android:background="@color/black"-->
+        <!--android:gravity="center_vertical"-->
+        <!--android:orientation="vertical"-->
+        <!--android:padding="10dp">-->
 
         <com.tanzil.sportspal.customUi.MyTextView
             android:id="@+id/description_text"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:padding="5dp"
             android:layout_height="wrap_content"
             android:text="@string/news"
             android:textColor="@color/white"
+            android:maxLines="3"
             android:textSize="@dimen/bottomTextsize" />
 
-        <com.tanzil.sportspal.customUi.MyTextView
-            android:id="@+id/day_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:text="@string/news"
-            android:textColor="@color/white"
-            android:textSize="@dimen/bottomTextsize" />
-    </LinearLayout>
+        <!--<com.tanzil.sportspal.customUi.MyTextView-->
+            <!--android:id="@+id/day_text"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginTop="3dp"-->
+            <!--android:text="@string/news"-->
+            <!--android:textColor="@color/white"-->
+            <!--android:textSize="@dimen/bottomTextsize" />-->
+    <!--</LinearLayout>-->
 
-    <com.tanzil.sportspal.customUi.MyTextView
-        android:id="@+id/time_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="10dp"
-        android:text="@string/news"
-        android:textColor="@color/white"
-        android:textSize="@dimen/bottomTextsize" />
+    <!--<com.tanzil.sportspal.customUi.MyTextView-->
+        <!--android:id="@+id/time_text"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:gravity="center"-->
+        <!--android:padding="10dp"-->
+        <!--android:text="@string/news"-->
+        <!--android:textColor="@color/white"-->
+        <!--android:textSize="@dimen/bottomTextsize" />-->
 </LinearLayout>
 

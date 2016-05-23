@@ -2,16 +2,21 @@ package com.tanzil.sportspal.view.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
@@ -47,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     private boolean backer = false;
     private LinearLayout newsFeedLayout, playLayout, addSportLayout, chatLayout, profileLayout;
     private ImageView img_newsFeed, img_play, img_addSports, img_chat, img_profile, img_right;
-    private MyTextView txt_news, txt_play, txt_add, txt_chat, txt_profile;
+    private MyTextView tvTitle, txt_news, txt_play, txt_add, txt_chat, txt_profile;
     private Activity activity = MainActivity.this;
 
     @Override
@@ -61,6 +66,12 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        LocalBroadcastManager.getInstance(MainActivity.this).registerReceiver(
+                mHeaderReceiver, new IntentFilter("Header"));
+
+
+        tvTitle = (MyTextView) findViewById(R.id.header_text);
 
         drawerFragment = (FragmentDrawer)
                 getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
@@ -86,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         txt_profile = (MyTextView) findViewById(R.id.profile_text);
 
         // display the first navigation drawer view on app launch
-        displayView(0);
+        displayView(0, 0);
 
         newsFeedLayout.setOnClickListener(this);
         playLayout.setOnClickListener(this);
@@ -95,23 +106,44 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         profileLayout.setOnClickListener(this);
     }
 
+    /**
+     * Header heading update method
+     **/
+    private final BroadcastReceiver mHeaderReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get extra data included in the Intent
+            String message = intent.getStringExtra("message");
+            String textName[] = new String[2];
+            try {
+                textName = message.split("-");
+            } catch (Exception e) {
+                e.printStackTrace();
+                textName[0] = "";
+                textName[1] = "";
+            }
+            tvTitle.setText(textName[1]);
+            Log.d("receiver", "Got message: " + message);
+        }
+    };
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.layout_news:
-                displayView(0);
+                displayView(0, 0);
                 break;
             case R.id.layout_play:
-                displayView(1);
+                displayView(1, 0);
                 break;
             case R.id.layout_add:
-                displayView(2);
+                displayView(2, 0);
                 break;
             case R.id.layout_chat:
-                displayView(3);
+                displayView(3, 0);
                 break;
             case R.id.layout_profile:
-                displayView(4);
+                displayView(4, 0);
                 break;
         }
     }
@@ -222,14 +254,16 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 
     @Override
     public void onDrawerItemSelected(View view, int position) {
-        displayView(position);
+        displayView(position, 1);
     }
 
-    private void displayView(int position) {
+    private void displayView(int position, int flag) {
         setBackground(position);
         Fragment fragment = null;
         String title = getString(R.string.app_name);
+        if (flag == 0) {
         switch (position) {
+
             case 0:
                 fragment = new NewsFeedFragment();
                 title = getString(R.string.title_news);
@@ -250,15 +284,27 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 fragment = new ProfileFragment();
                 title = getString(R.string.title_profile);
                 break;
-            case 5:
-                fragment = new SettingsFragment();
-                title = getString(R.string.title_settings);
-                break;
-            case 6:
-                showAlert("Are you sure, you want to log out?");
-                break;
-            default:
-                break;
+            }
+        } else {
+            switch (position) {
+
+                case 0:
+                    fragment = new NewsFeedFragment();
+                    title = getString(R.string.title_news);
+                    break;
+                case 1:
+                    fragment = new PlayMainFragment();
+                    title = getString(R.string.title_play);
+                    break;
+                case 2:
+                    fragment = new SettingsFragment();
+                    title = getString(R.string.title_settings);
+                    break;
+                case 3:
+                    showAlert("Are you sure, you want to log out?");
+                    break;
+            }
+
         }
 
         if (fragment != null) {

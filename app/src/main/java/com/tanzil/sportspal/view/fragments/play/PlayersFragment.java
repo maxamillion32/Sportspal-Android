@@ -5,12 +5,18 @@ package com.tanzil.sportspal.view.fragments.play;
  */
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.tanzil.sportspal.R;
@@ -37,6 +43,13 @@ public class PlayersFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         this.activity = super.getActivity();
+        Intent intent = new Intent("Header");
+        intent.putExtra(
+                "message",
+                "SP-"
+                        + activity.getString(R.string.title_play));
+
+        LocalBroadcastManager.getInstance(activity).sendBroadcast(intent);
         View rootView = inflater.inflate(R.layout.fragment_news_feed, container, false);
 
 
@@ -49,6 +62,22 @@ public class PlayersFragment extends Fragment {
             ModelManager.getInstance().getUsersManager().getNearUsers(true);
         } else
             setData();
+
+        sportsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Fragment fragment = new PlayerDetailFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("id", gamesArrayList.get(position).getId());
+                fragment.setArguments(bundle);
+
+                FragmentManager fragmentManager = ((FragmentActivity) activity).getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.container_body, fragment, "PlayerDetailFragment");
+                fragmentTransaction.addToBackStack("PlayerDetailFragment");
+                fragmentTransaction.commit();
+            }
+        });
 
 
         return rootView;

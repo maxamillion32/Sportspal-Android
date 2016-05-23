@@ -5,7 +5,6 @@ import android.util.Log;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.tanzil.sportspal.Utility.ServiceApi;
 import com.tanzil.sportspal.httprequest.SPRestClient;
-import com.tanzil.sportspal.model.ModelManager;
 import com.tanzil.sportspal.model.SportsManager;
 
 import org.json.JSONArray;
@@ -144,8 +143,8 @@ public class Users {
         this.teamsArrayList = teamsArrayList;
     }
 
-    public ArrayList<Users> getUserDetails(){
-        SPRestClient.get(ServiceApi.GET_USERS + "/" + ModelManager.getInstance().getAuthManager().getUserId(), null, new JsonHttpResponseHandler() {
+    public ArrayList<Users> getUserDetails(String id){
+        SPRestClient.get(ServiceApi.GET_USER_DETAILS + "/" + id, null, new JsonHttpResponseHandler() {
             @Override
             public void onStart() {
                 Log.e(TAG, "GetUserDetails called before request is started");
@@ -163,46 +162,47 @@ public class Users {
                 Log.e(TAG, "onSuccess  --> " + response.toString());
 
                 try {
-//                    "id": 13
-//                    "first_name": "Arun"
-//                    "last_name": "Sharma"
-//                    "email": "arun@yahoo.com"
-//                    "dob": "14/08/1988"
-//                    "gender": "Male"
-//                    "modified": "2016-05-09T06:13:53+0000"
-//                    "created": "2016-05-09T06:13:53+0000"
-//                    "image": ""
-//                    "social_platform": ""
-//                    "social_id": ""
-//                    "latitude": "0"
-//                    "longitude": "0"
-//                    "games": [0]
-//                    "favourite_users": [0]
-//                    "teams": [0]
-//                    "user_fav_locations": [0]
 
                     int state = response.getInt("status");
                     if (state == 200) {
-                        JSONArray jsonArray = response.getJSONArray("message");
-                        int count = jsonArray.length();
+                        JSONObject jsonArray = response.getJSONObject("message");
+//                        int count = jsonArray.length();
                         usersList = new ArrayList<Users>();
-                        if (count > 0)
-                            for (int i = 0; i < count; i++) {
+//                        if (count > 0) {
+//                            for (int i = 0; i < count; i++) {
                                 Users users = new Users();
-                                users.setId(jsonArray.getJSONObject(i).getString("id"));
-                                users.setFirst_name(jsonArray.getJSONObject(i).getString("first_name"));
-                                users.setLast_name(jsonArray.getJSONObject(i).getString("last_name"));
-                                users.setEmail(jsonArray.getJSONObject(i).getString("email"));
-                                users.setDob(jsonArray.getJSONObject(i).getString("dob"));
-                                users.setGender(jsonArray.getJSONObject(i).getString("gender"));
-                                users.setImage(jsonArray.getJSONObject(i).getString("image"));
-                                users.setSocial_platform(jsonArray.getJSONObject(i).getString("social_platform"));
-                                users.setSocial_id(jsonArray.getJSONObject(i).getString("social_id"));
-                                users.setLatitude(jsonArray.getJSONObject(i).getString("latitude"));
-                                users.setLongitude(jsonArray.getJSONObject(i).getString("longitude"));
+                                users.setId(jsonArray.getString("id"));
+                                users.setFirst_name(jsonArray.getString("first_name"));
+                                users.setLast_name(jsonArray.getString("last_name"));
+                                users.setEmail(jsonArray.getString("email"));
+                                users.setDob(jsonArray.getString("dob"));
+                                users.setGender(jsonArray.getString("gender"));
+                                users.setImage(jsonArray.getString("image"));
+                                users.setSocial_platform(jsonArray.getString("social_platform"));
+                                users.setSocial_id(jsonArray.getString("social_id"));
+                                users.setLatitude(jsonArray.getString("latitude"));
+                                users.setLongitude(jsonArray.getString("longitude"));
 
-                                if (jsonArray.getJSONObject(i).has("games")) {
-                                    JSONArray jsonArray1 = jsonArray.getJSONObject(i).getJSONArray("games");
+                                if (jsonArray.has("sports_preferences")) {
+                                    JSONArray jsonArray1 = jsonArray.getJSONArray("sports_preferences");
+                                    if (jsonArray1 != null) {
+                                        ArrayList<Sports> sportsArrayList = new ArrayList<Sports>();
+                                        for (int j = 0; j < jsonArray1.length(); j++) {
+                                            Sports sports = new Sports();
+                                            sports.setUserId(jsonArray1.getJSONObject(j).getString("user_id"));
+                                            if (!jsonArray1.getJSONObject(j).isNull("sport")){
+                                                JSONObject jsonObject = jsonArray1.getJSONObject(j).getJSONObject("sport");
+                                                sports.setId(jsonObject.getString("id"));
+                                                sports.setStatus(jsonObject.getString("status"));
+                                                sports.setName(jsonObject.getString("name"));
+                                            }
+                                            sportsArrayList.add(sports);
+                                        }
+                                        users.setSports_preferences(sportsArrayList);
+                                    }
+                                }
+                                if (jsonArray.has("games")) {
+                                    JSONArray jsonArray1 = jsonArray.getJSONArray("games");
                                     if (jsonArray1 != null) {
                                         ArrayList<Games> gamesArrayList = new ArrayList<Games>();
                                         for (int j = 0; j < jsonArray1.length(); j++) {
@@ -222,8 +222,8 @@ public class Users {
                                         users.setGamesArrayList(gamesArrayList);
                                     }
                                 }
-                                if (jsonArray.getJSONObject(i).has("teams")) {
-                                    JSONArray jsonArray1 = jsonArray.getJSONObject(i).getJSONArray("teams");
+                                if (jsonArray.has("teams")) {
+                                    JSONArray jsonArray1 = jsonArray.getJSONArray("teams");
                                     if (jsonArray1 != null) {
                                         ArrayList<Teams> teamsArrayList = new ArrayList<Teams>();
                                         for (int j = 0; j < jsonArray1.length(); j++) {
@@ -242,12 +242,13 @@ public class Users {
                                     }
                                 }
                                 usersList.add(users);
-                            }
+//                            }
                         EventBus.getDefault().post("GetUserDetails True");
                     } else {
                         EventBus.getDefault().post("GetUserDetails False");
                     }
                 } catch (JSONException e) {
+                    e.printStackTrace();
                     EventBus.getDefault().post("GetUserDetails False");
                 }
 

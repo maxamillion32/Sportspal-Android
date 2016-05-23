@@ -7,26 +7,25 @@ package com.tanzil.sportspal.view.adapters;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 
-import com.pkmmte.view.CircularImageView;
 import com.tanzil.sportspal.R;
 import com.tanzil.sportspal.customUi.MyTextView;
-import com.tanzil.sportspal.model.bean.Sports;
 
 import java.util.ArrayList;
 
 
 public class NewsFeedAdapter extends BaseAdapter {
-    private ArrayList<Sports> list;
+    private ArrayList<String> list;
     private Activity activity;
+    private int[] images = {R.drawable.patanjali, R.drawable.decathlon, R.drawable.nike};
 
     public NewsFeedAdapter(final Activity context,
-                           ArrayList<Sports> list) {
+                           ArrayList<String> list) {
         this.list = list;
         this.activity = context;
     }
@@ -68,19 +67,20 @@ public class NewsFeedAdapter extends BaseAdapter {
 
         try {
 
-            viewHolder.descriptionText.setText(list.get(position).getName());
-            viewHolder.dayText.setText("NA");
+            viewHolder.descriptionText.setText(list.get(position));
+            viewHolder.userPic.setImageResource(images[position]);
+//            viewHolder.dayText.setText("NA");
 
-            if (android.os.Build.VERSION.SDK_INT < 23) {
-                viewHolder.userPic.setBorderColor(activity.getResources().getColor(R.color.white));
-                viewHolder.userPic.setSelectorColor(activity.getResources().getColor(R.color.circular_image_border_color));
-            } else {
-                viewHolder.userPic.setBorderColor(ContextCompat.getColor(activity, R.color.white));
-                viewHolder.userPic.setSelectorStrokeColor(ContextCompat.getColor(activity, R.color.circular_image_border_color));
-            }
-            viewHolder.userPic.setBorderWidth(5);
-            viewHolder.userPic.setSelectorStrokeWidth(5);
-            viewHolder.userPic.addShadow();
+//            if (android.os.Build.VERSION.SDK_INT < 23) {
+//                viewHolder.userPic.setBorderColor(activity.getResources().getColor(R.color.white));
+//                viewHolder.userPic.setSelectorColor(activity.getResources().getColor(R.color.circular_image_border_color));
+//            } else {
+//                viewHolder.userPic.setBorderColor(ContextCompat.getColor(activity, R.color.white));
+//                viewHolder.userPic.setSelectorStrokeColor(ContextCompat.getColor(activity, R.color.circular_image_border_color));
+//            }
+//            viewHolder.userPic.setBorderWidth(5);
+//            viewHolder.userPic.setSelectorStrokeWidth(5);
+//            viewHolder.userPic.addShadow();
 
         } catch (Exception ex) {
         }
@@ -89,17 +89,20 @@ public class NewsFeedAdapter extends BaseAdapter {
     }
 
     class CompleteListViewHolder {
-        public MyTextView descriptionText, dayText, timeText;
-        public CircularImageView userPic;
+        public MyTextView descriptionText/*, dayText, timeText*/;
+        //        public CircularImageView userPic;
+        public ImageView userPic;
 
         public CompleteListViewHolder(View convertview) {
             descriptionText = (MyTextView) convertview
                     .findViewById(R.id.description_text);
-            dayText = (MyTextView) convertview
-                    .findViewById(R.id.day_text);
-            timeText = (MyTextView) convertview
-                    .findViewById(R.id.time_text);
-            userPic = (CircularImageView) convertview
+//            dayText = (MyTextView) convertview
+//                    .findViewById(R.id.day_text);
+//            timeText = (MyTextView) convertview
+//                    .findViewById(R.id.time_text);
+//            userPic = (CircularImageView) convertview
+//                    .findViewById(R.id.img_profile);
+            userPic = (ImageView) convertview
                     .findViewById(R.id.img_profile);
         }
     }

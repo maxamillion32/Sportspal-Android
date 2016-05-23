@@ -79,22 +79,6 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyAuXVk2yKgdJ8ix9kRK7nq9CCrUmbX9L0U" />
 
-        <receiver
-            android:name=".pushnotification.GcmBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND">
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <!-- Receives the registration id. -->
-                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-                <action android:name="com.google.android.c2dm.intent.UNREGISTER" />
-
-                <category android:name="com.tanzil.sportspal" />
-            </intent-filter>
-        </receiver>
-
-        <service
-            android:name=".pushnotification.GcmIntentService"
-            android:enabled="true" />
     </application>
 
 </manifest>

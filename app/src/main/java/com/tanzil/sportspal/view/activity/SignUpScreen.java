@@ -3,15 +3,22 @@ package com.tanzil.sportspal.view.activity;
 import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.tanzil.sportspal.R;
 import com.tanzil.sportspal.Utility.GPSTracker;
 import com.tanzil.sportspal.Utility.Preferences;
@@ -21,6 +28,8 @@ import com.tanzil.sportspal.customUi.MyButton;
 import com.tanzil.sportspal.customUi.MyEditText;
 import com.tanzil.sportspal.model.AuthManager;
 import com.tanzil.sportspal.model.ModelManager;
+import com.tanzil.sportspal.pushnotification.QuickstartPreferences;
+import com.tanzil.sportspal.pushnotification.RegistrationIntentService;
 
 import org.json.JSONObject;
 
@@ -44,6 +53,8 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
     private AuthManager authManager;
     private double lat = 0.000, lng = 0.000;
     private GPSTracker gps;
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    private BroadcastReceiver mRegistrationBroadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +73,27 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
         authManager = ModelManager.getInstance().getAuthManager();
         String deviceId = Preferences.readString(getApplicationContext(), Preferences.DEVICE_ID, "");
         if (Utils.isEmptyString(deviceId)) {
-            deviceId = Utils.getRegId(this);
-            authManager.setDeviceToken(deviceId);
+            mRegistrationBroadcastReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    SharedPreferences sharedPreferences =
+                            PreferenceManager.getDefaultSharedPreferences(context);
+                    boolean sentToken = sharedPreferences
+                            .getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
+                    if (sentToken) {
+                        Toast.makeText(SignUpScreen.this, getString(R.string.gcm_send_message), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(SignUpScreen.this, getString(R.string.token_error_message), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            };
+
+            if (checkPlayServices()) {
+                // Start IntentService to register this application with GCM.
+                Intent intent = new Intent(this, RegistrationIntentService.class);
+                startService(intent);
+            }
+            authManager.setDeviceToken(Preferences.readString(getApplicationContext(), Preferences.DEVICE_ID, ""));
         } else {
             authManager.setDeviceToken(deviceId);
         }
@@ -93,6 +123,27 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
         img_back.setOnClickListener(this);
         et_DOB.setOnClickListener(this);
     }
+    /**
+     * Check the device to make sure it has the Google Play Services APK. If
+     * it doesn't, display a dialog that allows users to download the APK from
+     * the Google Play Store or enable it in the device's system settings.
+     */
+    private boolean checkPlayServices() {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
+                        .show();
+            } else {
+                Log.i(TAG, "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
+    }
+
 
     DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
 

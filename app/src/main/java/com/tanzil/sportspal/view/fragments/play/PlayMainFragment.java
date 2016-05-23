@@ -5,12 +5,14 @@ package com.tanzil.sportspal.view.fragments.play;
  */
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +37,13 @@ public class PlayMainFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
 
         this.activity = super.getActivity();
+        Intent intent = new Intent("Header");
+        intent.putExtra(
+                "message",
+                "SP-"
+                        + activity.getString(R.string.title_play));
+
+        LocalBroadcastManager.getInstance(activity).sendBroadcast(intent);
         View rootView = inflater.inflate(R.layout.fragment_play, container, false);
 
         img_right = (ImageView) activity.findViewById(R.id.img_right);

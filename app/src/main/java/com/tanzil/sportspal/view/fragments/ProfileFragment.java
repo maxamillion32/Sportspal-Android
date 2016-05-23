@@ -2,8 +2,10 @@ package com.tanzil.sportspal.view.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +42,11 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         this.activity = super.getActivity();
+
+        Intent intent = new Intent("Header");
+        intent.putExtra("message", "SP-" + activity.getString(R.string.title_profile));
+        LocalBroadcastManager.getInstance(activity).sendBroadcast(intent);
+
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
 
         txt_name = (MyTextView) rootView.findViewById(R.id.txt_player_name);
@@ -152,12 +159,12 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     public void onEventMainThread(String message) {
         Log.e(TAG, "-- " + message);
-        if (message.equalsIgnoreCase("GetUserDetails True")) {
+        if (message.equalsIgnoreCase("GetMyDetails True")) {
             Utils.dismissLoading();
             setData();
-        } else if (message.equalsIgnoreCase("GetUserDetails False")) {
+        } else if (message.equalsIgnoreCase("GetMyDetails False")) {
             Utils.dismissLoading();
-        } else if (message.equalsIgnoreCase("GetUserDetails Network Error")) {
+        } else if (message.equalsIgnoreCase("GetMyDetails Network Error")) {
             Utils.dismissLoading();
         }
     }

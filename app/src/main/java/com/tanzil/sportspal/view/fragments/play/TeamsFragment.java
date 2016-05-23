@@ -5,8 +5,10 @@ package com.tanzil.sportspal.view.fragments.play;
  */
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,9 +18,7 @@ import android.widget.ListView;
 import com.tanzil.sportspal.R;
 import com.tanzil.sportspal.Utility.Utils;
 import com.tanzil.sportspal.model.ModelManager;
-import com.tanzil.sportspal.model.bean.Games;
 import com.tanzil.sportspal.model.bean.Teams;
-import com.tanzil.sportspal.view.adapters.SportsFragmentAdapter;
 import com.tanzil.sportspal.view.adapters.TeamsFragmentAdapter;
 
 import java.util.ArrayList;
@@ -39,6 +39,13 @@ public class TeamsFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         this.activity = super.getActivity();
+        Intent intent = new Intent("Header");
+        intent.putExtra(
+                "message",
+                "SP-"
+                        + activity.getString(R.string.title_play));
+
+        LocalBroadcastManager.getInstance(activity).sendBroadcast(intent);
         View rootView = inflater.inflate(R.layout.fragment_news_feed, container, false);
 
 

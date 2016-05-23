@@ -71,7 +71,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
     private View headerView, footerView;
 
     private MyEditText teamName /*corporateGroup, privateText*/;
-    private MyTextView teamSport, txt_teamType;
+    private MyTextView teamSport, txt_Type;
     private ArrayList<Teams> teamsArrayList;
     private ArrayList<Sports> sportsArrayList;
     private Dialog sportsDialog, teamDialog;
@@ -81,6 +81,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
     private MembersListAdapter membersListAdapter;
     private TeamTypeDialogAdapter teamTypeDialogAdapter;
     private ArrayList<String> teamsType = new ArrayList<String>();
+    private ArrayList<String> corporateTypes = new ArrayList<String>();
     private double lat = 0.000, lng = 0.000;
     private GPSTracker gps;
     private boolean mAlreadyLoaded = false;
@@ -203,38 +204,40 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
 
         ArrayList<Address> addressArrayList = ModelManager.getInstance().getAddressManager().getAddresses();
         if (addressArrayList != null)
-        if (addressArrayList.size() > 0) {
-            game_teamName.setText(addressArrayList.get(0).getTeam_name());
-            game_sportsName.setText(addressArrayList.get(0).getTeam_name());
-            txt_Date.setText(addressArrayList.get(0).getTeam_name());
-            txt_teamType.setText(addressArrayList.get(0).getTeam_name());
-            txt_Time.setText(addressArrayList.get(0).getTeam_name());
-            txt_Address.setText(addressArrayList.get(0).getAddress());
-            sportsId = addressArrayList.get(0).getSports_id();
-            teamId = addressArrayList.get(0).getTeam_id();
-            latitude = String.valueOf(addressArrayList.get(0).getLatitude());
-            longitude = String.valueOf(addressArrayList.get(0).getLongitude());
-        }
+            if (addressArrayList.size() > 0) {
+                game_teamName.setText(addressArrayList.get(0).getTeam_name());
+                game_sportsName.setText(addressArrayList.get(0).getTeam_name());
+                txt_Date.setText(addressArrayList.get(0).getTeam_name());
+                txt_teamType.setText(addressArrayList.get(0).getTeam_name());
+                txt_Time.setText(addressArrayList.get(0).getTeam_name());
+                txt_Address.setText(addressArrayList.get(0).getAddress());
+                sportsId = addressArrayList.get(0).getSports_id();
+                teamId = addressArrayList.get(0).getTeam_id();
+                latitude = String.valueOf(addressArrayList.get(0).getLatitude());
+                longitude = String.valueOf(addressArrayList.get(0).getLongitude());
+            }
 
     }
+
     public boolean canAccessLocation() {
-        return(hasPermission(Manifest.permission.ACCESS_FINE_LOCATION));
+        return (hasPermission(Manifest.permission.ACCESS_FINE_LOCATION));
     }
+
     public boolean hasPermission(String perm) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return(PackageManager.PERMISSION_GRANTED==activity.checkSelfPermission(perm));
+            return (PackageManager.PERMISSION_GRANTED == activity.checkSelfPermission(perm));
         } else
             return true;
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch(requestCode) {
+        switch (requestCode) {
 
             case Utils.LOCATION_REQUEST:
                 if (canAccessLocation()) {
                     getLatLong();
-                }
-                else {
+                } else {
                     gps.showSettingsAlert();
                 }
                 break;
@@ -271,11 +274,22 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
                 .inflate(activity, R.layout.add_team_header_layout, null);
 
         teamName = (MyEditText) headerView.findViewById(R.id.et_team_name);
-        corporateGroup = (MyEditText) headerView.findViewById(R.id.et_corporate);
-        privateText = (MyEditText) headerView.findViewById(R.id.et_private);
+//        corporateGroup = (MyEditText) headerView.findViewById(R.id.et_corporate);
+//        privateText = (MyEditText) headerView.findViewById(R.id.et_private);
+        txt_Type = (MyTextView) headerView.findViewById(R.id.team_type_txt);
 
         teamSport = (MyTextView) headerView.findViewById(R.id.txt_team_sport);
 
+        corporateTypes = new ArrayList<String>();
+        corporateTypes.add(activity.getString(R.string.corporate));
+        corporateTypes.add(activity.getString(R.string.private_text));
+
+        txt_Type.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showCorporateDialog();
+            }
+        });
         membersList.addHeaderView(headerView);
     }
 
@@ -337,6 +351,37 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
                 // setData(position);
                 game_teamName.setText(teamsArrayList.get(position).getTeam_name());
                 teamId = teamsArrayList.get(position).getId();
+                teamDialog.dismiss();
+            }
+        });
+    }
+
+    private void showCorporateDialog() {
+        final Dialog teamDialog = new Dialog(activity);
+        teamDialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+        teamDialog.setContentView(R.layout.alert_dialog_custom_view);
+        teamDialog.getWindow().setBackgroundDrawable(
+                new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        MyTextView titleView = (MyTextView) teamDialog.findViewById(R.id.title_name);
+        titleView.setText(activity.getString(R.string.select_team));
+
+        ListView listView = (ListView) teamDialog.findViewById(R.id.items_list);
+
+        teamTypeDialogAdapter = new TeamTypeDialogAdapter(activity,
+                corporateTypes);
+        listView.setAdapter(teamTypeDialogAdapter);
+        teamTypeDialogAdapter.notifyDataSetChanged();
+        teamDialog.show();
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                // TODO Auto-generated method stub
+                // setData(position);
+                txt_Type.setText(corporateTypes.get(position));
                 teamDialog.dismiss();
             }
         });

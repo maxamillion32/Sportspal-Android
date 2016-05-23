@@ -1,8 +1,13 @@
 package com.tanzil.sportspal.view.fragments;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +42,13 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         this.activity = super.getActivity();
+        Intent intent = new Intent("Header");
+        intent.putExtra(
+                "message",
+                "SP-"
+                        + activity.getString(R.string.title_settings));
+
+        LocalBroadcastManager.getInstance(activity).sendBroadcast(intent);
         View rootView = inflater.inflate(R.layout.fragment_settings, container, false);
 
         myCalendar = Calendar.getInstance();
@@ -96,6 +108,12 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                 break;
 
             case R.id.btn_preferences:
+                Fragment fragment = new PreferencesFragment();
+                FragmentManager fragmentManager = ((FragmentActivity) activity).getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.container_body, fragment, "PreferencesFragment");
+                fragmentTransaction.addToBackStack("PreferencesFragment");
+                fragmentTransaction.commit();
                 break;
         }
     }
@@ -120,12 +138,12 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
     public void onEventMainThread(String message) {
         Log.e(TAG, "-- " + message);
-        if (message.equalsIgnoreCase("GetUserDetails True")) {
+        if (message.equalsIgnoreCase("GetMyDetails True")) {
             Utils.dismissLoading();
             setData();
-        } else if (message.equalsIgnoreCase("GetUserDetails False")) {
+        } else if (message.equalsIgnoreCase("GetMyDetails False")) {
             Utils.dismissLoading();
-        } else if (message.equalsIgnoreCase("GetUserDetails Network Error")) {
+        } else if (message.equalsIgnoreCase("GetMyDetails Network Error")) {
             Utils.dismissLoading();
         }
     }
