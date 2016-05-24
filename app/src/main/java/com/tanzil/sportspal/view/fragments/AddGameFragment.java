@@ -102,9 +102,6 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         /* just return view as it is */
         }
 
-//        LocalBroadcastManager.getInstance(activity).registerReceiver(
-//                mAddressReciever, new IntentFilter("Address"));
-
         gps = new GPSTracker(activity);
 
         myCalendar = Calendar.getInstance();
@@ -168,54 +165,33 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
 
         setValues();
 
-//        txt_Address.addTextChangedListener(new TextWatcher() {
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                if (count % 3 == 0) {
-//                    placesTask = new PlacesTask();
-//                    placesTask.execute(s.toString());
-//                }
-//            }
-//
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count,
-//                                          int after) {
-//                // TODO Auto-generated method stub
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//                // TODO Auto-generated method stub
-//            }
-//        });
-
-//        txt_Address.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-////                upperLayout.setVisibility(View.VISIBLE);
-//                Utils.closeKeyboard(activity, txt_Address.getWindowToken());
-//            }
-//        });
         return rootView;
     }
 
+    // to set the values when we coming back from pick address screen
     private void setValues() {
-
         ArrayList<Address> addressArrayList = ModelManager.getInstance().getAddressManager().getAddresses();
-        if (addressArrayList != null)
-            if (addressArrayList.size() > 0) {
-                game_teamName.setText(addressArrayList.get(0).getTeam_name());
-                game_sportsName.setText(addressArrayList.get(0).getTeam_name());
-                txt_Date.setText(addressArrayList.get(0).getTeam_name());
-                txt_teamType.setText(addressArrayList.get(0).getTeam_name());
-                txt_Time.setText(addressArrayList.get(0).getTeam_name());
-                txt_Address.setText(addressArrayList.get(0).getAddress());
-                sportsId = addressArrayList.get(0).getSports_id();
-                teamId = addressArrayList.get(0).getTeam_id();
-                latitude = String.valueOf(addressArrayList.get(0).getLatitude());
-                longitude = String.valueOf(addressArrayList.get(0).getLongitude());
-            }
+        if (addressArrayList == null)
+            addressArrayList = new ArrayList<>();
+
+        SPLog.e("Values : ", "" + addressArrayList.size());
+
+        if (addressArrayList.size() > 0) {
+            game_teamName.setText(addressArrayList.get(0).getTeam_name());
+            game_sportsName.setText(addressArrayList.get(0).getSports_name());
+            txt_Date.setText(addressArrayList.get(0).getDate());
+            txt_teamType.setText(addressArrayList.get(0).getTeam_type());
+            txt_Time.setText(addressArrayList.get(0).getTime());
+            txt_Address.setText(addressArrayList.get(0).getAddress());
+            sportsId = addressArrayList.get(0).getSports_id();
+            teamId = addressArrayList.get(0).getTeam_id();
+            latitude = String.valueOf(addressArrayList.get(0).getLatitude());
+            longitude = String.valueOf(addressArrayList.get(0).getLongitude());
+            if (addressArrayList.get(0).getTeam_type().equalsIgnoreCase("Individual"))
+                layout_TeamName.setVisibility(View.GONE);
+            else
+                layout_TeamName.setVisibility(View.VISIBLE);
+        }
 
     }
 
@@ -254,20 +230,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
 
     }
 
-//    private final BroadcastReceiver mAddressReciever = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            // Get extra data included in the Intent
-//            String[] message = intent.getStringExtra("message").split("@#@");
-//            if (message.length > 2) {
-//                txt_Address.setText(message[0]);
-//                latitude = message[1];
-//                longitude = message[2];
-//            }
-//            Log.d("receiver", "Got message: " + message[0]);
-//        }
-//    };
-
+    // Header for the add Team layout so that we can show Members list there
     private void setHeader() {
         SPLog.e("headerView Data : ", "Setting headerView to List data");
         headerView = View
@@ -293,6 +256,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         membersList.addHeaderView(headerView);
     }
 
+    // Footer for the Add team to show Add Member row in the last
     private void setFooter() {
         SPLog.e("footerView Data : ", "Setting footerView to List data");
         footerView = View
@@ -317,6 +281,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         membersList.addFooterView(footerView);
     }
 
+    // to show the team names in add game layout for selecting team name
     private void showTeamDialog() {
         teamDialog = new Dialog(activity);
         teamDialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
@@ -356,6 +321,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         });
     }
 
+    // to show the Corporate types in add game layout for selecting type
     private void showCorporateDialog() {
         final Dialog teamDialog = new Dialog(activity);
         teamDialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
@@ -387,6 +353,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         });
     }
 
+    // to show the Sports names in add game layout for selecting name
     private void showSportsDialog() {
         sportsDialog = new Dialog(activity);
         sportsDialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
@@ -426,6 +393,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         });
     }
 
+    // to show the team type in add game layout for selecting type
     private void showTeamType() {
         final Dialog teamDialog = new Dialog(activity);
         teamDialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
@@ -464,6 +432,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         teamDialog.show();
     }
 
+    // to check the validation for add game layout
     private boolean isGameValidate() {
         if (lat == 0.000 || lng == 0.000) {
             getLatLong();
