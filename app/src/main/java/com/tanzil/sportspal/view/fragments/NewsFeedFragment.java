@@ -50,22 +50,16 @@ public class NewsFeedFragment extends Fragment {
 
 
         newsFeedListView = (ListView) rootView.findViewById(R.id.news_feed_list);
-        // Inflate the layout for this fragment
 
-//        sportsArrayList = ModelManager.getInstance().getSportsManager().getAllSportsList(false);
-//        if (sportsArrayList == null) {
-//            Utils.showLoading(activity, activity.getString(R.string.please_wait));
-//            ModelManager.getInstance().getSportsManager().getAllSportsList(true);
-//        } else
         newsFeedUrls = new ArrayList<>();
-        newsFeedUrls.add("http://patanjalivaidya.blogspot.in/");
-        newsFeedUrls.add("https://www.decathlon.in/blog");
-        newsFeedUrls.add("http://news.nike.com/");
+        newsFeedUrls.add("http://economictimes.indiatimes.com/slideshows/biz-entrepreneurship/six-lessons-that-patanjali-teaches-indias-fmcg-sector/6-lessons-that-patanjali-teaches-indias-fmcg-sector/slideshow/51874418.cms");
+        newsFeedUrls.add("https://www.youtube.com/watch?v=Nyu3380Id64");
+        newsFeedUrls.add("http://news.nike.com/news/hyperadapt-adaptive-lacing");
 
         newsFeedDescription = new ArrayList<>();
-        newsFeedDescription.add("http://patanjalivaidya.blogspot.in/");
-        newsFeedDescription.add("https://www.decathlon.in/blog");
-        newsFeedDescription.add("http://news.nike.com/");
+        newsFeedDescription.add("Six lessons that Patanjali teaches India's FMCG sector");
+        newsFeedDescription.add("DECATHLON City Square Mall Opening");
+        newsFeedDescription.add("Nike HYPERADAPT 1.0 MANIFESTS THE UNIMAGINABLE");
 
         setData();
 
@@ -94,42 +88,6 @@ public class NewsFeedFragment extends Fragment {
         NewsFeedAdapter adapter = new NewsFeedAdapter(activity, newsFeedDescription);
         newsFeedListView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-//        sportsArrayList = ModelManager.getInstance().getSportsManager().getAllSportsList(false);
-//        if (sportsArrayList.size() > 0) {
-//            adapter = new NewsFeedAdapter(activity, sportsArrayList);
-//            newsFeedListView.setAdapter(adapter);
-//            adapter.notifyDataSetChanged();
-//        } else
-//            Utils.showMessage(activity, "There is no record found");
     }
 
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        EventBus.getDefault().register(this);
-//    }
-
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//        //gpDatabase.setConversation(chatManager.getConversations());
-//        EventBus.getDefault().unregister(this);
-//    }
-//
-//    @Override
-//    public void onDestroy() {
-//        super.onDestroy();
-//    }
-//
-//    public void onEventMainThread(String message) {
-//        Log.e(TAG, "-- " + message);
-//        if (message.equalsIgnoreCase("GetAllSports True")) {
-//            Utils.dismissLoading();
-//            setData();
-//        } else if (message.equalsIgnoreCase("GetAllSports False")) {
-//            Utils.dismissLoading();
-//        } else if (message.equalsIgnoreCase("GetAllSports Network Error")) {
-//            Utils.dismissLoading();
-//        }
-//    }
 }

@@ -1,6 +1,7 @@
 package com.tanzil.sportspal.view.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,6 +45,8 @@ public class PreferenceAdapter extends BaseAdapter{
         } else {
             holder = (ViewHolder) view.getTag();
         }
+
+        Log.e("name : ", list.get(position).getName());
         holder.itemName.setText(list.get(position).getName());
         return view;
     }

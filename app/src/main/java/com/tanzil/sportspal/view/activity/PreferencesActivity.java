@@ -187,7 +187,7 @@ public class PreferencesActivity extends Activity {
     public void onEventMainThread(String message) {
         if (message.equalsIgnoreCase("GetAllSports True")) {
             Utils.dismissLoading();
-
+            sportsArrayList = ModelManager.getInstance().getSportsManager().getAllSportsList(false);
             setData();
         } else if (message.contains("GetAllSports False")) {
             // showMatchHistoryList();
