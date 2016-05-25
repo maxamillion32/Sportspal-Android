@@ -13,6 +13,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
@@ -34,15 +36,18 @@ import com.tanzil.sportspal.Utility.Utils;
 import com.tanzil.sportspal.customUi.MyEditText;
 import com.tanzil.sportspal.customUi.MyTextView;
 import com.tanzil.sportspal.model.ModelManager;
+import com.tanzil.sportspal.model.TeamMembersManager;
 import com.tanzil.sportspal.model.bean.Address;
 import com.tanzil.sportspal.model.bean.Sports;
 import com.tanzil.sportspal.model.bean.Teams;
 import com.tanzil.sportspal.model.bean.Users;
 import com.tanzil.sportspal.view.adapters.MembersListAdapter;
 import com.tanzil.sportspal.view.adapters.SportsDialogAdapter;
+import com.tanzil.sportspal.view.adapters.TeamMembersAdapter;
 import com.tanzil.sportspal.view.adapters.TeamTypeDialogAdapter;
 import com.tanzil.sportspal.view.adapters.TeamsDialogAdapter;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -61,16 +66,16 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
     private String TAG = AddGameFragment.class.getSimpleName();
     private Activity activity;
     private ImageView addGame, img_sports, img_team;
-    private MyTextView game_sportsName, game_teamName, txt_Date, txt_Time, txt_teamType, txt_Address;
+    private MyTextView game_sportsName, game_teamName, txt_Date, txt_Time, txt_teamType, txt_Address, game_sports, add_team_member, teamN, teamT;
     //    private AutoCompleteTextView txt_Address;
     private Calendar myCalendar;
     //    private LinearLayout upperLayout;
-    private LinearLayout gameLayout, teamLayout, layout_TeamName;
+    private LinearLayout gameLayout, teamLayout, layout_TeamName, layoutSearch, createTeam;
     private String type = "game", sportsId = "", teamId = "", latitude = "0.00", longitude = "0.00";
-    private ListView membersList;
+    private ListView membersList, teamMemberList;
     private View headerView, footerView;
 
-    private MyEditText teamName /*corporateGroup, privateText*/;
+    private MyEditText teamName, et_search /*corporateGroup, privateText*/;
     private MyTextView teamSport, txt_Type;
     private ArrayList<Teams> teamsArrayList;
     private ArrayList<Sports> sportsArrayList;
@@ -110,19 +115,26 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         img_team = (ImageView) rootView.findViewById(R.id.img_team);
 
         game_sportsName = (MyTextView) rootView.findViewById(R.id.txt_sports_name);
+        game_sports = (MyTextView) rootView.findViewById(R.id.txt_sports);
         game_teamName = (MyTextView) rootView.findViewById(R.id.txt_team_name);
         txt_teamType = (MyTextView) rootView.findViewById(R.id.txt_team_type);
+        teamN = (MyTextView) rootView.findViewById(R.id.team_name);
+        teamT = (MyTextView) rootView.findViewById(R.id.team_type);
+
         txt_Date = (MyTextView) rootView.findViewById(R.id.txt_date);
         txt_Time = (MyTextView) rootView.findViewById(R.id.txt_time);
-//        txt_Address = (MyEditText) rootView.findViewById(R.id.txt_pick_address);
+        add_team_member = (MyTextView) rootView.findViewById(R.id.add_team_member);
 
-//        upperLayout = (LinearLayout) rootView.findViewById(R.id.upper_layout);
+        et_search = (MyEditText) rootView.findViewById(R.id.et_search);
+//        txt_Address = (MyEditText) rootView.findViewById(R.id.txt_pick_address);
+        createTeam = (LinearLayout) rootView.findViewById(R.id.game);
+        layoutSearch = (LinearLayout) rootView.findViewById(R.id.layout_search);
         gameLayout = (LinearLayout) rootView.findViewById(R.id.create_new_game_layout);
         teamLayout = (LinearLayout) rootView.findViewById(R.id.create_new_team_layout);
         layout_TeamName = (LinearLayout) rootView.findViewById(R.id.layout_team_name);
 
         membersList = (ListView) rootView.findViewById(R.id.memberList);
-
+        teamMemberList = (ListView) rootView.findViewById(R.id.list_all_members);
 //        txt_Address = (AutoCompleteTextView) rootView.findViewById(R.id.txt_pick_address);
         txt_Address = (MyTextView) rootView.findViewById(R.id.txt_pick_address);
 //        txt_Address.setThreshold(1);
@@ -130,20 +142,23 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         addGame.setOnClickListener(this);
         game_sportsName.setOnClickListener(this);
         game_teamName.setOnClickListener(this);
+        teamN.setOnClickListener(this);
         txt_teamType.setOnClickListener(this);
+        teamT.setOnClickListener(this);
         txt_Date.setOnClickListener(this);
         txt_Time.setOnClickListener(this);
         txt_Address.setOnClickListener(this);
         img_team.setOnClickListener(this);
         img_sports.setOnClickListener(this);
-
+        game_sports.setOnClickListener(this);
+        add_team_member.setOnClickListener(this);
+        createTeam.setOnClickListener(this);
 
         if (!canAccessLocation()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 requestPermissions(Utils.INITIAL_PERMS, Utils.INITIAL_REQUEST);
             }
         }
-
 
         if (savedInstanceState == null && !mAlreadyLoaded) {
 //            ModelManager.getInstance().getAddressManager().clearData();
@@ -164,8 +179,64 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         }
 
         setValues();
-
+        addTextChangeListener();
+        setClickOnList();
         return rootView;
+    }
+
+    ArrayList<Users> arrayTeam;
+
+    private void addTextChangeListener() {
+        et_search.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                ArrayList<Users> array = ModelManager.getInstance().getTeamMembersManager().getNearUsers("", false);
+                arrayTeam = new ArrayList<Users>();
+                for (int j = 0; j < array.size(); j++) {
+                    if (array.get(j).getFirst_name().toLowerCase().contains(charSequence.toString().toLowerCase())) {
+                        boolean isContain = false;
+                        for (int k = 0; k < selectedPlayers.size(); k++) {
+                            if (selectedPlayers.get(k).getEmail().equals(array.get(j).getEmail())) {
+                                isContain = true;
+                                break;
+                            }
+                        }
+                        if (!isContain)
+                            arrayTeam.add(array.get(j));
+                    }
+                }
+
+                TeamMembersAdapter teamMembersAdapter = new TeamMembersAdapter(activity, arrayTeam);
+                teamMemberList.setAdapter(teamMembersAdapter);
+                teamMembersAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+    }
+
+    ArrayList<Users> selectedPlayers = new ArrayList<>();
+
+    private void setClickOnList() {
+        teamMemberList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                layoutSearch.setVisibility(View.GONE);
+                selectedPlayers.add(arrayTeam.get(i));
+                TeamMembersAdapter teamMembersAdapter = new TeamMembersAdapter(activity, selectedPlayers);
+                membersList.setAdapter(teamMembersAdapter);
+                teamMembersAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     // to set the values when we coming back from pick address screen
@@ -282,7 +353,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
     }
 
     // to show the team names in add game layout for selecting team name
-    private void showTeamDialog() {
+    private void showTeamDialog(final boolean isGame) {
         teamDialog = new Dialog(activity);
         teamDialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
         teamDialog.setContentView(R.layout.alert_dialog_custom_view);
@@ -312,9 +383,10 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                // TODO Auto-generated method stub
-                // setData(position);
-                game_teamName.setText(teamsArrayList.get(position).getTeam_name());
+                if (isGame)
+                    game_teamName.setText(teamsArrayList.get(position).getTeam_name());
+                else
+                    teamN.setText(teamsArrayList.get(position).getTeam_name());
                 teamId = teamsArrayList.get(position).getId();
                 teamDialog.dismiss();
             }
@@ -354,7 +426,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
     }
 
     // to show the Sports names in add game layout for selecting name
-    private void showSportsDialog() {
+    private void showSportsDialog(final boolean isGame) {
         sportsDialog = new Dialog(activity);
         sportsDialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
         sportsDialog.setContentView(R.layout.alert_dialog_custom_view);
@@ -384,9 +456,10 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                // TODO Auto-generated method stub
-                // setData(position);
-                game_sportsName.setText(sportsArrayList.get(position).getName());
+                if (isGame)
+                    game_sportsName.setText(sportsArrayList.get(position).getName());
+                else
+                    game_sports.setText(sportsArrayList.get(position).getName());
                 sportsId = sportsArrayList.get(position).getId();
                 sportsDialog.dismiss();
             }
@@ -394,7 +467,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
     }
 
     // to show the team type in add game layout for selecting type
-    private void showTeamType() {
+    private void showTeamType(final boolean isGame) {
         final Dialog teamDialog = new Dialog(activity);
         teamDialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
         teamDialog.setContentView(R.layout.alert_dialog_custom_view);
@@ -424,8 +497,10 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
                     layout_TeamName.setVisibility(View.GONE);
                 else
                     layout_TeamName.setVisibility(View.VISIBLE);
-
-                txt_teamType.setText(teamsType.get(position));
+                if (isGame)
+                    txt_teamType.setText(teamsType.get(position));
+                else
+                    teamT.setText(teamsType.get(position));
                 teamDialog.dismiss();
             }
         });
@@ -487,7 +562,28 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
                         ModelManager.getInstance().getSportsManager().addGame(jsonObject);
                     }
                 } else {
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put("sport_id", sportsId);
+                        jsonObject.put("creator_id", ModelManager.getInstance().getAuthManager().getUserId());
+                        jsonObject.put("team_name", teamN.getText().toString());
+                        jsonObject.put("team_type", teamT.getText().toString());
+                        jsonObject.put("members_limit", 11);
+                        jsonObject.put("latitude", latitude);
+                        jsonObject.put("longitude", longitude);
+                        jsonObject.put("address", txt_Address.getText().toString());
 
+                        JSONArray jsonArray = new JSONArray();
+                        for (int i = 0; i < arrayTeam.size(); i++) {
+                            jsonArray.put(arrayTeam.get(i).getId());
+
+                        }
+                        jsonObject.put("team_members", jsonArray);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Utils.showLoading(activity, activity.getString(R.string.please_wait));
+                    ModelManager.getInstance().getTeamsManager().addTeam(jsonObject);
                 }
                 break;
 
@@ -515,31 +611,45 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
                 gameLayout.setVisibility(View.GONE);
                 teamLayout.setVisibility(View.VISIBLE);
                 type = "team";
-                teamsArrayList = ModelManager.getInstance().getTeamsManager().getAllTeams(false);
-                if (teamsArrayList == null) {
-                    Utils.showLoading(activity, activity.getString(R.string.please_wait));
-                    ModelManager.getInstance().getTeamsManager().getAllTeams(true);
-                } else {
-                    playersArrayList = ModelManager.getInstance().getUsersManager().getNearUsers(false);
-                    if (playersArrayList == null) {
-                        Utils.showLoading(activity, activity.getString(R.string.please_wait));
-                        ModelManager.getInstance().getUsersManager().getNearUsers(true);
-                    } else
-                        setData();
-                }
+                // teamsArrayList = ModelManager.getInstance().getTeamsManager().getAllTeams(false);
+//                if (teamsArrayList == null) {
+//                    Utils.showLoading(activity, activity.getString(R.string.please_wait));
+//                    ModelManager.getInstance().getTeamsManager().getAllTeams(true);
+//                } else {
+//                    playersArrayList = ModelManager.getInstance().getUsersManager().getNearUsers(false);
+//                    if (playersArrayList == null) {
+//                        Utils.showLoading(activity, activity.getString(R.string.please_wait));
+//                        ModelManager.getInstance().getUsersManager().getNearUsers(true);
+//                    } else
+//                        setData();
+//                }
 
                 break;
 
             case R.id.txt_sports_name:
-                showSportsDialog();
+                showSportsDialog(true);
                 break;
 
+            case R.id.txt_sports:
+                showSportsDialog(false);
+                break;
+
+
             case R.id.txt_team_name:
-                showTeamDialog();
+                showTeamDialog(true);
+                break;
+
+            case R.id.team_name:
+                showTeamDialog(false);
+                break;
+
+
+            case R.id.add_team_member:
+                Utils.showLoading(activity, "Loading team members..");
+                ModelManager.getInstance().getTeamMembersManager().getNearUsers(sportsId, true);
                 break;
 
             case R.id.txt_pick_address:
-
                 FragmentManager fm = getActivity().getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fm.beginTransaction();
                 Fragment fragment = new AddLocationFragment();
@@ -570,7 +680,11 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
                 break;
             case R.id.txt_team_type:
-                showTeamType();
+                showTeamType(true);
+                break;
+
+            case R.id.team_type:
+                showTeamType(false);
                 break;
 
         }
@@ -694,6 +808,13 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         } else if (message.equalsIgnoreCase("AddGame False")) {
             Utils.dismissLoading();
             Utils.showMessage(activity, activity.getString(R.string.something_went_wrong));
+        } else if (message.equalsIgnoreCase("AddTeam True")) {
+            Utils.showMessage(activity, "Team created successfully");
+            Utils.dismissLoading();
+            clearData();
+        } else if (message.equalsIgnoreCase("AddTeam False")) {
+            Utils.dismissLoading();
+            Utils.showMessage(activity, activity.getString(R.string.something_went_wrong));
         } else if (message.equalsIgnoreCase("AddGame Network Error")) {
             Utils.dismissLoading();
             Utils.showMessage(activity, activity.getString(R.string.something_went_wrong));
@@ -707,6 +828,12 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         } else if (message.equalsIgnoreCase("GetNearUsers Network Error")) {
             Utils.dismissLoading();
             Utils.showMessage(activity, activity.getString(R.string.something_went_wrong));
+        } else if (message.equalsIgnoreCase("GetTeam True")) {
+            Utils.dismissLoading();
+            layoutSearch.setVisibility(View.VISIBLE);
+            arrayTeam = ModelManager.getInstance().getTeamMembersManager().getNearUsers("", false);
+            TeamMembersAdapter teamMembersAdapter = new TeamMembersAdapter(activity, arrayTeam);
+            teamMemberList.setAdapter(teamMembersAdapter);
         }
     }
 }

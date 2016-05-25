@@ -122,7 +122,32 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
         signUpBtn.setOnClickListener(this);
         img_back.setOnClickListener(this);
         et_DOB.setOnClickListener(this);
+
+        setFacebookData();
     }
+
+
+    private void setFacebookData() {
+        try {
+            String email = getIntent().getExtras().getString("email");
+            String name = getIntent().getExtras().getString("name");
+            String gender = getIntent().getExtras().getString("gender");
+            String birthday = getIntent().getExtras().getString("birthday");
+
+            et_Email.setText(email);
+            if (name.contains(" ")) {
+                String[] nameArr = name.split(" ");
+                et_Name.setText(nameArr[0]);
+                et_LastName.setText(nameArr[nameArr.length - 1]);
+            } else
+                et_Name.setText(name);
+            et_Gender.setText(gender);
+            et_DOB.setText(birthday);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Check the device to make sure it has the Google Play Services APK. If
      * it doesn't, display a dialog that allows users to download the APK from
@@ -168,24 +193,26 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
         }
 
     }
+
     public boolean canAccessLocation() {
-        return(hasPermission(Manifest.permission.ACCESS_FINE_LOCATION));
+        return (hasPermission(Manifest.permission.ACCESS_FINE_LOCATION));
     }
+
     public boolean hasPermission(String perm) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return(PackageManager.PERMISSION_GRANTED==activity.checkSelfPermission(perm));
+            return (PackageManager.PERMISSION_GRANTED == activity.checkSelfPermission(perm));
         } else
             return true;
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch(requestCode) {
+        switch (requestCode) {
 
             case Utils.LOCATION_REQUEST:
                 if (canAccessLocation()) {
                     getLatLong();
-                }
-                else {
+                } else {
                     gps.showSettingsAlert();
                 }
                 break;
