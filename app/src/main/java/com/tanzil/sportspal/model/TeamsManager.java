@@ -464,7 +464,7 @@ public class TeamsManager {
         });
     }
 
-    private void addTeam(JSONObject jsonObject) {
+    public void addTeam(JSONObject jsonObject) {
         SPRestClient.post(ServiceApi.ADD_TEAM, jsonObject.toString(), new JsonHttpResponseHandler() {
             @Override
             public void onStart() {

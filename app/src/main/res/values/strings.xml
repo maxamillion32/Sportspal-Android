@@ -17,7 +17,7 @@
     <string name="something_went_wrong">Something went wrong!</string>
     <string name="please_check_internet">No Internet Connection!</string>
 
-    <string name="fb_app_id">456378094527814</string>
+    <string name="fb_app_id">1187982621233803</string>
 
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
@@ -74,6 +74,7 @@
     <string name="time_format">HH:MM</string>
     <string name="create_new_game">CREATE NEW GAME</string>
     <string name="pick_address">PICK ADDRESS</string>
+    <string name="add_team_member">Add Team Member</string>
 
     <!-- Create New Team Screen-->
     <string name="team_sport">TEAM SPORT</string>
@@ -88,4 +89,7 @@
     <string name="preferences">Prefrences</string>
     <string name="location">Location</string>
     <string name="advanced">Advanced</string>
+
+
+
 </resources>
