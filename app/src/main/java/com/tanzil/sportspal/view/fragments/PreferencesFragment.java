@@ -4,17 +4,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.SparseBooleanArray;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.tanzil.sportspal.R;
 import com.tanzil.sportspal.Utility.SPLog;
@@ -22,6 +19,10 @@ import com.tanzil.sportspal.Utility.Utils;
 import com.tanzil.sportspal.model.ModelManager;
 import com.tanzil.sportspal.model.bean.Sports;
 import com.tanzil.sportspal.view.adapters.PreferenceAdapter;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -37,8 +38,8 @@ public class PreferencesFragment extends Fragment {
     private ListView preferenceList;
     private ArrayList<Sports> sportsArrayList;
     //    private ArrayAdapter<String> adapter;
-    private String[] sportsName, sportsId;
-    private PreferenceAdapter adapter;
+    private String[] /*sportsName, */sportsId;
+    private PreferenceAdapter<Sports> adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,9 +55,49 @@ public class PreferencesFragment extends Fragment {
         LocalBroadcastManager.getInstance(activity).sendBroadcast(intent);
         View rootView = inflater.inflate(R.layout.fragment_preferences, container, false);
 
-//        ImageView img_submit = (ImageView) rootView.findViewById(R.id.img_submit);
+        ImageView img_submit = (ImageView) activity.findViewById(R.id.img_right);
+        img_submit.setImageResource(R.drawable.check);
+        img_submit.setVisibility(View.VISIBLE);
+
         preferenceList = (ListView) rootView.findViewById(R.id.preference_list);
 
+
+        img_submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (adapter != null) {
+                    ArrayList<Sports> mArrayProducts = adapter.getCheckedItems();
+
+                    SPLog.d(TAG, "Selected Items: " + mArrayProducts.toString());
+                    sportsId = new String[mArrayProducts.size()];
+                    for (int i = 0; i < mArrayProducts.size(); i++)
+                        sportsId[i] = mArrayProducts.get(i).getId();
+                }
+                if (sportsId != null)
+                    if (sportsId.length > 0) {
+                        JSONObject jsonObject = new JSONObject();
+                        try {
+                            jsonObject.put("user_id", ModelManager.getInstance().getAuthManager().getUserId());
+                            JSONArray jsonArray = new JSONArray();
+                            for (int i = 0; i < sportsId.length; i++)
+                                jsonArray.put(sportsId[i]);
+                            jsonObject.put("sport_id", jsonArray);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        Utils.showLoading(activity, activity.getString(R.string.please_wait));
+                        ModelManager.getInstance().getUserPreferredSportsManager().addPreferences(jsonObject);
+                    } else
+                        Toast.makeText(activity, "Please select atleast one sport of your preference", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(activity, "Please select atleast one sport of your preference", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        preferenceList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        // Capture ListView item click
 
         sportsArrayList = ModelManager.getInstance().getSportsManager().getAllSportsList(false);
         if (sportsArrayList == null) {
@@ -66,122 +107,17 @@ public class PreferencesFragment extends Fragment {
             setData();
         }
 
-//        img_submit.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                SparseBooleanArray checked = preferenceList.getCheckedItemPositions();
-//                ArrayList<String> selectedItems = new ArrayList<String>();
-//                for (int i = 0; i < checked.size(); i++) {
-//                    // Item position in adapter
-//                    int position = checked.keyAt(i);
-//                    SPLog.e("Position : ", "" + position);
-//                    // Add sport if it is checked i.e.) == TRUE!
-//                    if (checked.valueAt(i))
-//                        selectedItems.add(adapter.getItem(position));
-//                }
-//
-//                String[] outputStrArr = new String[selectedItems.size()];
-//
-//                for (int i = 0; i < selectedItems.size(); i++) {
-//                    outputStrArr[i] = selectedItems.get(i);
-//                }
-
-//            }
-//        });
-
-        preferenceList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                preferenceList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-                // Capture ListView item click
-                preferenceList.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-
-                    @Override
-                    public void onItemCheckedStateChanged(ActionMode mode,
-                                                          int position, long id, boolean checked) {
-
-                        // Prints the count of selected Items in title
-                        mode.setTitle(preferenceList.getCheckedItemCount() + " Selected");
-
-                        // Toggle the state of item after every click on it
-                        adapter.toggleSelection(position);
-                    }
-
-                    /**
-                     * Called to report a user click on an action button.
-                     * @return true if this callback handled the event,
-                     *          false if the standard MenuItem invocation should continue.
-                     */
-                    @Override
-                    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                        if (item.getItemId() == R.id.img_submit) {
-                            SparseBooleanArray selected = adapter.getSelectedIds();
-                            short size = (short) selected.size();
-                            for (byte I = 0; I < size; I++) {
-                                if (selected.valueAt(I)) {
-
-                                }
-                            }
-
-                            // Close CAB (Contextual Action Bar)
-                            mode.finish();
-                            return true;
-                        }
-                        return false;
-                    }
-
-                    /**
-                     * Called when action mode is first created.
-                     * The menu supplied will be used to generate action buttons for the action mode.
-                     * @param mode ActionMode being created
-                     * @param menu Menu used to populate action buttons
-                     * @return true if the action mode should be created,
-                     *          false if entering this mode should be aborted.
-                     */
-                    @Override
-                    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                        mode.getMenuInflater().inflate(R.menu.menu_main, menu);
-                        return true;
-                    }
-
-                    /**
-                     * Called when an action mode is about to be exited and destroyed.
-                     */
-                    @Override
-                    public void onDestroyActionMode(ActionMode mode) {
-                        //  mAdapter.removeSelection();
-                    }
-
-                    /**
-                     * Called to refresh an action mode's action menu whenever it is invalidated.
-                     * @return true if the menu or action mode was updated, false otherwise.
-                     */
-                    @Override
-                    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                        return false;
-                    }
-                });
-                return false;
-            }
-        });
-
         return rootView;
     }
 
     private void setData() {
         if (sportsArrayList.size() > 0) {
-            sportsName = new String[sportsArrayList.size()];
-            sportsId = new String[sportsArrayList.size()];
-            for (int i = 0; i < sportsArrayList.size(); i++) {
-                sportsName[i] = sportsArrayList.get(i).getName();
-                sportsId[i] = sportsArrayList.get(i).getId();
-            }
 
-            adapter = new PreferenceAdapter(activity, R.layout.row_preference_textview, sportsArrayList);
-//            listView.setAdapter(mAdapter);
+            adapter = new PreferenceAdapter<Sports>(activity, sportsArrayList);
 
-            preferenceList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
             preferenceList.setAdapter(adapter);
+            preferenceList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+            adapter.notifyDataSetChanged();
         } else
             preferenceList.setAdapter(null);
     }
@@ -204,6 +140,8 @@ public class PreferencesFragment extends Fragment {
             SPLog.e(TAG, "GetAllSports True");
             Utils.dismissLoading();
             sportsArrayList = ModelManager.getInstance().getSportsManager().getAllSportsList(false);
+            if (sportsArrayList == null)
+                sportsArrayList = new ArrayList<>();
             setData();
         } else if (message.contains("GetAllSports False")) {
             // showMatchHistoryList();
@@ -213,6 +151,20 @@ public class PreferencesFragment extends Fragment {
         } else if (message.equalsIgnoreCase("GetAllSports Network Error")) {
             Utils.showMessage(activity, "Network Error! Please try again");
             SPLog.e(TAG, "GetAllSports Network Error");
+            Utils.dismissLoading();
+        } else if (message.equalsIgnoreCase("AddPreferences True")) {
+            SPLog.e(TAG, "AddPreferences True");
+            Utils.dismissLoading();
+            ((FragmentActivity) activity).getSupportFragmentManager()
+                    .popBackStack();
+        } else if (message.contains("AddPreferences False")) {
+            // showMatchHistoryList();
+            Utils.showMessage(activity, "AddPreferences check your credentials!");
+            SPLog.e(TAG, "AddPreferences False");
+            Utils.dismissLoading();
+        } else if (message.equalsIgnoreCase("AddPreferences Network Error")) {
+            Utils.showMessage(activity, "Network Error! Please try again");
+            SPLog.e(TAG, "AddPreferences Network Error");
             Utils.dismissLoading();
         }
 

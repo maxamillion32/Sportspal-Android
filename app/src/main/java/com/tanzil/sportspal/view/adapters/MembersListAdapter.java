@@ -100,7 +100,7 @@ public class MembersListAdapter extends BaseAdapter {
             userNameText = (MyTextView) convertview
                     .findViewById(R.id.txt_user_name);
             userPic = (CircularImageView) convertview
-                    .findViewById(R.id.img_profile);
+                    .findViewById(R.id.img_user_pic);
             sportsType = (ImageView) convertview
                     .findViewById(R.id.img_sport_type);
         }

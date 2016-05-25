@@ -74,6 +74,7 @@
     <string name="time_format">HH:MM</string>
     <string name="create_new_game">CREATE NEW GAME</string>
     <string name="pick_address">PICK ADDRESS</string>
+    <string name="join_game">JOIN THE GAME</string>
 
     <!-- Create New Team Screen-->
     <string name="team_sport">TEAM SPORT</string>

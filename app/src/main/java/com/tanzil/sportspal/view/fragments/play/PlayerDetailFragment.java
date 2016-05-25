@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +16,7 @@ import android.widget.LinearLayout;
 import com.squareup.picasso.Picasso;
 import com.tanzil.sportspal.R;
 import com.tanzil.sportspal.Utility.DrawableImages;
+import com.tanzil.sportspal.Utility.SPLog;
 import com.tanzil.sportspal.Utility.Utils;
 import com.tanzil.sportspal.customUi.MyTextView;
 import com.tanzil.sportspal.model.ModelManager;
@@ -34,11 +34,12 @@ public class PlayerDetailFragment extends Fragment implements View.OnClickListen
 
     private String TAG = PlayerDetailFragment.class.getSimpleName();
     private Activity activity;
-    private ImageView profilePic, img_challenge, img_chat, img_fav;
+    private ImageView profilePic, img_challenge, img_chat, img_fav, img_right;
     private MyTextView txt_playerName, txt_occupation, txt_age, txt_description, txt_advanced;
     private LinearLayout gamesLayout;
     private ArrayList<Users> usersArrayList;
     private String id = "";
+    private boolean is_Fav = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -63,6 +64,9 @@ public class PlayerDetailFragment extends Fragment implements View.OnClickListen
             Log.e(TAG, ex.toString());
         }
 
+        img_right = (ImageView) activity.findViewById(R.id.img_right);
+        img_right.setVisibility(View.GONE);
+
         profilePic = (ImageView) rootView.findViewById(R.id.img_profile);
         img_challenge = (ImageView) rootView.findViewById(R.id.img_challenge);
         img_chat = (ImageView) rootView.findViewById(R.id.img_chat);
@@ -84,7 +88,7 @@ public class PlayerDetailFragment extends Fragment implements View.OnClickListen
         for (int i = 0; i < usersArrayList.size(); i++) {
             if (usersArrayList.get(i).getId().equalsIgnoreCase(id)) {
                 Utils.showLoading(activity, activity.getString(R.string.please_wait));
-                ModelManager.getInstance().getUsersManager().getNearUsers(false).get(i).getUserDetails(id);
+                ModelManager.getInstance().getUsersManager().getNearUsers(false).get(i).getUserDetails(true, id);
                 break;
             }
         }
@@ -96,6 +100,13 @@ public class PlayerDetailFragment extends Fragment implements View.OnClickListen
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.img_favorite:
+                if (is_Fav) {
+                    is_Fav = false;
+                    img_fav.setImageResource(R.drawable.fav);
+                } else {
+                    is_Fav = true;
+                    img_fav.setImageResource(R.drawable.fav_on);
+                }
                 break;
 
             case R.id.img_challenge:
@@ -110,36 +121,33 @@ public class PlayerDetailFragment extends Fragment implements View.OnClickListen
         usersArrayList = ModelManager.getInstance().getUsersManager().getNearUsers(false);
         for (int i = 0; i < usersArrayList.size(); i++) {
             if (usersArrayList.get(i).getId().equalsIgnoreCase(id)) {
-                txt_playerName.setText(usersArrayList.get(i).getFirst_name());
-                txt_age.setText(usersArrayList.get(i).getDob());
+                ArrayList<Users> userDetails = usersArrayList.get(i).getUserDetails(false, id);
+                txt_playerName.setText(userDetails.get(0).getFirst_name());
+                txt_age.setText(userDetails.get(0).getDob());
 //                txt_occupation.setText(usersArrayList.get(i).get);
-                txt_description.setText(usersArrayList.get(i).getDob());
+                txt_occupation.setVisibility(View.GONE);
+                if (!Utils.isEmptyString(userDetails.get(0).getDescription())) {
+                    txt_description.setText(userDetails.get(0).getDescription());
+                    txt_description.setVisibility(View.VISIBLE);
+                } else {
+                    txt_description.setVisibility(View.GONE);
+                }
 
                 String img1 = "", img2 = "";
 
                 img1 = usersArrayList.get(i).getImage();
 
 
-                ArrayList<Sports> sportsArrayList = usersArrayList.get(i).getSports_preferences();
+                ArrayList<Sports> sportsArrayList = userDetails.get(0).getSports_preferences();
                 if (sportsArrayList != null)
                     if (sportsArrayList.size() > 0) {
                         for (int j = 0; j < sportsArrayList.size(); j++) {
+                            SPLog.e("Sports name : ", sportsArrayList.get(j).getName());
                             LayoutInflater vi = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                             View v = vi.inflate(R.layout.row_sports_preferences, null);
 
                             MyTextView gameText1 = (MyTextView) v.findViewById(R.id.game_text1);
                             MyTextView gameText2 = (MyTextView) v.findViewById(R.id.game_text2);
-
-                            if (android.os.Build.VERSION.SDK_INT < 23) {
-                                gameText1.setTextColor(activity.getResources().getColor(R.color.white));
-                                gameText2.setTextColor(activity.getResources().getColor(R.color.white));
-                            } else {
-                                gameText1.setTextColor(ContextCompat.getColor(activity, R.color.white));
-                                gameText2.setTextColor(ContextCompat.getColor(activity, R.color.white));
-                            }
-
-                            gameText1.setTextSize(20);
-                            gameText2.setTextSize(20);
 
                             gameText1.setText(sportsArrayList.get(j).getName());
                             j = j + 1;
@@ -174,7 +182,6 @@ public class PlayerDetailFragment extends Fragment implements View.OnClickListen
     @Override
     public void onStop() {
         super.onStop();
-        //gpDatabase.setConversation(chatManager.getConversations());
         EventBus.getDefault().unregister(this);
     }
 
