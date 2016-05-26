@@ -6,21 +6,49 @@
     android:orientation="vertical">
 
     <ImageView
-        android:id="@+id/img_sports_pic"
+        android:id="@+id/img_team_pic"
         android:layout_width="match_parent"
         android:layout_height="@dimen/row_height"
         android:layout_gravity="center_horizontal|center_vertical"
         android:contentDescription="@string/app_name" />
 
-    <com.tanzil.sportspal.customUi.MyTextView
-        android:id="@+id/sport_name_text"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/news"
-        android:textColor="@color/white"
-        android:textSize="@dimen/large_text_size"
-        android:padding="10dp"
-        android:textStyle="bold" />
+        android:layout_gravity="center_vertical"
+        android:background="@android:color/transparent"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <com.tanzil.sportspal.customUi.MyTextView
+            android:id="@+id/team_name_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/news"
+            android:textColor="@color/white"
+            android:textSize="@dimen/large_text_size"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/img_challenge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:contentDescription="@string/app_name"
+            android:padding="5dp"
+            android:src="@drawable/challenge" />
+
+        <ImageView
+            android:id="@+id/img_chat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:contentDescription="@string/app_name"
+            android:padding="5dp"
+            android:src="@drawable/chat" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -33,7 +61,7 @@
         android:weightSum="2">
 
         <com.tanzil.sportspal.customUi.MyTextView
-            android:id="@+id/txt_team_name"
+            android:id="@+id/txt_sports_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -47,7 +75,7 @@
             android:textSize="@dimen/small_text_size" />
 
         <com.tanzil.sportspal.customUi.MyTextView
-            android:id="@+id/txt_date"
+            android:id="@+id/txt_team_type"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -61,44 +89,6 @@
             android:textSize="@dimen/small_text_size" />
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginTop="15dp"
-        android:background="@android:color/transparent"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:weightSum="2">
-
-        <com.tanzil.sportspal.customUi.MyTextView
-            android:id="@+id/txt_pick_address"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:drawableLeft="@drawable/pin"
-            android:drawablePadding="5dp"
-            android:drawableStart="@drawable/pin"
-            android:gravity="bottom"
-            android:padding="10dp"
-            android:text="@string/news"
-            android:textColor="@color/white"
-            android:textSize="@dimen/small_text_size" />
-
-        <com.tanzil.sportspal.customUi.MyTextView
-            android:id="@+id/txt_time"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:drawableLeft="@drawable/time"
-            android:drawablePadding="5dp"
-            android:drawableStart="@drawable/time"
-            android:gravity="bottom"
-            android:padding="10dp"
-            android:text="@string/news"
-            android:textColor="@color/white"
-            android:textSize="@dimen/small_text_size" />
-    </LinearLayout>
 
     <com.tanzil.sportspal.customUi.MyButton
         android:id="@+id/join_btn"
@@ -110,18 +100,18 @@
         android:gravity="center"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
-        android:text="@string/join_game"
+        android:text="@string/join_team"
         android:textColor="@color/bg"
-        android:textStyle="normal"
-        android:textSize="@dimen/medium_large_text_size" />
+        android:textSize="@dimen/medium_large_text_size"
+        android:textStyle="normal" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/white"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="10dp"
-        android:layout_marginRight="15dp"/>
+        android:layout_marginRight="15dp"
+        android:background="@color/white" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -161,8 +151,8 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/white"
         android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"/>
+        android:layout_marginRight="15dp"
+        android:background="@color/white" />
 
 </LinearLayout>

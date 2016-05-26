@@ -2,10 +2,8 @@ package com.tanzil.sportspal.view.fragments;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +13,6 @@ import android.widget.LinearLayout;
 
 import com.squareup.picasso.Picasso;
 import com.tanzil.sportspal.R;
-import com.tanzil.sportspal.Utility.DrawableImages;
 import com.tanzil.sportspal.Utility.Utils;
 import com.tanzil.sportspal.customUi.MyTextView;
 import com.tanzil.sportspal.model.ModelManager;
@@ -43,9 +40,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         this.activity = super.getActivity();
 
-        Intent intent = new Intent("Header");
-        intent.putExtra("message", "SP-" + activity.getString(R.string.title_profile));
-        LocalBroadcastManager.getInstance(activity).sendBroadcast(intent);
+
+        Utils.setHeader(activity, "5-" + activity.getString(R.string.title_profile));
+
 
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
 
@@ -84,7 +81,11 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 txt_name.setText(usersArrayList.get(i).getFirst_name());
                 txt_age.setText(usersArrayList.get(i).getDob());
 //                txt_occupation.setText(usersArrayList.get(i).get);
-                txt_information.setText(usersArrayList.get(i).getDob());
+                if (!Utils.isEmptyString(usersArrayList.get(i).getBio())) {
+                    txt_information.setText(usersArrayList.get(i).getBio());
+                    txt_information.setVisibility(View.VISIBLE);
+                } else
+                    txt_information.setVisibility(View.GONE);
 
                 String img1 = "", img2 = "";
 
@@ -103,14 +104,14 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
                             gameText1.setText(sportsArrayList.get(j).getName());
                             j = j + 1;
-                            if (sportsArrayList.size() >= j)
+                            if (sportsArrayList.size() > j)
                                 gameText2.setText(sportsArrayList.get(j).getName());
                             else
                                 gameText2.setVisibility(View.GONE);
 
                             game_layout.addView(v);
                         }
-                        img2 = sportsArrayList.get(0).getName();
+//                        img2 = sportsArrayList.get(0).getName();
                     }
 
                 if (!Utils.isEmptyString(img1)) {
@@ -118,7 +119,11 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                             .placeholder(R.drawable.players)
                             .into(img_user_pic);
                 } else {
-                    img_user_pic.setImageResource(DrawableImages.setImage(img2));
+                    if (usersArrayList.get(i).getGender().equalsIgnoreCase("Female"))
+                    img_user_pic.setImageResource(R.drawable.default_female);
+                    else
+                        img_user_pic.setImageResource(R.drawable.default_male);
+                    img_user_pic.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 }
 
             }

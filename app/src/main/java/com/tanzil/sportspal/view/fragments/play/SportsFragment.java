@@ -5,16 +5,18 @@ package com.tanzil.sportspal.view.fragments.play;
  */
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -51,13 +53,9 @@ public class SportsFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         this.activity = super.getActivity();
-        Intent intent = new Intent("Header");
-        intent.putExtra(
-                "message",
-                "SP-"
-                        + activity.getString(R.string.title_play));
 
-        LocalBroadcastManager.getInstance(activity).sendBroadcast(intent);
+        Utils.setHeader(activity, "2-" + activity.getString(R.string.title_play));
+
         View rootView = inflater.inflate(R.layout.fragment_news_feed, container, false);
 
         header_layout = (LinearLayout) activity.findViewById(R.id.header_layout);
@@ -118,6 +116,23 @@ public class SportsFragment extends Fragment {
             }
         });
 
+        sportsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Fragment fragment = new SportsDetailFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("id", gamesArrayList.get(position).getId());
+                bundle.putString("name", gamesArrayList.get(position).getName());
+                fragment.setArguments(bundle);
+
+                FragmentManager fragmentManager = ((FragmentActivity) activity).getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.container_body, fragment, "SportsDetailFragment");
+                fragmentTransaction.addToBackStack("SportsDetailFragment");
+                fragmentTransaction.commit();
+            }
+        });
+
         return rootView;
     }
 
@@ -143,11 +158,15 @@ public class SportsFragment extends Fragment {
     public void onStop() {
         super.onStop();
         //gpDatabase.setConversation(chatManager.getConversations());
+        header_layout.setVisibility(View.GONE);
+        search_layout.setVisibility(View.GONE);
         EventBus.getDefault().unregister(this);
     }
 
     @Override
     public void onDestroy() {
+        header_layout.setVisibility(View.GONE);
+        search_layout.setVisibility(View.GONE);
         super.onDestroy();
     }
 
@@ -163,7 +182,7 @@ public class SportsFragment extends Fragment {
             Utils.dismissLoading();
         } else if (message.equalsIgnoreCase("GetGameSearch True")) {
             Utils.dismissLoading();
-            gamesArrayList = ModelManager.getInstance().getSportsManager().getSearchedUserPreferredGames(false, "");
+            gamesArrayList = ModelManager.getInstance().getSportsManager().getGameSearch(false, null);
             setData();
         } else if (message.equalsIgnoreCase("GetGameSearch False")) {
             Utils.dismissLoading();

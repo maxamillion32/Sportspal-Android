@@ -36,7 +36,6 @@ import com.tanzil.sportspal.Utility.Utils;
 import com.tanzil.sportspal.customUi.MyEditText;
 import com.tanzil.sportspal.customUi.MyTextView;
 import com.tanzil.sportspal.model.ModelManager;
-import com.tanzil.sportspal.model.TeamMembersManager;
 import com.tanzil.sportspal.model.bean.Address;
 import com.tanzil.sportspal.model.bean.Sports;
 import com.tanzil.sportspal.model.bean.Teams;
@@ -96,6 +95,9 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         this.activity = super.getActivity();
+        Utils.setHeader(activity, "3-" + activity.getString(R.string.title_add));
+
+
         if (rootView != null) {
             ViewGroup parent = (ViewGroup) rootView.getParent();
             if (parent != null)

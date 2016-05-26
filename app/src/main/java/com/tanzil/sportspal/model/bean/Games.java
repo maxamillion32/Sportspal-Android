@@ -197,6 +197,7 @@ public class Games {
                     if (state == 200) {
                         JSONObject jsonArray = response.getJSONObject("message");
 
+                        userGamesList = new ArrayList<Games>();
                         Games.this.setId(jsonArray.getString("id"));
                         Games.this.setName(jsonArray.getString("name"));
                         Games.this.setSportsId(jsonArray.getString("sport_id"));
@@ -212,9 +213,20 @@ public class Games {
                         if (jsonArray.has("sport"))
                             Games.this.setSports_name(jsonArray.getJSONObject("sport").getString("name"));
                         if (jsonArray.has("user")) {
-                            Games.this.setUser_first_name(jsonArray.getJSONObject("user").getString("first_name"));
-                            Games.this.setUser_last_name(jsonArray.getJSONObject("user").getString("last_name"));
-                            Games.this.setUser_email(jsonArray.getJSONObject("user").getString("email"));
+                            if (!jsonArray.isNull("user")) {
+                                Games.this.setUser_first_name(jsonArray.getJSONObject("user").getString("first_name"));
+                                Games.this.setUser_last_name(jsonArray.getJSONObject("user").getString("last_name"));
+                                Games.this.setUser_email(jsonArray.getJSONObject("user").getString("email"));
+
+                                usersArrayList = new ArrayList<Users>();
+                                Users users = new Users();
+                                users.setFirst_name(jsonArray.getJSONObject("user").getString("first_name"));
+                                users.setLast_name(jsonArray.getJSONObject("user").getString("last_name"));
+                                users.setEmail(jsonArray.getJSONObject("user").getString("email"));
+                                usersArrayList.add(users);
+
+                                Games.this.setUsersArrayList(usersArrayList);
+                            }
                         }
 
                         userGamesList.add(Games.this);

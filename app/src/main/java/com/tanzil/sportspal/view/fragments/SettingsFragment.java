@@ -1,13 +1,11 @@
 package com.tanzil.sportspal.view.fragments;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,13 +40,9 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         this.activity = super.getActivity();
-        Intent intent = new Intent("Header");
-        intent.putExtra(
-                "message",
-                "SP-"
-                        + activity.getString(R.string.title_settings));
 
-        LocalBroadcastManager.getInstance(activity).sendBroadcast(intent);
+        Utils.setHeader(activity, "0-" + activity.getString(R.string.title_settings));
+
         View rootView = inflater.inflate(R.layout.fragment_settings, container, false);
 
         myCalendar = Calendar.getInstance();

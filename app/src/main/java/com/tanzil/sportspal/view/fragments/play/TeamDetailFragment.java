@@ -18,7 +18,7 @@ import com.tanzil.sportspal.Utility.Utils;
 import com.tanzil.sportspal.customUi.MyButton;
 import com.tanzil.sportspal.customUi.MyTextView;
 import com.tanzil.sportspal.model.ModelManager;
-import com.tanzil.sportspal.model.bean.Games;
+import com.tanzil.sportspal.model.bean.Teams;
 import com.tanzil.sportspal.model.bean.Users;
 import com.tanzil.sportspal.view.adapters.MembersListAdapter;
 
@@ -29,16 +29,16 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by arun.sharma on 5/25/2016.
  */
-public class SportsDetailFragment extends Fragment {
+public class TeamDetailFragment extends Fragment {
 
     private String TAG = PlayerDetailFragment.class.getSimpleName();
     private Activity activity;
     private ImageView sportsPic, img_right;
-    private MyTextView txt_sportName, txt_teamName, txt_date, txt_address, txt_time, txt_members, txt_memberSize;
+    private MyTextView txt_sportName, txt_teamName, txt_team_type, txt_members, txt_memberSize;
     private MyButton btn_join;
     private ListView memberList;
-    private ArrayList<Games> gamesArrayList;
-    private String id = "", spName = "";
+    private ArrayList<Teams> teamsArrayList;
+    private String id = "";
     private View headerView;
     private MembersListAdapter adapter;
     private ArrayList<Users> usersArrayList;
@@ -56,7 +56,6 @@ public class SportsDetailFragment extends Fragment {
             if (getArguments() != null) {
                 Bundle bundle = getArguments();
                 id = bundle.getString("id");
-                spName = bundle.getString("name");
             }
 
         } catch (Exception ex) {
@@ -67,43 +66,37 @@ public class SportsDetailFragment extends Fragment {
         img_right.setVisibility(View.GONE);
 
         memberList = (ListView) rootView.findViewById(R.id.memberList);
-        setHeader();
 
-        gamesArrayList = ModelManager.getInstance().getSportsManager().getUserPreferredGames(false);
-        for (int i = 0; i < gamesArrayList.size(); i++) {
-            if (gamesArrayList.get(i).getId().equalsIgnoreCase(id)) {
+        teamsArrayList = ModelManager.getInstance().getTeamsManager().getAllTeams(false);
+        for (int i = 0; i < teamsArrayList.size(); i++) {
+            if (teamsArrayList.get(i).getId().equalsIgnoreCase(id)) {
                 Utils.showLoading(activity, activity.getString(R.string.please_wait));
-                ModelManager.getInstance().getSportsManager().getUserPreferredGames(false).get(i).getGameDetails(true, id);
+                ModelManager.getInstance().getTeamsManager().getAllTeams(false).get(i).getTeamDetails(true, id);
                 break;
             }
         }
         return rootView;
     }
 
-    private void setHeader() {
-    }
 
     private void setData() {
-        gamesArrayList = ModelManager.getInstance().getSportsManager().getUserPreferredGames(false);
-        for (int i = 0; i < gamesArrayList.size(); i++) {
-            if (gamesArrayList.get(i).getId().equalsIgnoreCase(id)) {
-                ArrayList<Games> gameDetails = gamesArrayList.get(i).getGameDetails(false, id);
+        memberList.setAdapter(null);
+        teamsArrayList = ModelManager.getInstance().getTeamsManager().getAllTeams(false);
+        for (int i = 0; i < teamsArrayList.size(); i++) {
+            if (teamsArrayList.get(i).getId().equalsIgnoreCase(id)) {
+                ArrayList<Teams> teamDetails = teamsArrayList.get(i).getTeamDetails(false, id);
 
                 headerView = View
-                        .inflate(activity, R.layout.game_detail_header_layout, null);
+                        .inflate(activity, R.layout.team_detail_header_layout, null);
 
-                sportsPic = (ImageView) headerView.findViewById(R.id.img_sports_pic);
+                sportsPic = (ImageView) headerView.findViewById(R.id.img_team_pic);
 
-                txt_address = (MyTextView) headerView.findViewById(R.id.txt_pick_address);
-                txt_sportName = (MyTextView) headerView.findViewById(R.id.sport_name_text);
-                txt_teamName = (MyTextView) headerView.findViewById(R.id.txt_team_name);
-                txt_date = (MyTextView) headerView.findViewById(R.id.txt_date);
-                txt_time = (MyTextView) headerView.findViewById(R.id.txt_time);
+                txt_sportName = (MyTextView) headerView.findViewById(R.id.txt_sports_name);
+                txt_teamName = (MyTextView) headerView.findViewById(R.id.team_name_text);
+                txt_team_type = (MyTextView) headerView.findViewById(R.id.txt_team_type);
                 txt_members = (MyTextView) headerView.findViewById(R.id.txt_members);
                 txt_memberSize = (MyTextView) headerView.findViewById(R.id.txt_member_size);
 
-                if (!Utils.isEmptyString(spName))
-                    sportsPic.setImageResource(DrawableImages.setImage(spName));
 
                 btn_join = (MyButton) headerView.findViewById(R.id.join_btn);
                 btn_join.setTransformationMethod(null);
@@ -116,19 +109,17 @@ public class SportsDetailFragment extends Fragment {
                     }
                 });
 
-                txt_address.setText(gameDetails.get(0).getAddress());
-                txt_sportName.setText(gameDetails.get(0).getSports_name());
-                txt_teamName.setText(gameDetails.get(0).getName());
-                txt_time.setText(gameDetails.get(0).getTime());
-                txt_date.setText(gameDetails.get(0).getDate());
+                txt_sportName.setText(teamDetails.get(0).getSports_name());
+                txt_teamName.setText(teamDetails.get(0).getTeam_name());
+                txt_team_type.setText(teamDetails.get(0).getTeam_type());
                 txt_memberSize.setText("MAX SIZE(11)");
 
-                if (!Utils.isEmptyString(gameDetails.get(0).getSports_name()))
-                    sportsPic.setImageResource(DrawableImages.setImage(gameDetails.get(0).getSports_name()));
+                if (!Utils.isEmptyString(teamDetails.get(0).getSports_name()))
+                    sportsPic.setImageResource(DrawableImages.setImage(teamDetails.get(0).getSports_name()));
 
                 memberList.addHeaderView(headerView);
 
-                usersArrayList = gameDetails.get(0).getUsersArrayList();
+                usersArrayList = teamDetails.get(0).getUsersList();
                 if (usersArrayList == null)
                     usersArrayList = new ArrayList<>();
                 SPLog.e("User Array List : ", "" + usersArrayList.size());
@@ -162,12 +153,12 @@ public class SportsDetailFragment extends Fragment {
 
     public void onEventMainThread(String message) {
         Log.e(TAG, "-- " + message);
-        if (message.equalsIgnoreCase("GetGameDetails True")) {
+        if (message.equalsIgnoreCase("GetTeamDetails True")) {
             Utils.dismissLoading();
             setData();
-        } else if (message.equalsIgnoreCase("GetGameDetails False")) {
+        } else if (message.equalsIgnoreCase("GetTeamDetails False")) {
             Utils.dismissLoading();
-        } else if (message.equalsIgnoreCase("GetGameDetails Network Error")) {
+        } else if (message.equalsIgnoreCase("GetTeamDetails Network Error")) {
             Utils.dismissLoading();
         }
     }

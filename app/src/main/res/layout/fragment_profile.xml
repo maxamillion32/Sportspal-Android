@@ -168,8 +168,7 @@
                 android:layout_gravity="center_vertical"
                 android:background="@android:color/transparent"
                 android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="10dp">
+                android:orientation="vertical" />
 
                 <!--<com.tanzil.sportspal.customUi.MyTextView-->
                     <!--android:id="@+id/game_text"-->
@@ -178,7 +177,6 @@
                     <!--android:text="@string/news"-->
                     <!--android:textColor="@color/white"-->
                     <!--android:textSize="@dimen/small_text_size" />-->
-            </LinearLayout>
 
             <com.tanzil.sportspal.customUi.MyTextView
                 android:id="@+id/information_text"

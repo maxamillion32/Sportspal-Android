@@ -156,7 +156,7 @@ public class TeamsManager {
     }
 
     private void getSearchedTeams(JSONObject jsonObject) {
-        SPRestClient.post(ServiceApi.GET_ALL_TEAMS, jsonObject.toString(), new JsonHttpResponseHandler() {
+        SPRestClient.post(ServiceApi.GET_SEARCH_TEAMS, jsonObject.toString(), new JsonHttpResponseHandler() {
             @Override
             public void onStart() {
                 Log.e(TAG, "GetSearchTeams called before request is started");

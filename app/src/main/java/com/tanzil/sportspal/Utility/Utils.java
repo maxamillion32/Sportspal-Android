@@ -12,6 +12,7 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -94,6 +95,12 @@ public class Utils {
             public void onAnimationRepeat(Animation animation) {
             }
         });
+    }
+
+    public static void setHeader(Activity activity, String header) {
+        Intent intent = new Intent("Header");
+        intent.putExtra("message", header);
+        LocalBroadcastManager.getInstance(activity).sendBroadcast(intent);
     }
 
     public static String capSentence(String string, boolean capitalize) {

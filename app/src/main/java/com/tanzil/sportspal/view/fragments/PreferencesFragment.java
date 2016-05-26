@@ -1,11 +1,9 @@
 package com.tanzil.sportspal.view.fragments;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,13 +44,9 @@ public class PreferencesFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         this.activity = super.getActivity();
-        Intent intent = new Intent("Header");
-        intent.putExtra(
-                "message",
-                "SP-"
-                        + activity.getString(R.string.preferences));
 
-        LocalBroadcastManager.getInstance(activity).sendBroadcast(intent);
+        Utils.setHeader(activity, "0-" + activity.getString(R.string.preferences));
+
         View rootView = inflater.inflate(R.layout.fragment_preferences, container, false);
 
         ImageView img_submit = (ImageView) activity.findViewById(R.id.img_right);

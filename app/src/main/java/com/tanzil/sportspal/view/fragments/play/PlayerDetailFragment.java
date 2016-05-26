@@ -2,10 +2,8 @@ package com.tanzil.sportspal.view.fragments.play;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,13 +43,9 @@ public class PlayerDetailFragment extends Fragment implements View.OnClickListen
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         this.activity = super.getActivity();
-        Intent intent = new Intent("Header");
-        intent.putExtra(
-                "message",
-                "SP-"
-                        + activity.getString(R.string.players));
 
-        LocalBroadcastManager.getInstance(activity).sendBroadcast(intent);
+        Utils.setHeader(activity, "2-" + activity.getString(R.string.title_play));
+
         View rootView = inflater.inflate(R.layout.fragment_player_details, container, false);
 
         try {

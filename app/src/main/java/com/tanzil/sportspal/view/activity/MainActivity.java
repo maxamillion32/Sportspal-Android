@@ -122,6 +122,8 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 textName[0] = "";
                 textName[1] = "";
             }
+            int pos = Integer.parseInt(textName[0]);
+            setBackground(pos - 1);
             tvTitle.setText(textName[1]);
             Log.d("receiver", "Got message: " + message);
         }
@@ -262,28 +264,28 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         Fragment fragment = null;
         String title = getString(R.string.app_name);
         if (flag == 0) {
-        switch (position) {
+            switch (position) {
 
-            case 0:
-                fragment = new NewsFeedFragment();
-                title = getString(R.string.title_news);
-                break;
-            case 1:
-                fragment = new PlayMainFragment();
-                title = getString(R.string.title_play);
-                break;
-            case 2:
-                fragment = new AddGameFragment();
-                title = getString(R.string.title_add);
-                break;
-            case 3:
-                fragment = new NewsFeedFragment();
-                title = getString(R.string.title_chat);
-                break;
-            case 4:
-                fragment = new ProfileFragment();
-                title = getString(R.string.title_profile);
-                break;
+                case 0:
+                    fragment = new NewsFeedFragment();
+                    title = getString(R.string.title_news);
+                    break;
+                case 1:
+                    fragment = new PlayMainFragment();
+                    title = getString(R.string.title_play);
+                    break;
+                case 2:
+                    fragment = new AddGameFragment();
+                    title = getString(R.string.title_add);
+                    break;
+                case 3:
+                    fragment = new ChatFragment();
+                    title = getString(R.string.title_chat);
+                    break;
+                case 4:
+                    fragment = new ProfileFragment();
+                    title = getString(R.string.title_profile);
+                    break;
             }
         } else {
             switch (position) {

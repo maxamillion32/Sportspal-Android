@@ -5,13 +5,11 @@ package com.tanzil.sportspal.view.fragments;
  */
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.tanzil.sportspal.R;
+import com.tanzil.sportspal.Utility.Utils;
 import com.tanzil.sportspal.view.adapters.NewsFeedAdapter;
 
 import java.util.ArrayList;
@@ -39,13 +38,9 @@ public class NewsFeedFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         this.activity = super.getActivity();
-        Intent intent = new Intent("Header");
-        intent.putExtra(
-                "message",
-                "SP-"
-                        + activity.getString(R.string.title_news));
 
-        LocalBroadcastManager.getInstance(activity).sendBroadcast(intent);
+        Utils.setHeader(activity, "1-" + activity.getString(R.string.title_news));
+
         View rootView = inflater.inflate(R.layout.fragment_news_feed, container, false);
 
 

@@ -4,13 +4,11 @@
 package com.tanzil.sportspal.view.fragments;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.http.SslError;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +23,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.tanzil.sportspal.R;
+import com.tanzil.sportspal.Utility.Utils;
 
 /**
  * Fragment to display Return and Exchange information.
@@ -48,11 +47,9 @@ public class BrowserLinkFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        Intent intent = new Intent("Header");
-        intent.putExtra("message",
-                "SP-" + activity.getString(R.string.title_news));
 
-        LocalBroadcastManager.getInstance(activity).sendBroadcast(intent);
+        Utils.setHeader(activity, "1-" + activity.getString(R.string.title_news));
+
 
         View rootView = inflater.inflate(R.layout.fragment_browserlinks,
                 container, false);
