@@ -71,7 +71,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
     private View headerView, footerView;
 
     private MyEditText teamName /*corporateGroup, privateText*/;
-    private MyTextView teamSport, txt_teamType;
+    private MyTextView teamSport, txt_Type;
     private ArrayList<Teams> teamsArrayList;
     private ArrayList<Sports> sportsArrayList;
     private Dialog sportsDialog, teamDialog;
@@ -271,8 +271,8 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
                 .inflate(activity, R.layout.add_team_header_layout, null);
 
         teamName = (MyEditText) headerView.findViewById(R.id.et_team_name);
-        corporateGroup = (MyEditText) headerView.findViewById(R.id.et_corporate);
-        privateText = (MyEditText) headerView.findViewById(R.id.et_private);
+//        corporateGroup = (MyEditText) headerView.findViewById(R.id.et_corporate);
+//        privateText = (MyEditText) headerView.findViewById(R.id.et_private);
 
         teamSport = (MyTextView) headerView.findViewById(R.id.txt_team_sport);
 
