@@ -15,21 +15,28 @@
     <string name="last_name">Last Name</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="something_went_wrong">Something went wrong!</string>
+    <string name="please_check_internet">No Internet Connection!</string>
+
+    <string name="fb_app_id">1187982621233803</string>
 
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
     <string name="submit">Submit</string>
+
+    <string name="gcm_send_message">Token retrieved and sent to server! You can now use gcmsender to send downstream messages to this app.</string>
+    <string name="registering_message">Generating InstanceID token....</string>
+    <string name="token_error_message">An error occurred while either fetching the InstanceID token, sending the fetched token to the server or subscribing to the PubSub topic. Please try running the sample again.</string>
+
     <!-- navigation drawer item labels  -->
     <string-array name="nav_drawer_labels">
-        <item>NEWS</item>
-        <item>PLAY</item>
-        <item>ADD</item>
-        <item>CHAT</item>
-        <item>PROFILE</item>
+        <item>HOME</item>
+        <item>SHARE</item>
         <item>SETTINGS</item>
         <item>LOGOUT</item>
     </string-array>
 
+    <string name="title_home">HOME</string>
+    <string name="title_share">SHARE</string>
     <string name="title_play">PLAY</string>
     <string name="title_add">ADD</string>
     <string name="title_chat">CHAT</string>
@@ -48,6 +55,8 @@
     <string name="please_enter_sex">Please enter Gender</string>
     <string name="dob">DOB</string>
     <string name="gender">Gender</string>
+    <string name="pick_location">Pick Location</string>
+    <string name="description">Description</string>
 
     <!-- Main Screen-->
     <string name="news">NEWS</string>
@@ -67,17 +76,24 @@
     <string name="time_format">HH:MM</string>
     <string name="create_new_game">CREATE NEW GAME</string>
     <string name="pick_address">PICK ADDRESS</string>
+    <string name="join_game">JOIN THE GAME</string>
+    <string name="add_team_member">Add Team Member</string>
 
     <!-- Create New Team Screen-->
     <string name="team_sport">TEAM SPORT</string>
     <string name="corporate_group">CORPORATE GROUP</string>
+    <string name="corporate">CORPORATE</string>
     <string name="private_text">PRIVATE</string>
     <string name="select_sports">Select Sports</string>
     <string name="select_team">Select Team</string>
     <string name="select_team_type">Select Team Type</string>
+    <string name="join_team">JOIN THE TEAM</string>
 
     <!-- Profile Screen-->
     <string name="preferences">Prefrences</string>
     <string name="location">Location</string>
     <string name="advanced">Advanced</string>
+
+
+
 </resources>

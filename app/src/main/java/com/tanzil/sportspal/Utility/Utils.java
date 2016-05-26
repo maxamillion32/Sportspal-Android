@@ -7,13 +7,17 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.drawable.AnimationDrawable;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.IBinder;
-import android.util.Log;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Base64;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -21,11 +25,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.tanzil.sportspal.R;
-import com.tanzil.sportspal.model.ModelManager;
 
-import java.io.IOException;
+import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -38,14 +40,16 @@ public class Utils {
 
     private static Date now;
     private static ProgressDialog progressDialog;
-    private static GoogleCloudMessaging gcm;
-    private static String regid;
-    public static final String[] INITIAL_PERMS={
+    //    private static GoogleCloudMessaging gcm;
+//    private static String regid;
+    public static final String[] INITIAL_PERMS = {
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.READ_CONTACTS
     };
-    public static final int INITIAL_REQUEST=1337;
-    public static final int LOCATION_REQUEST=INITIAL_REQUEST+3;
+    public static final int INITIAL_REQUEST = 1337;
+    public static final int LOCATION_REQUEST = INITIAL_REQUEST + 3;
+    public static final int REQUEST_CAMERA = 200;
+    public static final int SELECT_FILE = 201;
 
 
     public static void showLoading(Activity act, String msg) {
@@ -99,6 +103,31 @@ public class Utils {
             public void onAnimationRepeat(Animation animation) {
             }
         });
+    }
+
+    public static Bitmap scaleBitmap(Bitmap bitmap, int wantedWidth, int wantedHeight) {
+        Bitmap output = Bitmap.createBitmap(wantedWidth, wantedHeight, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+        Matrix m = new Matrix();
+        m.setScale((float) wantedWidth / bitmap.getWidth(), (float) wantedHeight / bitmap.getHeight());
+        canvas.drawBitmap(bitmap, m, new Paint());
+        return output;
+    }
+
+    public static String encodeTobase64(Bitmap image) {
+        Bitmap immagex = image;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        immagex.compress(Bitmap.CompressFormat.JPEG, 60, baos);
+        byte[] b = baos.toByteArray();
+        String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
+        SPLog.e("LOOK--->imageEncoded", imageEncoded);
+        return imageEncoded;
+    }
+
+    public static void setHeader(Activity activity, String header) {
+        Intent intent = new Intent("Header");
+        intent.putExtra("message", header);
+        LocalBroadcastManager.getInstance(activity).sendBroadcast(intent);
     }
 
     public static String capSentence(String string, boolean capitalize) {
@@ -175,50 +204,50 @@ public class Utils {
         }
     }
 
-    public static String getRegId(final Activity contex) {
-        new AsyncTask<Void, Void, String>() {
-            ProgressDialog progressDialog;
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                progressDialog = ProgressDialog
-                        .show(contex,
-                                "",
-                                contex.getString(R.string.please_wait),
-                                true);
-            }
-
-            @Override
-            protected String doInBackground(Void... params) {
-                String msg = "";
-                try {
-                    if (gcm == null) {
-                        gcm = GoogleCloudMessaging.getInstance(contex);
-                    }
-                    regid = gcm.register(ServiceApi.GCM_PROJECT_NUMBER);
-                    ModelManager.getInstance().getAuthManager().setDeviceToken(regid);
-                    // Utils.deviceId = regid;
-                    msg = "Device registered, registration ID=" + regid;
-
-                } catch (IOException ex) {
-                    msg = "Error :" + ex.getMessage();
-
-                }
-                return msg;
-            }
-
-            @Override
-            protected void onPostExecute(String msg) {
-                if (progressDialog != null) {
-                    progressDialog.dismiss();
-                }
-                Log.e("UTILS", "DEVICE_Token---> " + regid);
-            }
-
-        }.execute(null, null, null);
-        return regid;
-    }
+//    public static String getRegId(final Activity contex) {
+//        new AsyncTask<Void, Void, String>() {
+//            ProgressDialog progressDialog;
+//
+//            @Override
+//            protected void onPreExecute() {
+//                super.onPreExecute();
+//                progressDialog = ProgressDialog
+//                        .show(contex,
+//                                "",
+//                                contex.getString(R.string.please_wait),
+//                                true);
+//            }
+//
+//            @Override
+//            protected String doInBackground(Void... params) {
+//                String msg = "";
+//                try {
+//                    if (gcm == null) {
+//                        gcm = GoogleCloudMessaging.getInstance(contex);
+//                    }
+//                    regid = gcm.register(ServiceApi.GCM_PROJECT_NUMBER);
+//                    ModelManager.getInstance().getAuthManager().setDeviceToken(regid);
+//                    // Utils.deviceId = regid;
+//                    msg = "Device registered, registration ID=" + regid;
+//
+//                } catch (IOException ex) {
+//                    msg = "Error :" + ex.getMessage();
+//
+//                }
+//                return msg;
+//            }
+//
+//            @Override
+//            protected void onPostExecute(String msg) {
+//                if (progressDialog != null) {
+//                    progressDialog.dismiss();
+//                }
+//                Log.e("UTILS", "DEVICE_Token---> " + regid);
+//            }
+//
+//        }.execute(null, null, null);
+//        return regid;
+//    }
 
     public static boolean checkGPSEnabled(Activity activity) {
         final LocationManager manager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);

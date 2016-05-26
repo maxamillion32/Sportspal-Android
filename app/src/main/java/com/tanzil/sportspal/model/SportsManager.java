@@ -88,6 +88,7 @@ public class SportsManager {
                         EventBus.getDefault().post("GetAllSports False");
                     }
                 } catch (JSONException e) {
+                    e.printStackTrace();
                     EventBus.getDefault().post("GetAllSports False");
                 }
 
@@ -190,6 +191,7 @@ public class SportsManager {
                         EventBus.getDefault().post("GetGameSearch False");
                     }
                 } catch (JSONException e) {
+                    e.printStackTrace();
                     EventBus.getDefault().post("GetGameSearch False");
                 }
 
@@ -292,6 +294,7 @@ public class SportsManager {
                         EventBus.getDefault().post("GetAllGames False");
                     }
                 } catch (JSONException e) {
+                    e.printStackTrace();
                     EventBus.getDefault().post("GetAllGames False");
                 }
 
@@ -395,6 +398,7 @@ public class SportsManager {
                         EventBus.getDefault().post("GetUserGames False");
                     }
                 } catch (JSONException e) {
+                    e.printStackTrace();
                     EventBus.getDefault().post("GetUserGames False");
                 }
 
@@ -497,6 +501,7 @@ public class SportsManager {
                         EventBus.getDefault().post("GetSearchedGames False");
                     }
                 } catch (JSONException e) {
+                    e.printStackTrace();
                     EventBus.getDefault().post("GetSearchedGames False");
                 }
 
@@ -569,6 +574,7 @@ public class SportsManager {
                         EventBus.getDefault().post("AddGame False");
                     }
                 } catch (JSONException e) {
+                    e.printStackTrace();
                     EventBus.getDefault().post("AddGame False");
                 }
 

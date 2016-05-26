@@ -1,0 +1,44 @@
+{
+  "project_info": {
+    "project_number": "317594767865",
+    "project_id": "sportspal-1299"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:317594767865:android:209117cf66163f38",
+        "android_client_info": {
+          "package_name": "com.tanzil.sportspal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "317594767865-3e7s57hssuc4hm5hs4g6volkqust508m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tanzil.sportspal",
+            "certificate_hash": "FD946895F5C344EAA09F57E590034E6B922F91EE"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnyP2JhME7AnAnF-K4G53bhSU3KnZaMUA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

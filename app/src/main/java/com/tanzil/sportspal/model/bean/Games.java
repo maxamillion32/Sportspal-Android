@@ -1,10 +1,26 @@
 package com.tanzil.sportspal.model.bean;
 
+import android.util.Log;
+
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.tanzil.sportspal.Utility.ServiceApi;
+import com.tanzil.sportspal.httprequest.SPRestClient;
+import com.tanzil.sportspal.model.SportsManager;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+import cz.msebera.android.httpclient.Header;
+import de.greenrobot.event.EventBus;
+
 /**
  * Created by arun.sharma on 5/3/2016.
  */
 public class Games {
 
+    private final String TAG = SportsManager.class.getSimpleName();
     String id;
     String name;
     String status;
@@ -13,6 +29,16 @@ public class Games {
     String gameType;
     String teamId;
     String date, time, latitude, longitude, address, sports_name, user_first_name, user_last_name, user_email;
+    private ArrayList<Games> userGamesList;
+    private ArrayList<Users> usersArrayList;
+
+    public ArrayList<Users> getUsersArrayList() {
+        return usersArrayList;
+    }
+
+    public void setUsersArrayList(ArrayList<Users> usersArrayList) {
+        this.usersArrayList = usersArrayList;
+    }
 
     public String getId() {
         return id;
@@ -141,6 +167,120 @@ public class Games {
     public void setUser_email(String user_email) {
         this.user_email = user_email;
     }
+
+    public ArrayList<Games> getGameDetails(boolean shouldRefresh, String id) {
+        if (shouldRefresh)
+            getDetails(id);
+        return userGamesList;
+    }
+
+    public ArrayList<Games> getDetails(String id) {
+        SPRestClient.get(ServiceApi.GET_GAME_DETAIL + "/" + id, null, new JsonHttpResponseHandler() {
+            @Override
+            public void onStart() {
+                Log.e(TAG, "GetGameDetails called before request is started");
+            }
+
+            @Override
+            public void onCancel() {
+                super.onCancel();
+                Log.e(TAG, "onCancel  --> ");
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+                Log.e(TAG, "onSuccess  --> " + response.toString());
+
+                try {
+                    int state = response.getInt("status");
+                    if (state == 200) {
+                        JSONObject jsonArray = response.getJSONObject("message");
+
+                        userGamesList = new ArrayList<Games>();
+                        Games.this.setId(jsonArray.getString("id"));
+                        Games.this.setName(jsonArray.getString("name"));
+                        Games.this.setSportsId(jsonArray.getString("sport_id"));
+                        Games.this.setUserId(jsonArray.getString("user_id"));
+                        Games.this.setGameType(jsonArray.getString("game_type"));
+                        Games.this.setTeamId(jsonArray.getString("team_id"));
+                        Games.this.setDate(jsonArray.getString("date"));
+                        Games.this.setTime(jsonArray.getString("time"));
+                        Games.this.setLatitude(jsonArray.getString("latitude"));
+                        Games.this.setLongitude(jsonArray.getString("longitude"));
+                        Games.this.setAddress(jsonArray.getString("address"));
+
+                        if (jsonArray.has("sport"))
+                            Games.this.setSports_name(jsonArray.getJSONObject("sport").getString("name"));
+                        if (jsonArray.has("user")) {
+                            if (!jsonArray.isNull("user")) {
+                                Games.this.setUser_first_name(jsonArray.getJSONObject("user").getString("first_name"));
+                                Games.this.setUser_last_name(jsonArray.getJSONObject("user").getString("last_name"));
+                                Games.this.setUser_email(jsonArray.getJSONObject("user").getString("email"));
+
+                                usersArrayList = new ArrayList<Users>();
+                                Users users = new Users();
+                                users.setFirst_name(jsonArray.getJSONObject("user").getString("first_name"));
+                                users.setLast_name(jsonArray.getJSONObject("user").getString("last_name"));
+                                users.setEmail(jsonArray.getJSONObject("user").getString("email"));
+                                usersArrayList.add(users);
+
+                                Games.this.setUsersArrayList(usersArrayList);
+                            }
+                        }
+
+                        userGamesList.add(Games.this);
+//                            }
+                        EventBus.getDefault().post("GetGameDetails True");
+                    } else {
+                        EventBus.getDefault().post("GetGameDetails False");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    EventBus.getDefault().post("GetGameDetails False");
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+                if (errorResponse != null) {
+                    Log.e(TAG, "onFailure  --> " + errorResponse.toString());
+                    EventBus.getDefault().post("GetGameDetails False");
+                } else {
+                    EventBus.getDefault().post("GetGameDetails Network Error");
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                super.onFailure(statusCode, headers, responseString, throwable);
+                if (responseString != null) {
+                    Log.e(TAG, "onFailure  --> " + responseString.toString());
+                    EventBus.getDefault().post("GetGameDetails False");
+                } else {
+                    EventBus.getDefault().post("GetGameDetails Network Error");
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+                Log.e(TAG, "onFinish  --> ");
+            }
+
+            @Override
+            public void onRetry(int retryNo) {
+                // called when request is retried
+                Log.e(TAG, "onRetry  --> ");
+            }
+
+        });
+        return userGamesList;
+    }
+
 }
 
 

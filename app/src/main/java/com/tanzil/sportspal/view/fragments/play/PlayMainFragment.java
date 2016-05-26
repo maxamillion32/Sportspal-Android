@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.tanzil.sportspal.R;
+import com.tanzil.sportspal.Utility.Utils;
 import com.tanzil.sportspal.customUi.MyTextView;
 
 
@@ -35,6 +36,9 @@ public class PlayMainFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
 
         this.activity = super.getActivity();
+
+        Utils.setHeader(activity, "2-" + activity.getString(R.string.title_play));
+
         View rootView = inflater.inflate(R.layout.fragment_play, container, false);
 
         img_right = (ImageView) activity.findViewById(R.id.img_right);

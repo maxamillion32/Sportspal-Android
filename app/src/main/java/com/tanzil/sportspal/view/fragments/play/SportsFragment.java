@@ -7,12 +7,16 @@ package com.tanzil.sportspal.view.fragments.play;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -24,6 +28,9 @@ import com.tanzil.sportspal.customUi.MyEditText;
 import com.tanzil.sportspal.model.ModelManager;
 import com.tanzil.sportspal.model.bean.Games;
 import com.tanzil.sportspal.view.adapters.SportsFragmentAdapter;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -46,6 +53,9 @@ public class SportsFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         this.activity = super.getActivity();
+
+        Utils.setHeader(activity, "2-" + activity.getString(R.string.title_play));
+
         View rootView = inflater.inflate(R.layout.fragment_news_feed, container, false);
 
         header_layout = (LinearLayout) activity.findViewById(R.id.header_layout);
@@ -59,10 +69,10 @@ public class SportsFragment extends Fragment {
         sportsListView = (ListView) rootView.findViewById(R.id.news_feed_list);
         // Inflate the layout for this fragment
 
-        gamesArrayList = ModelManager.getInstance().getSportsManager().getAllGames(false);
+        gamesArrayList = ModelManager.getInstance().getSportsManager().getUserPreferredGames(false);
         if (gamesArrayList == null) {
             Utils.showLoading(activity, activity.getString(R.string.please_wait));
-            ModelManager.getInstance().getSportsManager().getAllGames(true);
+            ModelManager.getInstance().getSportsManager().getUserPreferredGames(true);
         } else
             setData();
 
@@ -88,10 +98,38 @@ public class SportsFragment extends Fragment {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_GO || actionId == EditorInfo.IME_ACTION_DONE) {
-
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put("user_id", ModelManager.getInstance().getAuthManager().getUserId());
+                        jsonObject.put("is_preferred", 1);
+                        jsonObject.put("keyword", et_search.getText().toString().trim());
+                        jsonObject.put("is_keyword", 1);
+                        jsonObject.put("is_nearby", 0);
+                    } catch (JSONException e){
+                        e.printStackTrace();
+                    }
+                    Utils.showLoading(activity, activity.getString(R.string.please_wait));
+                    ModelManager.getInstance().getSportsManager().getGameSearch(true, jsonObject);
                     Utils.closeKeyboard(activity, et_search.getWindowToken());
                 }
                 return true;
+            }
+        });
+
+        sportsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Fragment fragment = new SportsDetailFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("id", gamesArrayList.get(position).getId());
+                bundle.putString("name", gamesArrayList.get(position).getName());
+                fragment.setArguments(bundle);
+
+                FragmentManager fragmentManager = ((FragmentActivity) activity).getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.container_body, fragment, "SportsDetailFragment");
+                fragmentTransaction.addToBackStack("SportsDetailFragment");
+                fragmentTransaction.commit();
             }
         });
 
@@ -99,12 +137,14 @@ public class SportsFragment extends Fragment {
     }
 
     private void setData() {
-        gamesArrayList = ModelManager.getInstance().getSportsManager().getAllGames(false);
-        if (gamesArrayList.size() > 0) {
-            adapter = new SportsFragmentAdapter(activity, gamesArrayList);
-            sportsListView.setAdapter(adapter);
-            adapter.notifyDataSetChanged();
-        } else
+        if (gamesArrayList != null)
+            if (gamesArrayList.size() > 0) {
+                adapter = new SportsFragmentAdapter(activity, gamesArrayList);
+                sportsListView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+            } else
+                Utils.showMessage(activity, "There is no record found");
+        else
             Utils.showMessage(activity, "There is no record found");
     }
 
@@ -118,22 +158,35 @@ public class SportsFragment extends Fragment {
     public void onStop() {
         super.onStop();
         //gpDatabase.setConversation(chatManager.getConversations());
+        header_layout.setVisibility(View.GONE);
+        search_layout.setVisibility(View.GONE);
         EventBus.getDefault().unregister(this);
     }
 
     @Override
     public void onDestroy() {
+        header_layout.setVisibility(View.GONE);
+        search_layout.setVisibility(View.GONE);
         super.onDestroy();
     }
 
     public void onEventMainThread(String message) {
         Log.e(TAG, "-- " + message);
-        if (message.equalsIgnoreCase("GetAllGames True")) {
+        if (message.equalsIgnoreCase("GetUserGames True")) {
             Utils.dismissLoading();
+            gamesArrayList = ModelManager.getInstance().getSportsManager().getUserPreferredGames(false);
             setData();
-        } else if (message.equalsIgnoreCase("GetAllGames False")) {
+        } else if (message.equalsIgnoreCase("GetUserGames False")) {
             Utils.dismissLoading();
-        } else if (message.equalsIgnoreCase("GetAllGames Network Error")) {
+        } else if (message.equalsIgnoreCase("GetUserGames Network Error")) {
+            Utils.dismissLoading();
+        } else if (message.equalsIgnoreCase("GetGameSearch True")) {
+            Utils.dismissLoading();
+            gamesArrayList = ModelManager.getInstance().getSportsManager().getGameSearch(false, null);
+            setData();
+        } else if (message.equalsIgnoreCase("GetGameSearch False")) {
+            Utils.dismissLoading();
+        } else if (message.equalsIgnoreCase("GetGameSearch Network Error")) {
             Utils.dismissLoading();
         }
     }

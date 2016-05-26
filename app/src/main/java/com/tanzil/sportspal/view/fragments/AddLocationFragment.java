@@ -69,6 +69,9 @@ public class AddLocationFragment extends Fragment implements View.OnClickListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.activity = super.getActivity();
 
+        Utils.setHeader(activity, "0-" + activity.getString(R.string.pick_location));
+
+
         if (rootView != null) {
             ViewGroup parent = (ViewGroup) rootView.getParent();
             if (parent != null)

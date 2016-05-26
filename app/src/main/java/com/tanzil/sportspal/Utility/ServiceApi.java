@@ -34,4 +34,8 @@ public class ServiceApi {
     public static final String GET_USERS_GAMES = baseurl + "games/index/";
     public static final String GET_USER_TEAMS = baseurl + "teams/index/";
     public static final String GET_SEARCH_TEAMS = baseurl + "teams/search";
+    public static final String ADD_USER_PREFERENCE = baseurl + "users/sports";
+    public static final String GET_GAME_DETAIL = baseurl + "games/singlegame/";
+    public static final String GET_TEAM_DETAIL = baseurl + "teams/singleteam/";
+    public static final String GET_SEARCH_USERS = baseurl + "users/search";
 }

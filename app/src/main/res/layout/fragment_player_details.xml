@@ -2,18 +2,18 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black">
+    android:background="@color/bg">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/black"
+        android:background="@color/bg"
         android:baselineAligned="false"
         android:gravity="center_vertical"
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/img_team"
+            android:id="@+id/img_profile"
             android:layout_width="match_parent"
             android:layout_height="@dimen/row_height"
             android:layout_gravity="center_horizontal|center_vertical"
@@ -69,30 +69,30 @@
                     android:padding="5dp">
 
                     <ImageView
-                        android:id="@+id/img_group"
+                        android:id="@+id/img_challenge"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginRight="10dp"
+                        android:layout_gravity="center_horizontal|center_vertical"
                         android:contentDescription="@string/app_name"
+                        android:padding="5dp"
                         android:src="@drawable/challenge" />
 
                     <ImageView
                         android:id="@+id/img_chat"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginRight="10dp"
+                        android:layout_gravity="center_horizontal|center_vertical"
                         android:contentDescription="@string/app_name"
+                        android:padding="5dp"
                         android:src="@drawable/chat" />
 
                     <ImageView
                         android:id="@+id/img_favorite"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginRight="10dp"
+                        android:layout_gravity="center_horizontal|center_vertical"
                         android:contentDescription="@string/app_name"
+                        android:padding="5dp"
                         android:src="@drawable/fav" />
                 </LinearLayout>
 
@@ -119,7 +119,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="bottom"
-                        android:text="@string/news"
+                        android:text="@string/advanced"
                         android:textColor="@color/white"
                         android:textSize="@dimen/small_text_size" />
                 </LinearLayout>
@@ -134,41 +134,32 @@
             android:background="@android:color/transparent"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="10dp"
             android:weightSum="2">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:contentDescription="@string/app_name"
-                android:src="@drawable/birthday" />
 
             <com.tanzil.sportspal.customUi.MyTextView
                 android:id="@+id/age_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:drawableLeft="@drawable/birthday"
+                android:drawablePadding="5dp"
+                android:drawableStart="@drawable/birthday"
                 android:gravity="bottom"
+                android:padding="10dp"
                 android:text="@string/news"
                 android:textColor="@color/white"
                 android:textSize="@dimen/small_text_size" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:contentDescription="@string/app_name"
-                android:src="@drawable/occupation" />
 
             <com.tanzil.sportspal.customUi.MyTextView
                 android:id="@+id/occupation_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:drawableLeft="@drawable/occupation"
+                android:drawablePadding="5dp"
+                android:drawableStart="@drawable/occupation"
                 android:gravity="bottom"
+                android:padding="10dp"
                 android:text="@string/news"
                 android:textColor="@color/white"
                 android:textSize="@dimen/small_text_size" />
@@ -181,37 +172,21 @@
             android:layout_gravity="center_vertical"
             android:background="@android:color/transparent"
             android:gravity="center_vertical"
-            android:orientation="vertical"
-            android:padding="10dp" />
+            android:orientation="vertical" />
 
-        <LinearLayout
+
+        <com.tanzil.sportspal.customUi.MyTextView
+            android:id="@+id/description_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
             android:layout_marginTop="15dp"
-            android:background="@android:color/transparent"
+            android:drawableLeft="@drawable/description"
+            android:drawablePadding="5dp"
+            android:drawableStart="@drawable/description"
             android:gravity="center_vertical"
-            android:orientation="horizontal"
             android:padding="10dp"
-            android:weightSum="2">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:contentDescription="@string/app_name"
-                android:src="@drawable/description" />
-
-            <com.tanzil.sportspal.customUi.MyTextView
-                android:id="@+id/description_text"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:text="@string/news"
-                android:textColor="@color/white"
-                android:textSize="@dimen/small_text_size" />
-        </LinearLayout>
+            android:text="@string/news"
+            android:textColor="@color/white"
+            android:textSize="@dimen/small_text_size" />
     </LinearLayout>
 </ScrollView>

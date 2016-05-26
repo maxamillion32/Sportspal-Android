@@ -18,8 +18,6 @@ import com.pkmmte.view.CircularImageView;
 import com.tanzil.sportspal.R;
 import com.tanzil.sportspal.Utility.SPLog;
 import com.tanzil.sportspal.customUi.MyTextView;
-import com.tanzil.sportspal.model.bean.Players;
-import com.tanzil.sportspal.model.bean.Sports;
 import com.tanzil.sportspal.model.bean.Users;
 
 import java.util.ArrayList;
@@ -86,6 +84,7 @@ public class MembersListAdapter extends BaseAdapter {
             viewHolder.userPic.addShadow();
 
         } catch (Exception ex) {
+            ex.printStackTrace();
         }
 
         return v;
@@ -100,7 +99,7 @@ public class MembersListAdapter extends BaseAdapter {
             userNameText = (MyTextView) convertview
                     .findViewById(R.id.txt_user_name);
             userPic = (CircularImageView) convertview
-                    .findViewById(R.id.img_profile);
+                    .findViewById(R.id.img_user_pic);
             sportsType = (ImageView) convertview
                     .findViewById(R.id.img_sport_type);
         }
