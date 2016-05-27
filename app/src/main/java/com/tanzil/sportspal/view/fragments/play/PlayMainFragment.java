@@ -42,6 +42,7 @@ public class PlayMainFragment extends Fragment implements View.OnClickListener {
         View rootView = inflater.inflate(R.layout.fragment_play, container, false);
 
         img_right = (ImageView) activity.findViewById(R.id.img_right);
+        img_right.setImageResource(R.drawable.search);
         img_right.setVisibility(View.VISIBLE);
 
         fragmentManager = ((FragmentActivity) activity).getSupportFragmentManager();

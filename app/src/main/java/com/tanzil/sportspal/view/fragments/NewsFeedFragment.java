@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.tanzil.sportspal.R;
@@ -45,6 +46,9 @@ public class NewsFeedFragment extends Fragment {
 
 
         newsFeedListView = (ListView) rootView.findViewById(R.id.news_feed_list);
+        ImageView imageView = (ImageView) activity.findViewById(R.id.img_right);
+        imageView.setImageResource(R.drawable.notification);
+        imageView.setVisibility(View.VISIBLE);
 
         newsFeedUrls = new ArrayList<>();
         newsFeedUrls.add("http://economictimes.indiatimes.com/slideshows/biz-entrepreneurship/six-lessons-that-patanjali-teaches-indias-fmcg-sector/6-lessons-that-patanjali-teaches-indias-fmcg-sector/slideshow/51874418.cms");
@@ -72,6 +76,18 @@ public class NewsFeedFragment extends Fragment {
                 fragmentTransaction.addToBackStack("BrowserLinkFragment");
                 fragmentTransaction.commit();
 
+            }
+        });
+
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment fragment = new NotificationsFragment();
+                FragmentManager fragmentManager = ((FragmentActivity) activity).getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.container_body, fragment, "NotificationsFragment");
+                fragmentTransaction.addToBackStack("NotificationsFragment");
+                fragmentTransaction.commit();
             }
         });
 

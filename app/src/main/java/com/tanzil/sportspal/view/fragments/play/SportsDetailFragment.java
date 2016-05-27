@@ -64,7 +64,7 @@ public class SportsDetailFragment extends Fragment {
         }
 
         img_right = (ImageView) activity.findViewById(R.id.img_right);
-        img_right.setVisibility(View.GONE);
+        img_right.setVisibility(View.INVISIBLE);
 
         memberList = (ListView) rootView.findViewById(R.id.memberList);
         setHeader();

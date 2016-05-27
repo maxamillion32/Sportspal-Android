@@ -24,6 +24,7 @@ import com.tanzil.sportspal.R;
 import com.tanzil.sportspal.Utility.Utils;
 import com.tanzil.sportspal.customUi.MyButton;
 import com.tanzil.sportspal.customUi.MyEditText;
+import com.tanzil.sportspal.customUi.MyTextView;
 import com.tanzil.sportspal.model.ModelManager;
 import com.tanzil.sportspal.model.bean.Users;
 
@@ -42,10 +43,11 @@ import de.greenrobot.event.EventBus;
 public class SettingsFragment extends Fragment implements View.OnClickListener {
     private String TAG = SettingsFragment.class.getSimpleName();
     private Activity activity;
-    private MyEditText et_email, et_firstName, et_lastName, et_dob, et_description;
+    private MyEditText et_email, et_firstName, et_lastName, et_dob;
+    private MyTextView et_description;
     private MyButton btn_preferences, btn_location;
     private Calendar myCalendar;
-    private ImageView img_update, img_user_pic;
+    private ImageView /*img_update*/img_right, img_user_pic;
     private ArrayList<Users> usersArrayList;
     private String base64ImageData = "", gender = "";
 
@@ -58,8 +60,9 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
         View rootView = inflater.inflate(R.layout.fragment_settings, container, false);
 
-        ImageView imageView = (ImageView) activity.findViewById(R.id.img_right);
-        imageView.setVisibility(View.GONE);
+        ImageView img_right = (ImageView) activity.findViewById(R.id.img_right);
+        img_right.setImageResource(R.drawable.check);
+        img_right.setVisibility(View.VISIBLE);
 
         myCalendar = Calendar.getInstance();
 
@@ -67,12 +70,12 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         et_firstName = (MyEditText) rootView.findViewById(R.id.et_first_name);
         et_lastName = (MyEditText) rootView.findViewById(R.id.et_last_name);
         et_dob = (MyEditText) rootView.findViewById(R.id.et_dob);
-        et_description = (MyEditText) rootView.findViewById(R.id.et_description);
+        et_description = (MyTextView) rootView.findViewById(R.id.et_description);
 
         btn_preferences = (MyButton) rootView.findViewById(R.id.btn_preferences);
         btn_location = (MyButton) rootView.findViewById(R.id.btn_location);
 
-        img_update = (ImageView) rootView.findViewById(R.id.img_add);
+//        img_update = (ImageView) rootView.findViewById(R.id.img_add);
         img_user_pic = (ImageView) rootView.findViewById(R.id.img_user_pic);
 
         btn_location.setTransformationMethod(null);
@@ -80,7 +83,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
         btn_preferences.setOnClickListener(this);
         btn_location.setOnClickListener(this);
-        img_update.setOnClickListener(this);
+//        img_update.setOnClickListener(this);
+        img_right.setOnClickListener(this);
         img_user_pic.setOnClickListener(this);
 
         usersArrayList = ModelManager.getInstance().getUsersManager().getMyDetails(false);
@@ -107,14 +111,32 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                 et_dob.setText(usersArrayList.get(i).getDob());
                 btn_location.setText(usersArrayList.get(i).getAddress());
 
+                if (!Utils.isEmptyString(usersArrayList.get(i).getBio())) {
+                    et_description.setText(usersArrayList.get(i).getBio());
+                    et_description.setVisibility(View.VISIBLE);
+                } else
+                    et_description.setVisibility(View.GONE);
+
+
                 gender = usersArrayList.get(i).getGender();
+
+                int img = R.drawable.default_male;
+                if (!Utils.isEmptyString(gender))
+                    if (gender.equalsIgnoreCase("Female"))
+                        img = R.drawable.default_female;
+                    else
+                        img = R.drawable.default_male;
 
                 if (!Utils.isEmptyString(usersArrayList.get(i).getImage()))
                     Picasso.with(activity)
                             .load(usersArrayList.get(i).getImage())
-                            .placeholder(R.drawable.customer_img)
-                            .error(R.drawable.customer_img)
+                            .placeholder(img)
+                            .error(img)
                             .into(img_user_pic);
+                else {
+                    img_user_pic.setImageResource(img);
+                    img_user_pic.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                }
 //                    }
 //                }
             }
@@ -124,21 +146,21 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.img_add:
+            case R.id.img_right:
                 if (et_firstName.getText().toString().trim().length() == 0) {
                     et_firstName.requestFocus();
                     Toast.makeText(activity, "Please enter first name field", Toast.LENGTH_SHORT).show();
                 } else if (et_lastName.getText().toString().trim().length() == 0) {
                     et_lastName.requestFocus();
                     Toast.makeText(activity, "Please enter last name field", Toast.LENGTH_SHORT).show();
-                } else if (et_description.getText().toString().trim().length() == 0) {
-                    et_description.requestFocus();
-                    Toast.makeText(activity, "Please enter description", Toast.LENGTH_SHORT).show();
+//                } else if (et_description.getText().toString().trim().length() == 0) {
+//                    et_description.requestFocus();
+//                    Toast.makeText(activity, "Please enter description", Toast.LENGTH_SHORT).show();
                 } else {
                     JSONObject jsonObject = new JSONObject();
                     try {
                         jsonObject.put("first_name", et_firstName.getText().toString().trim());
-                        jsonObject.put("last_name", et_firstName.getText().toString().trim());
+                        jsonObject.put("last_name", et_lastName.getText().toString().trim());
                         jsonObject.put("dob", et_dob.getText().toString().trim());
                         jsonObject.put("gender", gender);
                         jsonObject.put("bio", et_description.getText().toString().trim());
@@ -234,6 +256,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     public void onStop() {
         super.onStop();
         //gpDatabase.setConversation(chatManager.getConversations());
+        img_right.setVisibility(View.INVISIBLE);
         EventBus.getDefault().unregister(this);
     }
 

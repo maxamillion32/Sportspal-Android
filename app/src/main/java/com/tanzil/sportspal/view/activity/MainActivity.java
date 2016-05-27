@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 textName[1] = "";
             }
             int pos = Integer.parseInt(textName[0]);
-            setBackground(pos - 1);
+            setBackground(pos);
             tvTitle.setText(textName[1]);
             Log.d("receiver", "Got message: " + message);
         }
@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     }
 
     private void setBackground(int position) {
-        if (position == 0) {
+        if (position == 1) {
             img_newsFeed.setImageResource(R.drawable.newsfeed);
             img_play.setImageResource(R.drawable.play);
             img_addSports.setImageResource(R.drawable.add);
@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 txt_chat.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.white));
                 txt_profile.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.white));
             }
-        } else if (position == 1) {
+        } else if (position == 2) {
             img_newsFeed.setImageResource(R.drawable.newsfeed);
             img_play.setImageResource(R.drawable.play);
             img_addSports.setImageResource(R.drawable.add);
@@ -191,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 txt_chat.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.white));
                 txt_profile.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.white));
             }
-        } else if (position == 2) {
+        } else if (position == 3) {
             img_newsFeed.setImageResource(R.drawable.newsfeed);
             img_play.setImageResource(R.drawable.play);
             img_addSports.setImageResource(R.drawable.add);
@@ -211,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 txt_chat.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.white));
                 txt_profile.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.white));
             }
-        } else if (position == 3) {
+        } else if (position == 4) {
             img_newsFeed.setImageResource(R.drawable.newsfeed);
             img_play.setImageResource(R.drawable.play);
             img_addSports.setImageResource(R.drawable.add);
@@ -231,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 txt_news.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.white));
                 txt_profile.setTextColor(ContextCompat.getColor(MainActivity.this, R.color.white));
             }
-        } else if (position == 4) {
+        } else if (position == 5) {
             img_newsFeed.setImageResource(R.drawable.newsfeed);
             img_play.setImageResource(R.drawable.play);
             img_addSports.setImageResource(R.drawable.add);
