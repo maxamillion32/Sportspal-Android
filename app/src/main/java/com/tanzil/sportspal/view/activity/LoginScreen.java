@@ -131,7 +131,7 @@ public class LoginScreen extends Activity implements View.OnClickListener {
                         post_data.put("email", et_Email.getText().toString().trim());
                         post_data.put("password", et_Password.getText().toString().trim());
                         post_data.put("device_type", "Android");
-                        post_data.put("device_token", /*authManager.getDeviceToken()*/"");
+                        post_data.put("device_token", authManager.getDeviceToken());
                         SPLog.e(TAG, "LoginData" + post_data.toString());
 
                     } catch (Exception e1) {
@@ -171,6 +171,8 @@ public class LoginScreen extends Activity implements View.OnClickListener {
             SPLog.e(TAG, "Login True");
             SPLog.e("user id : ", Preferences.readString(getApplicationContext(), Preferences.USER_ID, ""));
             authManager.setUserId(Preferences.readString(getApplicationContext(), Preferences.USER_ID, ""));
+            authManager.setUserToken(Preferences.readString(getApplicationContext(), Preferences.USER_TOKEN, ""));
+            authManager.setEmail(Preferences.readString(getApplicationContext(), Preferences.EMAIL, ""));
             Intent intent = new Intent(activity, MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);

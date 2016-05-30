@@ -46,15 +46,16 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
 
     private String TAG = SignUpScreen.class.getSimpleName();
     private Activity activity = SignUpScreen.this;
-    private ImageView img_back;
+    private ImageView img_back, img_male, img_female;
     private MyButton signUpBtn;
-    private MyEditText et_Email, et_Password, et_ConfirmPassword, et_Name, et_LastName, et_DOB, et_Gender;
+    private MyEditText et_Email, et_Password, et_ConfirmPassword, et_Name, et_LastName, et_DOB/*, et_Gender*/;
     private Calendar myCalendar;
     private AuthManager authManager;
     private double lat = 0.000, lng = 0.000;
     private GPSTracker gps;
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private BroadcastReceiver mRegistrationBroadcastReceiver;
+    private String gender = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +101,8 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
 
         signUpBtn = (MyButton) findViewById(R.id.sign_up_btn);
         img_back = (ImageView) findViewById(R.id.img_back);
+        img_male = (ImageView) findViewById(R.id.img_male);
+        img_female = (ImageView) findViewById(R.id.img_female);
 
         et_Email = (MyEditText) findViewById(R.id.et_email);
         et_Password = (MyEditText) findViewById(R.id.et_password);
@@ -107,7 +110,7 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
         et_ConfirmPassword = (MyEditText) findViewById(R.id.et_confirm_password);
         et_LastName = (MyEditText) findViewById(R.id.et_last_name);
         et_DOB = (MyEditText) findViewById(R.id.et_dob);
-        et_Gender = (MyEditText) findViewById(R.id.et_sex);
+//        et_Gender = (MyEditText) findViewById(R.id.et_sex);
 
         myCalendar = Calendar.getInstance();
 
@@ -122,6 +125,8 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
         signUpBtn.setOnClickListener(this);
         img_back.setOnClickListener(this);
         et_DOB.setOnClickListener(this);
+        img_male.setOnClickListener(this);
+        img_female.setOnClickListener(this);
 
         setFacebookData();
     }
@@ -131,7 +136,7 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
         try {
             String email = getIntent().getExtras().getString("email");
             String name = getIntent().getExtras().getString("name");
-            String gender = getIntent().getExtras().getString("gender");
+            gender = getIntent().getExtras().getString("gender");
             String birthday = getIntent().getExtras().getString("birthday");
 
             et_Email.setText(email);
@@ -141,7 +146,17 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
                 et_LastName.setText(nameArr[nameArr.length - 1]);
             } else
                 et_Name.setText(name);
-            et_Gender.setText(gender);
+            if (!Utils.isEmptyString(gender))
+                if (gender.equalsIgnoreCase("Female")) {
+                    img_female.setImageResource(R.drawable.selected_female);
+                    img_male.setImageResource(R.drawable.unselected_male);
+                } else {
+                    img_female.setImageResource(R.drawable.unselected_female);
+                    img_male.setImageResource(R.drawable.selected_male);
+                }
+            else
+                gender = "Male";
+//            et_Gender.setText(gender);
             et_DOB.setText(birthday);
         } catch (Exception e) {
             e.printStackTrace();
@@ -254,8 +269,7 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
                 } else if (et_DOB.getText().toString().trim().length() == 0) {
                     et_DOB.requestFocus();
                     Toast.makeText(getBaseContext(), getString(R.string.please_enter_dob), Toast.LENGTH_SHORT).show();
-                } else if (et_Gender.getText().toString().trim().length() == 0) {
-                    et_Gender.requestFocus();
+                } else if (gender.length() == 0) {
                     Toast.makeText(getBaseContext(), getString(R.string.please_enter_sex), Toast.LENGTH_SHORT).show();
                 } else {
                     Utils.showLoading(activity, getString(R.string.please_wait));
@@ -267,7 +281,7 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
                         post_data.put("first_name", et_Name.getText().toString().trim());
                         post_data.put("last_name", et_LastName.getText().toString().trim());
                         post_data.put("dob", et_DOB.getText().toString().trim());
-                        post_data.put("gender", et_Gender.getText().toString().trim());
+                        post_data.put("gender", gender);
                         post_data.put("latitude", lat);
                         post_data.put("longitude", lng);
                         post_data.put("device_type", "Android");
@@ -287,6 +301,18 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
                 new DatePickerDialog(SignUpScreen.this, date, myCalendar
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                break;
+
+            case R.id.img_male:
+                gender = "Male";
+                img_female.setImageResource(R.drawable.unselected_female);
+                img_male.setImageResource(R.drawable.selected_male);
+                break;
+
+            case R.id.img_female:
+                gender = "Female";
+                img_female.setImageResource(R.drawable.selected_female);
+                img_male.setImageResource(R.drawable.unselected_male);
                 break;
         }
     }
@@ -308,6 +334,9 @@ public class SignUpScreen extends Activity implements View.OnClickListener {
         if (message.equalsIgnoreCase("Register True")) {
             Utils.dismissLoading();
             Preferences.writeString(activity, Preferences.EMAIL, et_Email.getText().toString());
+            authManager.setUserId(Preferences.readString(getApplicationContext(), Preferences.USER_ID, ""));
+            authManager.setUserToken(Preferences.readString(getApplicationContext(), Preferences.USER_TOKEN, ""));
+            authManager.setEmail(Preferences.readString(getApplicationContext(), Preferences.EMAIL, ""));
             SPLog.e(TAG, "Register True");
             startActivity(new Intent(activity, LoginScreen.class));
             finish();

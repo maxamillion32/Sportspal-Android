@@ -83,8 +83,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:contentDescription="@string/app_name"
-            android:layout_marginRight="5dp"
-            android:layout_marginEnd="5dp"
+            android:padding="5dp"
             android:src="@drawable/team" />
 
         <com.tanzil.sportspal.customUi.MyTextView

@@ -24,6 +24,7 @@ import com.tanzil.sportspal.Utility.Preferences;
 import com.tanzil.sportspal.Utility.SPLog;
 import com.tanzil.sportspal.Utility.Utils;
 import com.tanzil.sportspal.customUi.MyButton;
+import com.tanzil.sportspal.model.AuthManager;
 import com.tanzil.sportspal.model.ModelManager;
 
 import org.json.JSONException;
@@ -60,6 +61,11 @@ public class SplashScreen extends Activity implements View.OnClickListener {
         // set User Id to model
         ModelManager.getInstance().getAuthManager().setUserId(Preferences.readString(SplashScreen.this, Preferences.USER_ID, ""));
 
+        AuthManager authManager = ModelManager.getInstance().getAuthManager();
+        authManager.setUserToken(Preferences.readString(getApplicationContext(), Preferences.USER_TOKEN, ""));
+        authManager.setDeviceToken(Preferences.readString(getApplicationContext(), Preferences.DEVICE_ID, ""));
+        authManager.setEmail(Preferences.readString(getApplicationContext(), Preferences.EMAIL, ""));
+
         if (Utils.isConnectingToInternet(SplashScreen.this)) {
             /** Starts new activity */
             if (Preferences.readBoolean(SplashScreen.this, Preferences.LOGIN, false)) {
@@ -82,10 +88,8 @@ public class SplashScreen extends Activity implements View.OnClickListener {
                 md.update(signature.toByteArray());
                 Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
             }
-        } catch (PackageManager.NameNotFoundException e) {
-
-        } catch (NoSuchAlgorithmException e) {
-
+        } catch (PackageManager.NameNotFoundException | NoSuchAlgorithmException e) {
+            e.printStackTrace();
         }
 
 

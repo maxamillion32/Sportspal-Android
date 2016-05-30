@@ -6,6 +6,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.tanzil.sportspal.Utility.ServiceApi;
 import com.tanzil.sportspal.httprequest.SPRestClient;
 import com.tanzil.sportspal.model.bean.Teams;
+import com.tanzil.sportspal.model.bean.Users;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -88,16 +89,18 @@ public class TeamsManager {
                                 teams.setLatitude(jsonArray.getJSONObject(i).getString("latitude"));
                                 teams.setLongitude(jsonArray.getJSONObject(i).getString("longitude"));
                                 if (jsonArray.getJSONObject(i).has("sport"))
-                                    teams.setSports_name(jsonArray.getJSONObject(i).getJSONObject("sport").getString("name"));
-//                                if (jsonArray.getJSONObject(i).has("user")){
-//                                    ArrayList<Users> usersArrayList = new ArrayList<Users>();
-//                                    Users users = new Users();
-//                                    users.setFirst_name(jsonArray.getJSONObject(i).getJSONObject("user").getString("first_name"));
-//                                    users.setLast_name(jsonArray.getJSONObject(i).getJSONObject("user").getString("last_name"));
-//                                    users.setEmail(jsonArray.getJSONObject(i).getJSONObject("user").getString("email"));
-//                                    usersArrayList.add(users);
-//                                    teams.setUsersList(usersArrayList);
-//                                }
+                                    if (!jsonArray.getJSONObject(i).isNull("sport"))
+                                        teams.setSports_name(jsonArray.getJSONObject(i).getJSONObject("sport").getString("name"));
+                                if (jsonArray.getJSONObject(i).has("user"))
+                                    if (!jsonArray.getJSONObject(i).isNull("user")) {
+                                        ArrayList<Users> usersArrayList = new ArrayList<Users>();
+                                        Users users = new Users();
+                                        users.setFirst_name(jsonArray.getJSONObject(i).getJSONObject("user").getString("first_name"));
+                                        users.setLast_name(jsonArray.getJSONObject(i).getJSONObject("user").getString("last_name"));
+                                        users.setEmail(jsonArray.getJSONObject(i).getJSONObject("user").getString("email"));
+                                        usersArrayList.add(users);
+                                        teams.setUsersList(usersArrayList);
+                                    }
 
                                 teamsList.add(teams);
                             }
@@ -106,6 +109,7 @@ public class TeamsManager {
                         EventBus.getDefault().post("GetAllTeams False");
                     }
                 } catch (JSONException e) {
+                    e.printStackTrace();
                     EventBus.getDefault().post("GetAllTeams False");
                 }
 

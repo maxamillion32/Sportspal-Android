@@ -6,6 +6,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.SyncHttpClient;
 import com.tanzil.sportspal.Utility.SPLog;
+import com.tanzil.sportspal.model.ModelManager;
 
 import java.net.SocketTimeoutException;
 
@@ -59,7 +60,8 @@ public class SPRestClient {
             se = null;
             se = new StringEntity(post_data);
             se.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-//            getClient().addHeader("Content-Type", "application/json");
+            getClient().addHeader("username", ModelManager.getInstance().getAuthManager().getEmail());
+            getClient().addHeader("user_token", ModelManager.getInstance().getAuthManager().getUserToken());
             getClient().post(null, url, se, "application/json", responseHandler);
         } catch (Exception e1) {
             e1.printStackTrace();
@@ -87,6 +89,8 @@ public class SPRestClient {
             SPLog.e(TAG, "POST-URL---> " + url + " <-> POST-DATA---> " + post_data);
             se = null;
             se = new StringEntity(post_data);
+            getClient().addHeader("username", ModelManager.getInstance().getAuthManager().getEmail());
+            getClient().addHeader("user_token", ModelManager.getInstance().getAuthManager().getUserToken());
             getClient().put(null, url, se, "application/json", responseHandler);
         } catch (Exception e1) {
             e1.printStackTrace();
@@ -95,6 +99,8 @@ public class SPRestClient {
     }
 
     public static void delete(String url, String post_data, AsyncHttpResponseHandler responseHandler) {
+        getClient().addHeader("username", ModelManager.getInstance().getAuthManager().getEmail());
+        getClient().addHeader("user_token", ModelManager.getInstance().getAuthManager().getUserToken());
         getClient().delete(url, responseHandler);
     }
 }

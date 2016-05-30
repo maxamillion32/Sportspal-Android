@@ -67,7 +67,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
     private String TAG = AddGameFragment.class.getSimpleName();
     private Activity activity;
     private ImageView addGame, img_sports, img_team, ic_sport;
-    private MyTextView game_sportsName, game_teamName, textMember,txt_Date, txt_Time, txt_teamType, txt_Address, game_sports, add_team_member, teamN, teamT;
+    private MyTextView game_sportsName, game_teamName, textMember,txt_Date, txt_Time, txt_teamType, txt_Address, game_sports, add_team_member, teamT;
     //    private AutoCompleteTextView txt_Address;
     private Calendar myCalendar;
     //    private LinearLayout upperLayout;
@@ -76,7 +76,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
     private ListView membersList, teamMemberList;
     private View headerView, footerView;
 
-    private MyEditText teamName, et_search /*corporateGroup, privateText*/;
+    private MyEditText teamName, et_search, teamN /*corporateGroup, privateText*/;
     private MyTextView teamSport, txt_Type;
     private ArrayList<Teams> teamsArrayList;
     private ArrayList<Sports> sportsArrayList;
@@ -126,7 +126,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         game_sports = (MyTextView) rootView.findViewById(R.id.txt_sports);
         game_teamName = (MyTextView) rootView.findViewById(R.id.txt_team_name);
         txt_teamType = (MyTextView) rootView.findViewById(R.id.txt_team_type);
-        teamN = (MyTextView) rootView.findViewById(R.id.team_name);
+        teamN = (MyEditText) rootView.findViewById(R.id.team_name);
         teamT = (MyTextView) rootView.findViewById(R.id.team_type);
 
         txt_Date = (MyTextView) rootView.findViewById(R.id.txt_date);
@@ -394,10 +394,10 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                if (isGame)
+//                if (isGame)
                     game_teamName.setText(teamsArrayList.get(position).getTeam_name());
-                else
-                    teamN.setText(teamsArrayList.get(position).getTeam_name());
+//                else
+//                    teamN.setText(teamsArrayList.get(position).getTeam_name());
                 teamId = teamsArrayList.get(position).getId();
                 teamDialog.dismiss();
             }
@@ -561,6 +561,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
 
         ListView listView = (ListView) teamDialog.findViewById(R.id.items_list);
 
+        teamsType = new ArrayList<String>();
         teamsType.add("Individual");
         teamsType.add("Team");
         teamTypeDialogAdapter = new TeamTypeDialogAdapter(activity,
@@ -677,9 +678,9 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
                 showTeamDialog(true);
                 break;
 
-            case R.id.team_name:
-                showTeamDialog(false);
-                break;
+//            case R.id.team_name:
+//                showTeamDialog(false);
+//                break;
 
 
             case R.id.add_team_member:
@@ -768,8 +769,12 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
 
                     JSONArray jsonArray = new JSONArray();
 
-                    for (int i = 0; i < arrayTeam.size(); i++) {
-                        jsonArray.put(arrayTeam.get(i).getId());
+//                    for (int i = 0; i < arrayTeam.size(); i++) {
+//                        jsonArray.put(arrayTeam.get(i).getId());
+//
+//                    }
+                    for (int i = 0; i < selectedPlayers.size(); i++) {
+                        jsonArray.put(selectedPlayers.get(i).getId());
 
                     }
                     jsonObject.put("team_members", jsonArray);
