@@ -156,15 +156,15 @@ public class PlayersFragment extends Fragment {
     public void onStop() {
         super.onStop();
         //gpDatabase.setConversation(chatManager.getConversations());
-        header_layout.setVisibility(View.GONE);
         search_layout.setVisibility(View.GONE);
+        img_right.setVisibility(View.INVISIBLE);
         EventBus.getDefault().unregister(this);
     }
 
     @Override
     public void onDestroy() {
-        header_layout.setVisibility(View.GONE);
         search_layout.setVisibility(View.GONE);
+        img_right.setVisibility(View.INVISIBLE);
         super.onDestroy();
     }
 

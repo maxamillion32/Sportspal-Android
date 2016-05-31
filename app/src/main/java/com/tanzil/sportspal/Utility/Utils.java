@@ -7,12 +7,17 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.drawable.AnimationDrawable;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Base64;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -22,6 +27,7 @@ import android.widget.Toast;
 
 import com.tanzil.sportspal.R;
 
+import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -34,14 +40,16 @@ public class Utils {
 
     private static Date now;
     private static ProgressDialog progressDialog;
-//    private static GoogleCloudMessaging gcm;
+    //    private static GoogleCloudMessaging gcm;
 //    private static String regid;
-    public static final String[] INITIAL_PERMS={
+    public static final String[] INITIAL_PERMS = {
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.READ_CONTACTS
     };
-    public static final int INITIAL_REQUEST=1337;
-    public static final int LOCATION_REQUEST=INITIAL_REQUEST+3;
+    public static final int INITIAL_REQUEST = 1337;
+    public static final int LOCATION_REQUEST = INITIAL_REQUEST + 3;
+    public static final int REQUEST_CAMERA = 200;
+    public static final int SELECT_FILE = 201;
 
 
     public static void showLoading(Activity act, String msg) {
@@ -95,6 +103,25 @@ public class Utils {
             public void onAnimationRepeat(Animation animation) {
             }
         });
+    }
+
+    public static Bitmap scaleBitmap(Bitmap bitmap, int wantedWidth, int wantedHeight) {
+        Bitmap output = Bitmap.createBitmap(wantedWidth, wantedHeight, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+        Matrix m = new Matrix();
+        m.setScale((float) wantedWidth / bitmap.getWidth(), (float) wantedHeight / bitmap.getHeight());
+        canvas.drawBitmap(bitmap, m, new Paint());
+        return output;
+    }
+
+    public static String encodeTobase64(Bitmap image) {
+        Bitmap immagex = image;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        immagex.compress(Bitmap.CompressFormat.JPEG, 60, baos);
+        byte[] b = baos.toByteArray();
+        String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
+        SPLog.e("LOOK--->imageEncoded", imageEncoded);
+        return imageEncoded;
     }
 
     public static void setHeader(Activity activity, String header) {

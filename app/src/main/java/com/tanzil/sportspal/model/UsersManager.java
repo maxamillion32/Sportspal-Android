@@ -175,13 +175,14 @@ public class UsersManager {
 
         });
     }
+
     public ArrayList<Users> getMyDetails(boolean shouldRefresh) {
         if (shouldRefresh)
             getDetails();
         return selfInfoList;
     }
 
-    public ArrayList<Users> getDetails(){
+    public ArrayList<Users> getDetails() {
         SPRestClient.get(ServiceApi.GET_USER_DETAILS + "/" + ModelManager.getInstance().getAuthManager().getUserId(), null, new JsonHttpResponseHandler() {
             @Override
             public void onStart() {
@@ -221,6 +222,7 @@ public class UsersManager {
                                 users.setSocial_id(jsonObject.getString("social_id"));
                                 users.setLatitude(jsonObject.getString("latitude"));
                                 users.setLongitude(jsonObject.getString("longitude"));
+                                users.setAddress(jsonObject.getString("address"));
 
                                 if (jsonObject.has("sports_preferences")) {
                                     JSONArray jsonArray1 = jsonObject.getJSONArray("sports_preferences");
@@ -466,6 +468,76 @@ public class UsersManager {
                     EventBus.getDefault().post("GetSearchUsers False");
                 } else {
                     EventBus.getDefault().post("GetSearchUsers Network Error");
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+                Log.e(TAG, "onFinish  --> ");
+            }
+
+            @Override
+            public void onRetry(int retryNo) {
+                // called when request is retried
+                Log.e(TAG, "onRetry  --> ");
+            }
+
+        });
+    }
+
+    public void updateProfile(JSONObject jsonObject) {
+        SPRestClient.post(ServiceApi.GET_USER_DETAILS + "/" + ModelManager.getInstance().getAuthManager().getUserId(), jsonObject.toString(), new JsonHttpResponseHandler() {
+            @Override
+            public void onStart() {
+                Log.e(TAG, "UpdateProfile called before request is started");
+            }
+
+            @Override
+            public void onCancel() {
+                super.onCancel();
+                Log.e(TAG, "onCancel  --> ");
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+                Log.e(TAG, "onSuccess  --> " + response.toString());
+
+                try {
+                    int state = response.getInt("status");
+                    if (state == 200) {
+                        EventBus.getDefault().post("UpdateProfile True");
+                    } else {
+                        EventBus.getDefault().post("UpdateProfile False");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    EventBus.getDefault().post("UpdateProfile False");
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+                if (errorResponse != null) {
+                    Log.e(TAG, "onFailure  --> " + errorResponse.toString());
+                    EventBus.getDefault().post("UpdateProfile False");
+                } else {
+                    EventBus.getDefault().post("UpdateProfile Network Error");
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                super.onFailure(statusCode, headers, responseString, throwable);
+                if (responseString != null) {
+                    Log.e(TAG, "onFailure  --> " + responseString.toString());
+                    EventBus.getDefault().post("UpdateProfile False");
+                } else {
+                    EventBus.getDefault().post("UpdateProfile Network Error");
                 }
             }
 

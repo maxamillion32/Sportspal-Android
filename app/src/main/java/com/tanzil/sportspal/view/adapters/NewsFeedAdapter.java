@@ -69,18 +69,6 @@ public class NewsFeedAdapter extends BaseAdapter {
 
             viewHolder.descriptionText.setText(list.get(position));
             viewHolder.userPic.setImageResource(images[position]);
-//            viewHolder.dayText.setText("NA");
-
-//            if (android.os.Build.VERSION.SDK_INT < 23) {
-//                viewHolder.userPic.setBorderColor(activity.getResources().getColor(R.color.white));
-//                viewHolder.userPic.setSelectorColor(activity.getResources().getColor(R.color.circular_image_border_color));
-//            } else {
-//                viewHolder.userPic.setBorderColor(ContextCompat.getColor(activity, R.color.white));
-//                viewHolder.userPic.setSelectorStrokeColor(ContextCompat.getColor(activity, R.color.circular_image_border_color));
-//            }
-//            viewHolder.userPic.setBorderWidth(5);
-//            viewHolder.userPic.setSelectorStrokeWidth(5);
-//            viewHolder.userPic.addShadow();
 
         } catch (Exception ex) {
         }
@@ -89,19 +77,12 @@ public class NewsFeedAdapter extends BaseAdapter {
     }
 
     class CompleteListViewHolder {
-        public MyTextView descriptionText/*, dayText, timeText*/;
-        //        public CircularImageView userPic;
+        public MyTextView descriptionText;
         public ImageView userPic;
 
         public CompleteListViewHolder(View convertview) {
             descriptionText = (MyTextView) convertview
                     .findViewById(R.id.description_text);
-//            dayText = (MyTextView) convertview
-//                    .findViewById(R.id.day_text);
-//            timeText = (MyTextView) convertview
-//                    .findViewById(R.id.time_text);
-//            userPic = (CircularImageView) convertview
-//                    .findViewById(R.id.img_profile);
             userPic = (ImageView) convertview
                     .findViewById(R.id.img_profile);
         }

@@ -27,15 +27,31 @@ public class PreferenceAdapter<T> extends BaseAdapter {
     private Context mContext;
     private LayoutInflater mInflater;
     private ArrayList<Sports> mList;
+    private ArrayList<Sports> userPreferredSports;
     private SparseBooleanArray mSparseBooleanArray;
 
-    public PreferenceAdapter(Activity context, ArrayList<Sports> list) {
+    public PreferenceAdapter(Activity context, ArrayList<Sports> list,
+                             ArrayList<Sports> userPreferredSports) {
         // TODO Auto-generated constructor stub
         this.mContext = context;
         mInflater = LayoutInflater.from(mContext);
         mSparseBooleanArray = new SparseBooleanArray();
         mList = new ArrayList<Sports>();
+        this.userPreferredSports = userPreferredSports;
         this.mList = list;
+
+        if (userPreferredSports.size() > 0)
+            for (int i = 0; i < mList.size(); i++) {
+                boolean flag = false;
+                for (int j = 0; j < userPreferredSports.size(); j++)
+                    if (mList.get(i).getId().equalsIgnoreCase(userPreferredSports.get(j).getId())) {
+                        flag = true;
+                        break;
+                    }
+                mSparseBooleanArray.put(i, flag);
+            }
+
+
     }
 
 

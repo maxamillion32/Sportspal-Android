@@ -92,7 +92,7 @@ public class PreferencesActivity extends Activity {
     private void setData() {
         if (sportsArrayList.size() > 0) {
 
-            adapter = new PreferenceAdapter<Sports>(activity, sportsArrayList);
+            adapter = new PreferenceAdapter<Sports>(activity, sportsArrayList, new ArrayList<Sports>());
 
             preferenceList.setAdapter(adapter);
             preferenceList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);

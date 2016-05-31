@@ -24,12 +24,20 @@ public class Users {
     private ArrayList<Users> usersList;
     private final String TAG = UserPreferredSportsManager.class.getSimpleName();
 
-    String id, gender, dob, description, bio;
+    String id, gender, dob, description, bio, address;
     String first_name, last_name, email, image, social_platform, social_id, latitude, longitude;
 
     ArrayList<Sports> sports_preferences;
     ArrayList<Games> gamesArrayList;
     ArrayList<Teams> teamsArrayList;
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
     public String getBio() {
         return bio;

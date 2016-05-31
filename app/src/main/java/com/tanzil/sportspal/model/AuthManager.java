@@ -119,6 +119,8 @@ public class AuthManager {
                             users.setSocial_platform(response.getJSONObject("message").getString("social_platform"));
                             users.setLatitude(response.getJSONObject("message").getString("latitude"));
                             users.setLongitude(response.getJSONObject("message").getString("longitude"));
+                            setUserToken(response.getJSONObject("message").getString("usertoken"));
+                            Preferences.writeString(activity, Preferences.USER_TOKEN, response.getJSONObject("message").getString("usertoken"));
                             userInfo.add(users);
                             setUserInfo(userInfo);
                         }
@@ -165,7 +167,7 @@ public class AuthManager {
 
         SPLog.e(TAG, "RegisterData" + jsonObject.toString());
 
-        SPRestClient.post(ServiceApi.REGISTER, jsonObject.toString(), new JsonHttpResponseHandler() {
+        SPRestClient.loginPost(ServiceApi.REGISTER, jsonObject.toString(), new JsonHttpResponseHandler() {
             @Override
             public void onStart() {
                 Log.e(TAG, "called before request is started");
@@ -187,6 +189,8 @@ public class AuthManager {
                     if (state) {
                         Preferences.writeBoolean(activity, Preferences.REGISTRATION, true);
 
+                        Preferences.writeString(activity, Preferences.USER_ID, response.getJSONObject("message").getString("id"));
+                        Preferences.writeString(activity, Preferences.USER_ID, response.getJSONObject("message").getString("usertoken"));
                         EventBus.getDefault().postSticky("Register True");
                     } else {
                         EventBus.getDefault().postSticky("Register False@#@"+response.getString("message"));

@@ -50,7 +50,7 @@ public class TeamDetailFragment extends Fragment {
 
         Utils.setHeader(activity, "2-" + activity.getString(R.string.title_play));
 
-        View rootView = inflater.inflate(R.layout.fragment_game_details, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_team_details, container, false);
 
         try {
             if (getArguments() != null) {
@@ -63,9 +63,9 @@ public class TeamDetailFragment extends Fragment {
         }
 
         img_right = (ImageView) activity.findViewById(R.id.img_right);
-        img_right.setVisibility(View.GONE);
+        img_right.setVisibility(View.INVISIBLE);
 
-        memberList = (ListView) rootView.findViewById(R.id.memberList);
+        memberList = (ListView) rootView.findViewById(R.id.team_memberList);
 
         teamsArrayList = ModelManager.getInstance().getTeamsManager().getAllTeams(false);
         for (int i = 0; i < teamsArrayList.size(); i++) {

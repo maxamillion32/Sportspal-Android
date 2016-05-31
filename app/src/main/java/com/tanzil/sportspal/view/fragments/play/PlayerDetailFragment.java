@@ -59,7 +59,7 @@ public class PlayerDetailFragment extends Fragment implements View.OnClickListen
         }
 
         img_right = (ImageView) activity.findViewById(R.id.img_right);
-        img_right.setVisibility(View.GONE);
+        img_right.setVisibility(View.INVISIBLE);
 
         profilePic = (ImageView) rootView.findViewById(R.id.img_profile);
         img_challenge = (ImageView) rootView.findViewById(R.id.img_challenge);

@@ -44,6 +44,7 @@
     <string name="title_news">NEWS</string>
     <string name="title_settings">SETTINGS</string>
     <string name="title_logout">LOGOUT</string>
+    <string name="title_notifications">NOTIFICATIONS</string>
 
     <string name="search">Search</string>
 
@@ -56,6 +57,7 @@
     <string name="dob">DOB</string>
     <string name="gender">Gender</string>
     <string name="pick_location">Pick Location</string>
+    <string name="description">Description</string>
 
     <!-- Main Screen-->
     <string name="news">NEWS</string>

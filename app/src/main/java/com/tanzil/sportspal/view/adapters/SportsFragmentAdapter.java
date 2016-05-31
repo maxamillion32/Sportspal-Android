@@ -73,9 +73,9 @@ public class SportsFragmentAdapter extends BaseAdapter {
             viewHolder.dayText.setText(list.get(position).getDate());
             viewHolder.timeText.setText(list.get(position).getTime());
 
-
             viewHolder.img_team.setImageResource(DrawableImages.setImage(list.get(position).getSports_name()));
         } catch (Exception ex) {
+            ex.printStackTrace();
         }
 
         return v;

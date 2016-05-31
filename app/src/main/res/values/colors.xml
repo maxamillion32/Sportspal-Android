@@ -9,7 +9,7 @@
     <color name="bg">#212121</color>
     <color name="black">#000000</color>
     <color name="transparent_white">#11FFFFFF</color>
-    <color name="hint_color">#FFFFFF</color>
+    <color name="hint_color">#dedfd1</color>
     <color name="edit_text_color">#FFFFFF</color>
     <color name="dark_grey">#818181</color>
     <color name="bg_color">#dedfd1</color>

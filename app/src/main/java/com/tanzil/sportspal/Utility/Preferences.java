@@ -24,6 +24,7 @@ public class Preferences {
     public static final String PASSWORD = "password";
 
     public static final String DEVICE_ID = "device_id";
+    public static final String USER_TOKEN = "user_token";
 
     //  GpPreferences.writeString(getApplicationContext(), Preferences.NAME, "dev");
     // GpPreferences.readString(getApplicationContext(), Preferences.NAME, "");

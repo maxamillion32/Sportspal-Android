@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +39,8 @@ public class PreferencesFragment extends Fragment {
     //    private ArrayAdapter<String> adapter;
     private String[] /*sportsName, */sportsId;
     private PreferenceAdapter<Sports> adapter;
+    private String type = "";
+    private ArrayList<Sports> userPreferredSports;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,6 +58,15 @@ public class PreferencesFragment extends Fragment {
 
         preferenceList = (ListView) rootView.findViewById(R.id.preference_list);
 
+        try {
+            if (getArguments() != null) {
+                Bundle bundle = getArguments();
+                type = bundle.getString("type");
+            }
+
+        } catch (Exception ex) {
+            Log.e(TAG, ex.toString());
+        }
 
         img_submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,8 +118,10 @@ public class PreferencesFragment extends Fragment {
 
     private void setData() {
         if (sportsArrayList.size() > 0) {
-
-            adapter = new PreferenceAdapter<Sports>(activity, sportsArrayList);
+            userPreferredSports = ModelManager.getInstance().getUsersManager().getMyDetails(false).get(0).getSports_preferences();
+            if (userPreferredSports == null)
+                userPreferredSports = new ArrayList<Sports>();
+            adapter = new PreferenceAdapter<Sports>(activity, sportsArrayList, userPreferredSports);
 
             preferenceList.setAdapter(adapter);
             preferenceList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
