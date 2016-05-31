@@ -41,7 +41,6 @@ import com.tanzil.sportspal.model.bean.Address;
 import com.tanzil.sportspal.model.bean.Sports;
 import com.tanzil.sportspal.model.bean.Teams;
 import com.tanzil.sportspal.model.bean.Users;
-import com.tanzil.sportspal.view.activity.MainActivity;
 import com.tanzil.sportspal.view.adapters.MembersListAdapter;
 import com.tanzil.sportspal.view.adapters.SportsDialogAdapter;
 import com.tanzil.sportspal.view.adapters.TeamMembersAdapter;
@@ -628,12 +627,14 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
 
             case R.id.img_sports:
                 if (Build.VERSION.SDK_INT < 23) {
-                    img_sports.setBackgroundColor(activity.getResources().getColor(R.color.grey_text));
+                    img_sports.setBackgroundColor(activity.getResources().getColor(R.color.white));
                     img_team.setBackgroundColor(activity.getResources().getColor(R.color.transparent_white));
                 } else {
-                    img_sports.setBackgroundColor(ContextCompat.getColor(activity, R.color.grey_text));
+                    img_sports.setBackgroundColor(ContextCompat.getColor(activity, R.color.white));
                     img_team.setBackgroundColor(ContextCompat.getColor(activity, R.color.transparent_white));
                 }
+                img_team.setImageResource(R.drawable.team_pic);
+                img_sports.setImageResource(R.drawable.sports_black);
                 gameLayout.setVisibility(View.VISIBLE);
                 teamLayout.setVisibility(View.GONE);
                 type = "game";
@@ -642,26 +643,16 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
             case R.id.img_team:
                 if (Build.VERSION.SDK_INT < 23) {
                     img_sports.setBackgroundColor(activity.getResources().getColor(R.color.transparent_white));
-                    img_team.setBackgroundColor(activity.getResources().getColor(R.color.grey_text));
+                    img_team.setBackgroundColor(activity.getResources().getColor(R.color.white));
                 } else {
                     img_sports.setBackgroundColor(ContextCompat.getColor(activity, R.color.transparent_white));
-                    img_team.setBackgroundColor(ContextCompat.getColor(activity, R.color.grey_text));
+                    img_team.setBackgroundColor(ContextCompat.getColor(activity, R.color.white));
                 }
+                img_team.setImageResource(R.drawable.team_black);
+                img_sports.setImageResource(R.drawable.sports_pic);
                 gameLayout.setVisibility(View.GONE);
                 teamLayout.setVisibility(View.VISIBLE);
                 type = "team";
-                // teamsArrayList = ModelManager.getInstance().getTeamsManager().getAllTeams(false);
-//                if (teamsArrayList == null) {
-//                    Utils.showLoading(activity, activity.getString(R.string.please_wait));
-//                    ModelManager.getInstance().getTeamsManager().getAllTeams(true);
-//                } else {
-//                    playersArrayList = ModelManager.getInstance().getUsersManager().getNearUsers(false);
-//                    if (playersArrayList == null) {
-//                        Utils.showLoading(activity, activity.getString(R.string.please_wait));
-//                        ModelManager.getInstance().getUsersManager().getNearUsers(true);
-//                    } else
-//                        setData();
-//                }
 
                 break;
 

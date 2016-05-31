@@ -3,11 +3,13 @@ package com.tanzil.sportspal.view.adapters;
 /**
  * Created by Ravi on 29/07/15.
  */
+
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.tanzil.sportspal.R;
@@ -21,6 +23,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
     List<NavDrawerItem> data = Collections.emptyList();
     private LayoutInflater inflater;
     private Context context;
+    private int[] icons = {R.drawable.home, R.drawable.share, R.drawable.notifications, R.drawable.settings, R.drawable.logout};
 
     public NavigationDrawerAdapter(Context context, List<NavDrawerItem> data) {
         this.context = context;
@@ -44,6 +47,7 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
     public void onBindViewHolder(MyViewHolder holder, int position) {
         NavDrawerItem current = data.get(position);
         holder.title.setText(current.getTitle());
+        holder.icon.setImageResource(icons[position]);
     }
 
     @Override
@@ -53,10 +57,12 @@ public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDraw
 
     class MyViewHolder extends RecyclerView.ViewHolder {
         TextView title;
+        ImageView icon;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             title = (TextView) itemView.findViewById(R.id.title);
+            icon = (ImageView) itemView.findViewById(R.id.icon);
         }
     }
 }

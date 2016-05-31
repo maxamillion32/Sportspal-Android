@@ -22,6 +22,9 @@ import com.tanzil.sportspal.model.bean.Teams;
 import com.tanzil.sportspal.model.bean.Users;
 import com.tanzil.sportspal.view.adapters.MembersListAdapter;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 import de.greenrobot.event.EventBus;
@@ -33,7 +36,7 @@ public class TeamDetailFragment extends Fragment {
 
     private String TAG = PlayerDetailFragment.class.getSimpleName();
     private Activity activity;
-    private ImageView sportsPic, img_right;
+    private ImageView sportsPic, img_right, img_challenge;
     private MyTextView txt_sportName, txt_teamName, txt_team_type, txt_members, txt_memberSize;
     private MyButton btn_join;
     private ListView memberList;
@@ -97,15 +100,44 @@ public class TeamDetailFragment extends Fragment {
                 txt_members = (MyTextView) headerView.findViewById(R.id.txt_members);
                 txt_memberSize = (MyTextView) headerView.findViewById(R.id.txt_member_size);
 
+                img_challenge = (ImageView) headerView.findViewById(R.id.img_challenge);
+                ImageView img_chat = (ImageView) headerView.findViewById(R.id.img_chat);
+
 
                 btn_join = (MyButton) headerView.findViewById(R.id.join_btn);
                 btn_join.setTransformationMethod(null);
 
+                final String id = teamDetails.get(0).getId();
                 btn_join.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         //  accepting the invitation to join the game
-                        Toast.makeText(activity, "Coming soon! Stay in Touch.", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(activity, "Coming soon! Stay in Touch.", Toast.LENGTH_SHORT).show();
+                        JSONObject jsonObject = new JSONObject();
+                        try {
+                            jsonObject.put("team_id", id);
+                            jsonObject.put("user_id", ModelManager.getInstance().getAuthManager().getUserId());
+                            jsonObject.put("status", "0");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        Utils.showLoading(activity, activity.getString(R.string.please_wait));
+                        ModelManager.getInstance().getTeamsManager().joinTeam(jsonObject);
+                    }
+                });
+
+                final int pos = i;
+                img_challenge.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        JSONObject jsonObject = new JSONObject();
+                        try {
+                            jsonObject.put("challenge_to", id);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        Utils.showLoading(activity, activity.getString(R.string.please_wait));
+                        teamsArrayList.get(pos).challengeTeam(jsonObject);
                     }
                 });
 
@@ -159,6 +191,22 @@ public class TeamDetailFragment extends Fragment {
         } else if (message.equalsIgnoreCase("GetTeamDetails False")) {
             Utils.dismissLoading();
         } else if (message.equalsIgnoreCase("GetTeamDetails Network Error")) {
+            Utils.dismissLoading();
+        } else if (message.equalsIgnoreCase("JoinTeam True")) {
+            Utils.dismissLoading();
+            btn_join.setVisibility(View.INVISIBLE);
+            Toast.makeText(activity, "Team joined successfully", Toast.LENGTH_SHORT).show();
+        } else if (message.equalsIgnoreCase("JoinTeam False")) {
+            Utils.dismissLoading();
+        } else if (message.equalsIgnoreCase("JoinTeam Network Error")) {
+            Utils.dismissLoading();
+        } else if (message.equalsIgnoreCase("ChallengeTeam True")) {
+            Utils.dismissLoading();
+            img_challenge.setVisibility(View.INVISIBLE);
+            Toast.makeText(activity, "You have challenged the team successfully", Toast.LENGTH_SHORT).show();
+        } else if (message.equalsIgnoreCase("ChallengeTeam False")) {
+            Utils.dismissLoading();
+        } else if (message.equalsIgnoreCase("ChallengeTeam Network Error")) {
             Utils.dismissLoading();
         }
     }

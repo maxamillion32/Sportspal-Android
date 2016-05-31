@@ -31,6 +31,7 @@
     <string-array name="nav_drawer_labels">
         <item>HOME</item>
         <item>SHARE</item>
+        <item>NOTIFICATIONS</item>
         <item>SETTINGS</item>
         <item>LOGOUT</item>
     </string-array>

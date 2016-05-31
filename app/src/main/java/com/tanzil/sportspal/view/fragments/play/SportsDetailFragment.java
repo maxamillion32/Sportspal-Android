@@ -22,6 +22,9 @@ import com.tanzil.sportspal.model.bean.Games;
 import com.tanzil.sportspal.model.bean.Users;
 import com.tanzil.sportspal.view.adapters.MembersListAdapter;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 import de.greenrobot.event.EventBus;
@@ -112,7 +115,17 @@ public class SportsDetailFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         //  accepting the invitation to join the game
-                        Toast.makeText(activity, "Coming soon! Stay in Touch.", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(activity, "Coming soon! Stay in Touch.", Toast.LENGTH_SHORT).show();
+                        JSONObject jsonObject = new JSONObject();
+                        try {
+                            jsonObject.put("sport_id", id);
+                            jsonObject.put("user_id", ModelManager.getInstance().getAuthManager().getUserId());
+                            jsonObject.put("status", "0");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        Utils.showLoading(activity, activity.getString(R.string.please_wait));
+                        ModelManager.getInstance().getSportsManager().joinGame(jsonObject);
                     }
                 });
 
@@ -168,6 +181,14 @@ public class SportsDetailFragment extends Fragment {
         } else if (message.equalsIgnoreCase("GetGameDetails False")) {
             Utils.dismissLoading();
         } else if (message.equalsIgnoreCase("GetGameDetails Network Error")) {
+            Utils.dismissLoading();
+        } else if (message.equalsIgnoreCase("JoinGame True")) {
+            Utils.dismissLoading();
+            btn_join.setVisibility(View.INVISIBLE);
+            Toast.makeText(activity, "Game joined successfully", Toast.LENGTH_SHORT).show();
+        } else if (message.equalsIgnoreCase("JoinGame False")) {
+            Utils.dismissLoading();
+        } else if (message.equalsIgnoreCase("JoinGame Network Error")) {
             Utils.dismissLoading();
         }
     }

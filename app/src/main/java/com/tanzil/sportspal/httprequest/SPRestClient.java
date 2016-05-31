@@ -37,6 +37,8 @@ public class SPRestClient {
 //        }
 
 
+        getClient().addHeader("username", ModelManager.getInstance().getAuthManager().getEmail());
+        getClient().addHeader("usertoken", ModelManager.getInstance().getAuthManager().getUserToken());
         getClient().get(url, responseHandler);
         // getClient().get(url, responseHandler);
     }
@@ -61,7 +63,7 @@ public class SPRestClient {
             se = new StringEntity(post_data);
             se.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
             getClient().addHeader("username", ModelManager.getInstance().getAuthManager().getEmail());
-            getClient().addHeader("user_token", ModelManager.getInstance().getAuthManager().getUserToken());
+            getClient().addHeader("usertoken", ModelManager.getInstance().getAuthManager().getUserToken());
             getClient().post(null, url, se, "application/json", responseHandler);
         } catch (Exception e1) {
             e1.printStackTrace();
@@ -90,7 +92,7 @@ public class SPRestClient {
             se = null;
             se = new StringEntity(post_data);
             getClient().addHeader("username", ModelManager.getInstance().getAuthManager().getEmail());
-            getClient().addHeader("user_token", ModelManager.getInstance().getAuthManager().getUserToken());
+            getClient().addHeader("usertoken", ModelManager.getInstance().getAuthManager().getUserToken());
             getClient().put(null, url, se, "application/json", responseHandler);
         } catch (Exception e1) {
             e1.printStackTrace();
@@ -100,7 +102,7 @@ public class SPRestClient {
 
     public static void delete(String url, String post_data, AsyncHttpResponseHandler responseHandler) {
         getClient().addHeader("username", ModelManager.getInstance().getAuthManager().getEmail());
-        getClient().addHeader("user_token", ModelManager.getInstance().getAuthManager().getUserToken());
+        getClient().addHeader("usertoken", ModelManager.getInstance().getAuthManager().getUserToken());
         getClient().delete(url, responseHandler);
     }
 }

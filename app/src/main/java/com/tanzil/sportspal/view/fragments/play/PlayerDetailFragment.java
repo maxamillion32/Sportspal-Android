@@ -21,6 +21,9 @@ import com.tanzil.sportspal.model.ModelManager;
 import com.tanzil.sportspal.model.bean.Sports;
 import com.tanzil.sportspal.model.bean.Users;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 import de.greenrobot.event.EventBus;
@@ -104,6 +107,18 @@ public class PlayerDetailFragment extends Fragment implements View.OnClickListen
                 break;
 
             case R.id.img_challenge:
+
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put("team_id", id);
+                    jsonObject.put("user_id", ModelManager.getInstance().getAuthManager().getUserId());
+                    jsonObject.put("status", "0");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Utils.showLoading(activity, activity.getString(R.string.please_wait));
+                ModelManager.getInstance().getTeamsManager().challengeTeam(jsonObject);
+
                 break;
 
             case R.id.img_chat:

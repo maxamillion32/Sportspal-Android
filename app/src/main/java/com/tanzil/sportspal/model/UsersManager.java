@@ -555,4 +555,73 @@ public class UsersManager {
 
         });
     }
+
+    public void challengePlayer(JSONObject jsonObject) {
+        SPRestClient.post(ServiceApi.CHALLENGE_TEAM, jsonObject.toString(), new JsonHttpResponseHandler() {
+            @Override
+            public void onStart() {
+                Log.e(TAG, "ChallengePlayer called before request is started");
+            }
+
+            @Override
+            public void onCancel() {
+                super.onCancel();
+                Log.e(TAG, "onCancel  --> ");
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+                Log.e(TAG, "onSuccess  --> " + response.toString());
+
+                try {
+                    int state = response.getInt("status");
+                    if (state == 200) {
+                        EventBus.getDefault().post("ChallengePlayer True");
+                    } else {
+                        EventBus.getDefault().post("ChallengePlayer False");
+                    }
+                } catch (JSONException e) {
+                    EventBus.getDefault().post("ChallengePlayer False");
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+                if (errorResponse != null) {
+                    Log.e(TAG, "onFailure  --> " + errorResponse.toString());
+                    EventBus.getDefault().post("ChallengePlayer False");
+                } else {
+                    EventBus.getDefault().post("ChallengePlayer Network Error");
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                super.onFailure(statusCode, headers, responseString, throwable);
+                if (responseString != null) {
+                    Log.e(TAG, "onFailure  --> " + responseString);
+                    EventBus.getDefault().post("ChallengePlayer False");
+                } else {
+                    EventBus.getDefault().post("ChallengePlayer Network Error");
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+                Log.e(TAG, "onFinish  --> ");
+            }
+
+            @Override
+            public void onRetry(int retryNo) {
+                // called when request is retried
+                Log.e(TAG, "onRetry  --> ");
+            }
+
+        });
+    }
 }

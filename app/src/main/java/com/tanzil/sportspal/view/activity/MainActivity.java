@@ -33,6 +33,7 @@ import com.tanzil.sportspal.view.fragments.AddGameFragment;
 import com.tanzil.sportspal.view.fragments.ChatFragment;
 import com.tanzil.sportspal.view.fragments.FragmentDrawer;
 import com.tanzil.sportspal.view.fragments.NewsFeedFragment;
+import com.tanzil.sportspal.view.fragments.NotificationsFragment;
 import com.tanzil.sportspal.view.fragments.ProfileFragment;
 import com.tanzil.sportspal.view.fragments.SettingsFragment;
 import com.tanzil.sportspal.view.fragments.play.PlayMainFragment;
@@ -152,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 
     private void setBackground(int position) {
         if (position == 1) {
-            img_newsFeed.setImageResource(R.drawable.newsfeed);
+            img_newsFeed.setImageResource(R.drawable.newsfeed_on);
             img_play.setImageResource(R.drawable.play);
             img_addSports.setImageResource(R.drawable.add);
             img_chat.setImageResource(R.drawable.chat);
@@ -173,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             }
         } else if (position == 2) {
             img_newsFeed.setImageResource(R.drawable.newsfeed);
-            img_play.setImageResource(R.drawable.play);
+            img_play.setImageResource(R.drawable.play_on);
             img_addSports.setImageResource(R.drawable.add);
             img_chat.setImageResource(R.drawable.chat);
             img_profile.setImageResource(R.drawable.profile);
@@ -194,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         } else if (position == 3) {
             img_newsFeed.setImageResource(R.drawable.newsfeed);
             img_play.setImageResource(R.drawable.play);
-            img_addSports.setImageResource(R.drawable.add);
+            img_addSports.setImageResource(R.drawable.add_on);
             img_chat.setImageResource(R.drawable.chat);
             img_profile.setImageResource(R.drawable.profile);
 
@@ -215,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             img_newsFeed.setImageResource(R.drawable.newsfeed);
             img_play.setImageResource(R.drawable.play);
             img_addSports.setImageResource(R.drawable.add);
-            img_chat.setImageResource(R.drawable.chat);
+            img_chat.setImageResource(R.drawable.chats_on);
             img_profile.setImageResource(R.drawable.profile);
 
             if (android.os.Build.VERSION.SDK_INT < 23) {
@@ -236,7 +237,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             img_play.setImageResource(R.drawable.play);
             img_addSports.setImageResource(R.drawable.add);
             img_chat.setImageResource(R.drawable.chat);
-            img_profile.setImageResource(R.drawable.profile);
+            img_profile.setImageResource(R.drawable.profile_on);
 
             if (android.os.Build.VERSION.SDK_INT < 23) {
                 txt_profile.setTextColor(getResources().getColor(R.color.light_green));
@@ -299,10 +300,14 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                     title = getString(R.string.title_play);
                     break;
                 case 2:
+                    fragment = new NotificationsFragment();
+                    title = getString(R.string.title_notifications);
+                    break;
+                case 3:
                     fragment = new SettingsFragment();
                     title = getString(R.string.title_settings);
                     break;
-                case 3:
+                case 4:
                     showAlert("Are you sure, you want to log out?");
                     break;
             }

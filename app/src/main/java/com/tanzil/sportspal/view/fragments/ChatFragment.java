@@ -7,6 +7,7 @@ import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.tanzil.sportspal.R;
 import com.tanzil.sportspal.Utility.Utils;
@@ -33,6 +34,9 @@ public class ChatFragment extends Fragment {
         } catch (InflateException e) {
         /* just return view as it is */
         }
+
+        ImageView imageView = (ImageView) activity.findViewById(R.id.img_right);
+        imageView.setVisibility(View.INVISIBLE);
         return rootView;
     }
 }

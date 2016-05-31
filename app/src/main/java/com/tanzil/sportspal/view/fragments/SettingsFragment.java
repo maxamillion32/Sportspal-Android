@@ -120,12 +120,12 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
                 gender = usersArrayList.get(i).getGender();
 
-                int img = R.drawable.default_male;
-                if (!Utils.isEmptyString(gender))
-                    if (gender.equalsIgnoreCase("Female"))
-                        img = R.drawable.default_female;
-                    else
-                        img = R.drawable.default_male;
+                int img = R.drawable.default_pic;
+//                if (!Utils.isEmptyString(gender))
+//                    if (gender.equalsIgnoreCase("Female"))
+//                        img = R.drawable.default_female;
+//                    else
+//                        img = R.drawable.default_male;
 
                 if (!Utils.isEmptyString(usersArrayList.get(i).getImage()))
                     Picasso.with(activity)

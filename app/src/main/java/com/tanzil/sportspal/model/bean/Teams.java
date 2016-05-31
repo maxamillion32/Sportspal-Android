@@ -5,6 +5,7 @@ import android.util.Log;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.tanzil.sportspal.Utility.ServiceApi;
 import com.tanzil.sportspal.httprequest.SPRestClient;
+import com.tanzil.sportspal.model.ModelManager;
 import com.tanzil.sportspal.model.TeamsManager;
 
 import org.json.JSONArray;
@@ -233,5 +234,74 @@ public class Teams {
 
         });
         return teamsArrayList;
+    }
+
+    public void challengeTeam(JSONObject jsonObject) {
+        SPRestClient.post(ServiceApi.CHALLENGE_TEAM + id + "/" + ModelManager.getInstance().getAuthManager().getUserId(), jsonObject.toString(), new JsonHttpResponseHandler() {
+            @Override
+            public void onStart() {
+                Log.e(TAG, "ChallengeTeam called before request is started");
+            }
+
+            @Override
+            public void onCancel() {
+                super.onCancel();
+                Log.e(TAG, "onCancel  --> ");
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+                Log.e(TAG, "onSuccess  --> " + response.toString());
+
+                try {
+                    int state = response.getInt("status");
+                    if (state == 200) {
+                        EventBus.getDefault().post("ChallengeTeam True");
+                    } else {
+                        EventBus.getDefault().post("ChallengeTeam False");
+                    }
+                } catch (JSONException e) {
+                    EventBus.getDefault().post("ChallengeTeam False");
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+                if (errorResponse != null) {
+                    Log.e(TAG, "onFailure  --> " + errorResponse.toString());
+                    EventBus.getDefault().post("ChallengeTeam False");
+                } else {
+                    EventBus.getDefault().post("ChallengeTeam Network Error");
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                super.onFailure(statusCode, headers, responseString, throwable);
+                if (responseString != null) {
+                    Log.e(TAG, "onFailure  --> " + responseString);
+                    EventBus.getDefault().post("ChallengeTeam False");
+                } else {
+                    EventBus.getDefault().post("ChallengeTeam Network Error");
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+                Log.e(TAG, "onFinish  --> ");
+            }
+
+            @Override
+            public void onRetry(int retryNo) {
+                // called when request is retried
+                Log.e(TAG, "onRetry  --> ");
+            }
+
+        });
     }
 }

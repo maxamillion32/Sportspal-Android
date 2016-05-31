@@ -119,10 +119,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                             .placeholder(R.drawable.players)
                             .into(img_user_pic);
                 } else {
-                    if (usersArrayList.get(i).getGender().equalsIgnoreCase("Female"))
-                    img_user_pic.setImageResource(R.drawable.default_female);
-                    else
-                        img_user_pic.setImageResource(R.drawable.default_male);
+//                    if (usersArrayList.get(i).getGender().equalsIgnoreCase("Female"))
+//                    img_user_pic.setImageResource(R.drawable.default_female);
+//                    else
+                        img_user_pic.setImageResource(R.drawable.default_pic);
                     img_user_pic.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 }
 
