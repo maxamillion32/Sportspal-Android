@@ -15,6 +15,7 @@ public class ModelManager {
     private TeamsManager teamsManager;
     private UserPreferredSportsManager userPreferredSportsManager;
     private AddressManager addressManager;
+    private NotificationsManager notificationsManager;
 
     private ModelManager() {
 
@@ -24,7 +25,8 @@ public class ModelManager {
         teamsManager = new TeamsManager();
         userPreferredSportsManager = new UserPreferredSportsManager();
         addressManager = new AddressManager();
-        teamMembersManager=new TeamMembersManager();
+        teamMembersManager = new TeamMembersManager();
+        notificationsManager = new NotificationsManager();
 
     }
 
@@ -36,7 +38,8 @@ public class ModelManager {
         this.teamsManager = null;
         this.userPreferredSportsManager = null;
         this.addressManager = null;
-        this.teamMembersManager=null;
+        this.teamMembersManager = null;
+        this.notificationsManager = null;
     }
 
     public static ModelManager getInstance() {
@@ -85,5 +88,9 @@ public class ModelManager {
 
     public void setTeamMembersManager(TeamMembersManager teamMembersManager) {
         this.teamMembersManager = teamMembersManager;
+    }
+
+    public NotificationsManager getNotificationsManager() {
+        return notificationsManager;
     }
 }
