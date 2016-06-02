@@ -15,15 +15,24 @@ public class GameChallenges {
     String userId;
     String teamId;
     String gameId;
-    private ArrayList<Users> usersArrayList;
+//    private ArrayList<Users> usersArrayList;
+    private Users users;
     private ArrayList<Teams> teamsArrayList;
 
-    public ArrayList<Users> getUsersArrayList() {
-        return usersArrayList;
+//    public ArrayList<Users> getUsersArrayList() {
+//        return usersArrayList;
+//    }
+//
+//    public void setUsersArrayList(ArrayList<Users> usersArrayList) {
+//        this.usersArrayList = usersArrayList;
+//    }
+
+    public Users getUsers() {
+        return users;
     }
 
-    public void setUsersArrayList(ArrayList<Users> usersArrayList) {
-        this.usersArrayList = usersArrayList;
+    public void setUsers(Users users) {
+        this.users = users;
     }
 
     public ArrayList<Teams> getTeamsArrayList() {

@@ -67,7 +67,9 @@ public class GameChallengesAdapter extends BaseAdapter {
 
         try {
 
-            viewHolder.descriptionText.setText(list.get(position).getName());
+            String desc = "Challenge received for " + list.get(position).getName() + " game";
+            viewHolder.descriptionText.setText(desc);
+            viewHolder.dateText.setText(list.get(position).getDate());
 //            viewHolder.userPic.setImageResource(images[position]);
 
             viewHolder.userPic.setBorderColor(activity.getResources().getColor(R.color.white));

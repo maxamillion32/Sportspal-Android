@@ -124,7 +124,7 @@ public class Teams {
     }
 
     public ArrayList<Teams> getDetails(String id) {
-        SPRestClient.get(ServiceApi.GET_TEAM_DETAIL + "/" + id, null, new JsonHttpResponseHandler() {
+        SPRestClient.get(ServiceApi.GET_TEAM_DETAIL + id, null, new JsonHttpResponseHandler() {
             @Override
             public void onStart() {
                 Log.e(TAG, "GetTeamDetails called before request is started");
@@ -142,6 +142,68 @@ public class Teams {
                 Log.e(TAG, "onSuccess  --> " + response.toString());
 
                 try {
+//                    "id": 65,
+//                            "sport_id": 16,
+//                            "team_name": "gaggagaga",
+//                            "team_type": "corporate",
+//                            "members_limit": 0,
+//                            "latitude": "0",
+//                            "longitude": "0",
+//                            "address": "",
+//                            "creator_id": 7,
+//                            "created": "2016-06-01T10:44:06+0000",
+//                            "modified": "2016-06-01T10:44:06+0000",
+//                            "team_members": [{
+//                        "id": 124,
+//                                "team_id": 65,
+//                                "user_id": 36,
+//                                "status": "0",
+//                                "created": "2016-06-01T10:44:06+0000",
+//                                "modified": "2016-06-01T10:44:06+0000",
+//                                "user": {
+//                            "id": 36,
+//                                    "first_name": "Amit",
+//                                    "last_name": "Yadav",
+//                                    "email": "amit4490dude@gmail.com",
+//                                    "password": "",
+//                                    "dob": "22-05-1991",
+//                                    "gender": "male",
+//                                    "bio": "",
+//                                    "modified": "2016-06-01T18:39:44+0000",
+//                                    "created": "2016-05-22T15:53:03+0000",
+//                                    "image": "images\/574f2bf003a1f.png",
+//                                    "social_platform": "",
+//                                    "social_id": "10208485761733698",
+//                                    "latitude": "30.704648617981",
+//                                    "longitude": "76.717872619629",
+//                                    "address": "2722, Mohali Bypass, Sector 61, Sahibzada Ajit Singh Nagar, Punjab 160071, India"
+//                        }
+//                    }, {
+//                        "id": 125,
+//                                "team_id": 65,
+//                                "user_id": 38,
+//                                "status": "0",
+//                                "created": "2016-06-01T10:44:06+0000",
+//                                "modified": "2016-06-01T10:44:06+0000",
+//                                "user": {
+//                            "id": 38,
+//                                    "first_name": "Megan",
+//                                    "last_name": "fox",
+//                                    "email": "megan@gmail.com",
+//                                    "password": "$2y$10$MMOChW1BeDpTgojNcp8YJeWHz8hyqKNtKXZenL573kddy2pjYn2g.",
+//                                    "dob": "22-05-1996",
+//                                    "gender": "female",
+//                                    "bio": "",
+//                                    "modified": "2016-06-01T18:29:46+0000",
+//                                    "created": "2016-05-22T16:13:30+0000",
+//                                    "image": "images\/574f299acb797.png",
+//                                    "social_platform": "",
+//                                    "social_id": "",
+//                                    "latitude": "30.704648617981",
+//                                    "longitude": "76.717872619629",
+//                                    "address": "2722, Mohali Bypass, Sector 61, Sahibzada Ajit Singh Nagar, Punjab 160071, India"
+//                        }
+//                    }],
 
                     int state = response.getInt("status");
                     if (state == 200) {
@@ -166,22 +228,25 @@ public class Teams {
                                 Teams.this.setSports_name("NA");
                             }
                         }
-                        if (jsonArray.has("user")) {
-                            if (!jsonArray.isNull("user")) {
-                                JSONArray jsonArray1 = jsonArray.getJSONArray("user");
-                                if (jsonArray1 != null) {
-                                    ArrayList<Users> usersArrayList = new ArrayList<Users>();
-                                    for (int j = 0; j < jsonArray1.length(); j++) {
-                                        Users users = new Users();
-                                        if (jsonArray1.getJSONObject(j).has("id"))
-                                            users.setId(jsonArray1.getJSONObject(j).getString("id"));
-                                        users.setFirst_name(jsonArray1.getJSONObject(j).getString("first_name"));
-                                        users.setLast_name(jsonArray1.getJSONObject(j).getString("last_name"));
-                                        users.setEmail(jsonArray1.getJSONObject(j).getString("email"));
-                                        usersArrayList.add(users);
+                        if (jsonArray.has("team_members")) {
+                            if (!jsonArray.isNull("team_members")) {
+                                JSONArray jsonArray1 = jsonArray.getJSONArray("team_members");
+                                ArrayList<Users> usersArrayList = new ArrayList<Users>();
+                                for (int j = 0; j < jsonArray1.length(); j++) {
+                                    if (jsonArray1.getJSONObject(j).has("user")) {
+                                        if (!jsonArray1.getJSONObject(j).isNull("user")) {
+                                            JSONObject jsonObject = jsonArray1.getJSONObject(j).getJSONObject("user");
+                                            Users users = new Users();
+                                            if (jsonArray1.getJSONObject(j).has("id"))
+                                                users.setId(jsonObject.getString("id"));
+                                            users.setFirst_name(jsonObject.getString("first_name"));
+                                            users.setLast_name(jsonObject.getString("last_name"));
+                                            users.setEmail(jsonObject.getString("email"));
+                                            usersArrayList.add(users);
+                                        }
                                     }
-                                    Teams.this.setUsersList(usersArrayList);
                                 }
+                                Teams.this.setUsersList(usersArrayList);
                             }
                         }
                         teamsArrayList.add(Teams.this);

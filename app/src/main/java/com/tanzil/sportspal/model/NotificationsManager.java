@@ -36,7 +36,7 @@ public class NotificationsManager {
     }
 
     public void getGameChallenges() {
-        SPRestClient.get(ServiceApi.GET_GAME_CHALLENGES, null, new JsonHttpResponseHandler() {
+        SPRestClient.get(ServiceApi.GET_GAME_CHALLENGES + ModelManager.getInstance().getAuthManager().getUserId(), null, new JsonHttpResponseHandler() {
             @Override
             public void onStart() {
                 Log.e(TAG, "GetGameChallenges called before request is started");
@@ -52,7 +52,6 @@ public class NotificationsManager {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 super.onSuccess(statusCode, headers, response);
                 Log.e(TAG, "onSuccess  --> " + response.toString());
-
                 try {
                     int state = response.getInt("status");
                     if (state == 200) {
@@ -73,7 +72,11 @@ public class NotificationsManager {
                                 notifications.setLatitude(jsonArray.getJSONObject(i).getString("latitude"));
                                 notifications.setLongitude(jsonArray.getJSONObject(i).getString("longitude"));
                                 notifications.setAddress(jsonArray.getJSONObject(i).getString("address"));
-
+                                if (jsonArray.getJSONObject(i).has("sport"))
+                                    if (!jsonArray.getJSONObject(i).isNull("sport")) {
+                                        notifications.setSports_name(jsonArray.getJSONObject(i).getJSONObject("sport").getString("name"));
+                                        notifications.setSports_status(jsonArray.getJSONObject(i).getJSONObject("sport").getString("status"));
+                                    }
                                 if (jsonArray.getJSONObject(i).has("game_challenges"))
                                     if (!jsonArray.getJSONObject(i).isNull("game_challenges")) {
                                         JSONArray jsonArray1 = jsonArray.getJSONObject(i).getJSONArray("game_challenges");
@@ -87,7 +90,7 @@ public class NotificationsManager {
                                             games.setStatus(jsonArray1.getJSONObject(j).getString("status"));
                                             if (jsonArray.getJSONObject(j).has("user"))
                                                 if (!jsonArray1.getJSONObject(j).isNull("user")) {
-                                                    ArrayList<Users> usersArrayList = new ArrayList<Users>();
+//                                                    ArrayList<Users> usersArrayList = new ArrayList<Users>();
                                                     JSONObject jsonObject = jsonArray1.getJSONObject(j).getJSONObject("user");
                                                     Users users = new Users();
                                                     users.setId(jsonObject.getString("id"));
@@ -103,8 +106,8 @@ public class NotificationsManager {
                                                     users.setLongitude(jsonObject.getString("longitude"));
                                                     users.setAddress(jsonObject.getString("address"));
 
-                                                    usersArrayList.add(users);
-                                                    games.setUsersArrayList(usersArrayList);
+//                                                    usersArrayList.add(users);
+                                                    games.setUsers(users);
                                                 }
                                             if (jsonArray.getJSONObject(j).has("team"))
                                                 if (!jsonArray1.getJSONObject(j).isNull("team")) {
@@ -124,6 +127,7 @@ public class NotificationsManager {
                                                     teamsArrayList.add(teams);
                                                     games.setTeamsArrayList(teamsArrayList);
                                                 }
+                                            gameChallengesArrayList.add(games);
                                         }
                                         notifications.setUserGamesList(gameChallengesArrayList);
                                     }
@@ -184,7 +188,7 @@ public class NotificationsManager {
     }
 
     public void getTeamChallenges() {
-        SPRestClient.get(ServiceApi.GET_TEAM_CHALLENGES, null, new JsonHttpResponseHandler() {
+        SPRestClient.get(ServiceApi.GET_TEAM_CHALLENGES + ModelManager.getInstance().getAuthManager().getUserId(), null, new JsonHttpResponseHandler() {
             @Override
             public void onStart() {
                 Log.e(TAG, "GetTeamChallenges called before request is started");

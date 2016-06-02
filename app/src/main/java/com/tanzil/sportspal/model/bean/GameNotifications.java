@@ -7,8 +7,24 @@ import java.util.ArrayList;
  */
 public class GameNotifications {
 
-    String id, sport_id, name, user_id, game_type, team_id, date, time, latitude, longitude, address;
+    String id, sport_id, name, user_id, game_type, team_id, date, time, latitude, longitude, address, sports_name, sports_status;
     private ArrayList<GameChallenges> userGamesList;
+
+    public String getSports_name() {
+        return sports_name;
+    }
+
+    public void setSports_name(String sports_name) {
+        this.sports_name = sports_name;
+    }
+
+    public String getSports_status() {
+        return sports_status;
+    }
+
+    public void setSports_status(String sports_status) {
+        this.sports_status = sports_status;
+    }
 
     public String getId() {
         return id;

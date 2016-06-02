@@ -4,11 +4,15 @@ import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 
@@ -36,6 +40,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
     private TeamChallengesAdapter teamChallengesAdapter;
     private ArrayList<GameNotifications> gameNotificationsArrayList;
     private ArrayList<TeamNotifications> teamNotificationsArrayList;
+    private boolean whichType = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -65,6 +70,30 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
             setData(0);
         }
 
+        notificationListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Fragment fragment;
+                if (whichType) {
+                    fragment = new TeamNotificationDetailFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("id", teamNotificationsArrayList.get(position).getTeam_id());
+                    fragment.setArguments(bundle);
+                } else {
+                    fragment = new GameNotificationDetailFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("id", gameNotificationsArrayList.get(position).getId());
+                    bundle.putString("name", gameNotificationsArrayList.get(position).getName());
+                    fragment.setArguments(bundle);
+                }
+
+                FragmentManager fragmentManager = ((FragmentActivity) activity).getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.container_body, fragment, fragment.getClass().getSimpleName());
+                fragmentTransaction.addToBackStack(fragment.getClass().getSimpleName());
+                fragmentTransaction.commit();
+            }
+        });
 
         return rootView;
     }
@@ -73,6 +102,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.img_sports:
+                whichType = false;
                 if (Build.VERSION.SDK_INT < 23) {
                     img_sports.setBackgroundColor(activity.getResources().getColor(R.color.white));
                     img_team.setBackgroundColor(activity.getResources().getColor(R.color.transparent_white));
@@ -88,6 +118,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                 break;
 
             case R.id.img_team:
+                whichType = true;
                 if (Build.VERSION.SDK_INT < 23) {
                     img_sports.setBackgroundColor(activity.getResources().getColor(R.color.transparent_white));
                     img_team.setBackgroundColor(activity.getResources().getColor(R.color.white));
@@ -104,7 +135,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         }
     }
 
-    private void setData (int type) {
+    private void setData(int type) {
         if (type == 0) {
             gameNotificationsArrayList = ModelManager.getInstance().getNotificationsManager().getGameChallengesNotifications(false);
             gameChallengesAdapter = new GameChallengesAdapter(activity, gameNotificationsArrayList);
@@ -117,6 +148,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
             teamChallengesAdapter.notifyDataSetChanged();
         }
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -138,6 +170,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         Log.e(TAG, "-- " + message);
         if (message.equalsIgnoreCase("GetGameChallenges True")) {
             Utils.dismissLoading();
+            whichType = false;
             setData(0);
         } else if (message.equalsIgnoreCase("GetGameChallenges False")) {
             Utils.dismissLoading();
@@ -145,6 +178,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
             Utils.dismissLoading();
         } else if (message.equalsIgnoreCase("GetTeamChallenges True")) {
             Utils.dismissLoading();
+            whichType = true;
             setData(1);
         } else if (message.equalsIgnoreCase("GetTeamChallenges False")) {
             Utils.dismissLoading();
