@@ -31,6 +31,7 @@ import android.widget.Toast;
 
 import com.pkmmte.view.CircularImageView;
 import com.tanzil.sportspal.R;
+import com.tanzil.sportspal.Utility.DrawableImages;
 import com.tanzil.sportspal.Utility.GPSTracker;
 import com.tanzil.sportspal.Utility.SPLog;
 import com.tanzil.sportspal.Utility.Utils;
@@ -66,7 +67,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
     private String TAG = AddGameFragment.class.getSimpleName();
     private Activity activity;
     private ImageView addGame, img_sports, img_team, ic_sport;
-    private MyTextView game_sportsName, game_teamName, textMember,txt_Date, txt_Time, txt_teamType, txt_Address, game_sports, add_team_member, teamT;
+    private MyTextView game_sportsName, game_teamName, textMember, txt_Date, txt_Time, txt_teamType, txt_Address, game_sports, add_team_member, teamT;
     //    private AutoCompleteTextView txt_Address;
     private Calendar myCalendar;
     //    private LinearLayout upperLayout;
@@ -206,6 +207,9 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 ArrayList<Users> array = ModelManager.getInstance().getTeamMembersManager().getNearUsers("", false);
+                if (array == null)
+                    array = new ArrayList<Users>();
+
                 arrayTeam = new ArrayList<Users>();
                 for (int j = 0; j < array.size(); j++) {
                     if (array.get(j).getFirst_name().toLowerCase().contains(charSequence.toString().toLowerCase())) {
@@ -244,7 +248,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
                 TeamMembersAdapter teamMembersAdapter = new TeamMembersAdapter(activity, selectedPlayers);
                 membersList.setAdapter(teamMembersAdapter);
                 teamMembersAdapter.notifyDataSetChanged();
-                textMember.setText("Member ("+selectedPlayers.size()+")");
+                textMember.setText("Member (" + selectedPlayers.size() + ")");
             }
         });
     }
@@ -394,7 +398,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
 //                if (isGame)
-                    game_teamName.setText(teamsArrayList.get(position).getTeam_name());
+                game_teamName.setText(teamsArrayList.get(position).getTeam_name());
 //                else
 //                    teamN.setText(teamsArrayList.get(position).getTeam_name());
                 teamId = teamsArrayList.get(position).getId();
@@ -473,78 +477,10 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
                 sportsId = sportsArrayList.get(position).getId();
                 sportsDialog.dismiss();
                 layoutSport.setVisibility(View.VISIBLE);
-                setImage(position);
-
+//                setImage(position);
+                ic_sport.setBackgroundResource(DrawableImages.setImage(sportsArrayList.get(position).getName()));
             }
         });
-    }
-
-    private void setImage(int pos) {
-
-        switch (pos) {
-            case 0:
-                ic_sport.setBackgroundResource(R.drawable.badminton);
-                break;
-
-            case 1:
-                ic_sport.setBackgroundResource(R.drawable.basketball);
-                break;
-
-            case 2:
-                ic_sport.setBackgroundResource(R.drawable.cricket);
-                break;
-
-            case 3:
-                ic_sport.setBackgroundResource(R.drawable.cycling);
-                break;
-
-            case 4:
-                ic_sport.setBackgroundResource(R.drawable.football);
-                break;
-            case 5:
-                ic_sport.setBackgroundResource(R.drawable.frisbee);
-                break;
-            case 6:
-                ic_sport.setBackgroundResource(R.drawable.golf);
-                break;
-            case 7:
-                ic_sport.setBackgroundResource(R.drawable.gymming);
-                break;
-            case 8:
-                ic_sport.setBackgroundResource(R.drawable.skating);//
-                break;
-            case 9:
-                ic_sport.setBackgroundResource(R.drawable.skating);//other
-                break;
-            case 10:
-                ic_sport.setBackgroundResource(R.drawable.skating);
-                break;
-            case 11:
-                ic_sport.setBackgroundResource(R.drawable.squash);//skiing
-                break;
-            case 12:
-                ic_sport.setBackgroundResource(R.drawable.squash);//snooker
-                break;
-            case 13:
-                ic_sport.setBackgroundResource(R.drawable.squash);
-                break;
-            case 14:
-                ic_sport.setBackgroundResource(R.drawable.swimming);
-                break;
-            case 15:
-                ic_sport.setBackgroundResource(R.drawable.tabletennis);
-                break;
-            case 16:
-                ic_sport.setBackgroundResource(R.drawable.tennis);
-                break;
-            case 17:
-                ic_sport.setBackgroundResource(R.drawable.volleyball);
-                break;
-            case 18:
-                ic_sport.setBackgroundResource(R.drawable.yoga);
-                break;
-        }
-
     }
 
     // to show the team type in add game layout for selecting type
@@ -746,7 +682,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
                 ModelManager.getInstance().getSportsManager().addGame(jsonObject);
             }
         } else {
-            if (arrayTeam != null&&arrayTeam.size()>0) {
+            if (arrayTeam != null && arrayTeam.size() > 0) {
                 JSONObject jsonObject = new JSONObject();
                 try {
                     jsonObject.put("sport_id", sportsId);

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+    <com.tanzil.sportspal.customUi.MyButton
+        android:id="@+id/txt_accept"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_weight="1"
+        android:background="@drawable/button_dark_green_bg"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="@string/accept"
+        android:textColor="@color/white"
+        android:textSize="@dimen/button_text_size" />
+
+    <com.tanzil.sportspal.customUi.MyButton
+        android:id="@+id/txt_reject"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_weight="1"
+        android:background="@drawable/button_cancel_bg"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="@string/reject"
+        android:textColor="@color/white"
+        android:textSize="@dimen/button_text_size" />
+
+</LinearLayout>

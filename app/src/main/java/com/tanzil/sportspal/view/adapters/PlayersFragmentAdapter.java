@@ -13,8 +13,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
+import com.squareup.picasso.Picasso;
 import com.tanzil.sportspal.R;
 import com.tanzil.sportspal.Utility.DrawableImages;
+import com.tanzil.sportspal.Utility.ServiceApi;
 import com.tanzil.sportspal.customUi.MyTextView;
 import com.tanzil.sportspal.model.ModelManager;
 import com.tanzil.sportspal.model.bean.Sports;
@@ -99,12 +101,16 @@ public class PlayersFragmentAdapter extends BaseAdapter {
         if (list.get(position).getImage() == null)
             userPic = "";
         else
-        userPic = list.get(position).getImage();
+            userPic = list.get(position).getImage();
 
         if (userPic.length() == 0)
-        viewHolder.img_user.setImageResource(DrawableImages.setImage(nm));
-        else
             viewHolder.img_user.setImageResource(DrawableImages.setImage(nm));
+        else
+            Picasso.with(activity)
+                    .load(ServiceApi.baseurl + userPic)
+                    .placeholder(R.drawable.customer_img)
+                    .error(R.drawable.customer_img)
+                    .into(viewHolder.img_user);
 
         return v;
     }

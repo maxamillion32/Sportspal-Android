@@ -16,5 +16,7 @@
     <color name="grey_text">#9f9fa2</color>
     <color name="bottom_bar_text">#929292</color>
     <color name="circular_image_border_color">#EEEEEE</color>
+    <color name="green_bg">#22B33E</color>
+    <color name="red">#FE0201</color>
 
 </resources>

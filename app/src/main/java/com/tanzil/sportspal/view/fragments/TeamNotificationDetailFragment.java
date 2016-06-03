@@ -3,6 +3,7 @@ package com.tanzil.sportspal.view.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,22 +38,22 @@ public class TeamNotificationDetailFragment extends Fragment {
 
     private String TAG = PlayerDetailFragment.class.getSimpleName();
     private Activity activity;
-    private ImageView sportsPic, img_right, img_challenge;
-    private MyTextView txt_sportName, txt_teamName, txt_team_type, txt_members, txt_memberSize;
-    private MyButton btn_join;
+    //    private ImageView sportsPic, img_right, img_challenge;
+//    private MyTextView txt_sportName, txt_teamName, txt_team_type, txt_members, txt_memberSize;
+//    private MyButton btn_join;
     private ListView memberList;
     private ArrayList<Teams> teamsArrayList;
-    private String id = "";
-    private View headerView;
-    private MembersListAdapter adapter;
-    private ArrayList<Users> usersArrayList;
+    private String id = "", request_id = "";
+//    private View headerView, footerView;
+//    private MembersListAdapter adapter;
+//    private ArrayList<Users> usersArrayList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         this.activity = super.getActivity();
 
-        Utils.setHeader(activity, "2-" + activity.getString(R.string.title_play));
+        Utils.setHeader(activity, "2-" + activity.getString(R.string.teams));
 
         View rootView = inflater.inflate(R.layout.fragment_team_details, container, false);
 
@@ -66,7 +67,7 @@ public class TeamNotificationDetailFragment extends Fragment {
             Log.e(TAG, ex.toString());
         }
 
-        img_right = (ImageView) activity.findViewById(R.id.img_right);
+        ImageView img_right = (ImageView) activity.findViewById(R.id.img_right);
         img_right.setVisibility(View.INVISIBLE);
 
         memberList = (ListView) rootView.findViewById(R.id.team_memberList);
@@ -95,57 +96,28 @@ public class TeamNotificationDetailFragment extends Fragment {
             if (teamsArrayList.get(i).getId().equalsIgnoreCase(id)) {
                 ArrayList<Teams> teamDetails = teamsArrayList.get(i).getTeamDetails(false, id);
 
-                headerView = View
+                // header view starts
+                View headerView = View
                         .inflate(activity, R.layout.team_detail_header_layout, null);
 
-                sportsPic = (ImageView) headerView.findViewById(R.id.img_team_pic);
+                ImageView sportsPic = (ImageView) headerView.findViewById(R.id.img_team_pic);
 
-                txt_sportName = (MyTextView) headerView.findViewById(R.id.txt_sports_name);
-                txt_teamName = (MyTextView) headerView.findViewById(R.id.team_name_text);
-                txt_team_type = (MyTextView) headerView.findViewById(R.id.txt_team_type);
-                txt_members = (MyTextView) headerView.findViewById(R.id.txt_members);
-                txt_memberSize = (MyTextView) headerView.findViewById(R.id.txt_member_size);
+                MyTextView txt_sportName = (MyTextView) headerView.findViewById(R.id.txt_sports_name);
+                MyTextView txt_teamName = (MyTextView) headerView.findViewById(R.id.team_name_text);
+                MyTextView txt_team_type = (MyTextView) headerView.findViewById(R.id.txt_team_type);
+                MyTextView txt_members = (MyTextView) headerView.findViewById(R.id.txt_members);
+                MyTextView txt_memberSize = (MyTextView) headerView.findViewById(R.id.txt_member_size);
 
-                img_challenge = (ImageView) headerView.findViewById(R.id.img_challenge);
+                ImageView img_challenge = (ImageView) headerView.findViewById(R.id.img_challenge);
                 ImageView img_chat = (ImageView) headerView.findViewById(R.id.img_chat);
+                img_challenge.setVisibility(View.INVISIBLE);
+                img_chat.setVisibility(View.INVISIBLE);
 
 
-                btn_join = (MyButton) headerView.findViewById(R.id.join_btn);
+                MyButton btn_join = (MyButton) headerView.findViewById(R.id.join_btn);
                 btn_join.setTransformationMethod(null);
+                btn_join.setVisibility(View.GONE);
 
-                final String id = teamDetails.get(0).getId();
-                btn_join.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //  accepting the invitation to join the game
-//                        Toast.makeText(activity, "Coming soon! Stay in Touch.", Toast.LENGTH_SHORT).show();
-                        JSONObject jsonObject = new JSONObject();
-                        try {
-                            jsonObject.put("team_id", id);
-                            jsonObject.put("user_id", ModelManager.getInstance().getAuthManager().getUserId());
-                            jsonObject.put("status", "0");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        Utils.showLoading(activity, activity.getString(R.string.please_wait));
-                        ModelManager.getInstance().getTeamsManager().joinTeam(jsonObject);
-                    }
-                });
-
-                final int pos = i;
-                img_challenge.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        JSONObject jsonObject = new JSONObject();
-                        try {
-                            jsonObject.put("challenge_to", id);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        Utils.showLoading(activity, activity.getString(R.string.please_wait));
-                        teamsArrayList.get(pos).challengeTeam(jsonObject);
-                    }
-                });
 
                 txt_sportName.setText(teamDetails.get(0).getSports_name());
                 txt_teamName.setText(teamDetails.get(0).getTeam_name());
@@ -157,15 +129,56 @@ public class TeamNotificationDetailFragment extends Fragment {
 
                 memberList.addHeaderView(headerView);
 
-                usersArrayList = teamDetails.get(0).getUsersList();
+                request_id = teamDetails.get(0).getRequest_id();
+
+                // footer view starts
+                View footerView = View
+                        .inflate(activity, R.layout.footer_accept_decline, null);
+                MyButton acceptButton = (MyButton) footerView.findViewById(R.id.txt_accept);
+                MyButton rejectButton = (MyButton) footerView.findViewById(R.id.txt_reject);
+
+                acceptButton.setTransformationMethod(null);
+                rejectButton.setTransformationMethod(null);
+
+                final int pos = i;
+                acceptButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        JSONObject jsonObject = new JSONObject();
+                        try {
+                            jsonObject.put("status", "1");
+                            jsonObject.put("request_id", request_id);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        Utils.showLoading(activity, activity.getString(R.string.please_wait));
+                        teamsArrayList.get(pos).acceptTeamRequest(jsonObject);
+                    }
+                });
+                rejectButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        JSONObject jsonObject = new JSONObject();
+                        try {
+                            jsonObject.put("request_id", request_id);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        Utils.showLoading(activity, activity.getString(R.string.please_wait));
+                        teamsArrayList.get(pos).rejectTeamRequest(jsonObject);
+                    }
+                });
+
+                memberList.addFooterView(footerView);
+
+                // users list section starts
+                ArrayList<Users> usersArrayList = teamDetails.get(0).getUsersList();
                 if (usersArrayList == null)
                     usersArrayList = new ArrayList<>();
                 SPLog.e("User Array List : ", "" + usersArrayList.size());
-                if (usersArrayList != null) {
-                    adapter = new MembersListAdapter(activity, usersArrayList);
-                    memberList.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
-                }
+                MembersListAdapter adapter = new MembersListAdapter(activity, usersArrayList);
+                memberList.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
                 txt_members.setText("Members(" + usersArrayList.size() + ")");
                 break;
             }
@@ -214,7 +227,7 @@ public class TeamNotificationDetailFragment extends Fragment {
             Utils.dismissLoading();
         } else if (message.equalsIgnoreCase("JoinTeam True")) {
             Utils.dismissLoading();
-            btn_join.setVisibility(View.INVISIBLE);
+//            btn_join.setVisibility(View.INVISIBLE);
             Toast.makeText(activity, "Team joined successfully", Toast.LENGTH_SHORT).show();
         } else if (message.equalsIgnoreCase("JoinTeam False")) {
             Utils.dismissLoading();
@@ -222,11 +235,29 @@ public class TeamNotificationDetailFragment extends Fragment {
             Utils.dismissLoading();
         } else if (message.equalsIgnoreCase("ChallengeTeam True")) {
             Utils.dismissLoading();
-            img_challenge.setVisibility(View.INVISIBLE);
+//            img_challenge.setVisibility(View.INVISIBLE);
             Toast.makeText(activity, "You have challenged the team successfully", Toast.LENGTH_SHORT).show();
         } else if (message.equalsIgnoreCase("ChallengeTeam False")) {
             Utils.dismissLoading();
         } else if (message.equalsIgnoreCase("ChallengeTeam Network Error")) {
+            Utils.dismissLoading();
+        } else if (message.equalsIgnoreCase("AcceptTeamRequest True")) {
+            Utils.dismissLoading();
+            ((FragmentActivity) activity)
+                    .getSupportFragmentManager().popBackStack();
+            Toast.makeText(activity, "You have accepted the invite successfully", Toast.LENGTH_SHORT).show();
+        } else if (message.equalsIgnoreCase("AcceptTeamRequest False")) {
+            Utils.dismissLoading();
+        } else if (message.equalsIgnoreCase("AcceptTeamRequest Network Error")) {
+            Utils.dismissLoading();
+        } else if (message.equalsIgnoreCase("RejectTeamRequest True")) {
+            Utils.dismissLoading();
+            ((FragmentActivity) activity)
+                    .getSupportFragmentManager().popBackStack();
+            Toast.makeText(activity, "You have rejected the invite successfully", Toast.LENGTH_SHORT).show();
+        } else if (message.equalsIgnoreCase("RejectTeamRequest False")) {
+            Utils.dismissLoading();
+        } else if (message.equalsIgnoreCase("RejectTeamRequest Network Error")) {
             Utils.dismissLoading();
         }
     }

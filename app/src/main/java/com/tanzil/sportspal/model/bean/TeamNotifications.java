@@ -4,7 +4,34 @@ package com.tanzil.sportspal.model.bean;
  * Created by arun.sharma on 6/1/2016.
  */
 public class TeamNotifications {
-    String id, status, user_id, team_id;
+    private final String TAG = TeamNotifications.class.getSimpleName();
+    String id, status, user_id, team_id, created_date;
+    Users users;
+    Teams teams;
+
+    public String getCreated_date() {
+        return created_date;
+    }
+
+    public void setCreated_date(String created_date) {
+        this.created_date = created_date;
+    }
+
+    public Users getUsers() {
+        return users;
+    }
+
+    public void setUsers(Users users) {
+        this.users = users;
+    }
+
+    public Teams getTeams() {
+        return teams;
+    }
+
+    public void setTeams(Teams teams) {
+        this.teams = teams;
+    }
 
     public String getId() {
         return id;

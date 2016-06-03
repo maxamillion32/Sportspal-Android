@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 import com.tanzil.sportspal.R;
 import com.tanzil.sportspal.Utility.SPLog;
+import com.tanzil.sportspal.Utility.ServiceApi;
 import com.tanzil.sportspal.Utility.Utils;
 import com.tanzil.sportspal.customUi.MyButton;
 import com.tanzil.sportspal.customUi.MyEditText;
@@ -154,7 +155,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
                 if (!Utils.isEmptyString(usersArrayList.get(i).getImage()))
                     Picasso.with(activity)
-                            .load(usersArrayList.get(i).getImage())
+                            .load(ServiceApi.baseurl + usersArrayList.get(i).getImage())
                             .placeholder(img)
                             .error(img)
                             .into(img_user_pic);

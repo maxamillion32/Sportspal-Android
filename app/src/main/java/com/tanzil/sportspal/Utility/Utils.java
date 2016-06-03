@@ -314,4 +314,12 @@ public class Utils {
         alert.show();
     }
 
+    public static int setColor(Activity activity, int color) {
+        if (android.os.Build.VERSION.SDK_INT < 23) {
+            return activity.getResources().getColor(color);
+
+        } else {
+            return ContextCompat.getColor(activity, color);
+        }
+    }
 }

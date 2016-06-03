@@ -13,9 +13,14 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.pkmmte.view.CircularImageView;
+import com.squareup.picasso.Picasso;
 import com.tanzil.sportspal.R;
+import com.tanzil.sportspal.Utility.ServiceApi;
+import com.tanzil.sportspal.Utility.Utils;
 import com.tanzil.sportspal.customUi.MyTextView;
 import com.tanzil.sportspal.model.bean.TeamNotifications;
+import com.tanzil.sportspal.model.bean.Teams;
+import com.tanzil.sportspal.model.bean.Users;
 
 import java.util.ArrayList;
 
@@ -67,9 +72,26 @@ public class TeamChallengesAdapter extends BaseAdapter {
 
         try {
 
-            viewHolder.descriptionText.setText(list.get(position).getTeam_id());
-            viewHolder.dateText.setText(list.get(position).getTeam_id());
-            viewHolder.userPic.setVisibility(View.GONE);
+            Teams teams = list.get(position).getTeams();
+            Users users = teams.getUsers();
+            String desc = users.getFirst_name() + " " + users.getLast_name() + " has invited you in " + teams.getTeam_name() + " team";
+            viewHolder.descriptionText.setText(desc);
+
+            String[] dt = list.get(position).getCreated_date().split("T");
+            viewHolder.dateText.setText(dt[0]);
+
+            viewHolder.userPic.setBorderColor(Utils.setColor(activity, R.color.white));
+            viewHolder.userPic.setBorderWidth(5);
+            viewHolder.userPic.setSelectorColor(Utils.setColor(activity, R.color.transparent_white));
+            viewHolder.userPic.setSelectorStrokeColor(Utils.setColor(activity, R.color.black));
+            viewHolder.userPic.setSelectorStrokeWidth(5);
+            viewHolder.userPic.addShadow();
+            if (!Utils.isEmptyString(users.getImage()))
+                Picasso.with(activity)
+                        .load(ServiceApi.baseurl + users.getImage())
+                        .placeholder(R.drawable.customer_img)
+                        .error(R.drawable.customer_img)
+                        .into(viewHolder.userPic);
 
         } catch (Exception ex) {
             ex.printStackTrace();

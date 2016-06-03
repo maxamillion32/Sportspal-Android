@@ -69,6 +69,7 @@
     <string name="sports">Sports</string>
     <string name="players">Players</string>
     <string name="teams">Teams</string>
+    <string name="game">Game</string>
 
     <!-- Create New Game Screen-->
     <string name="sports_name">SPORTS NAME</string>
@@ -96,6 +97,9 @@
     <string name="location">Location</string>
     <string name="advanced">Advanced</string>
 
+    <!-- Notification Screen-->
+    <string name="accept">Accept</string>
+    <string name="reject">Reject</string>
 
 
 </resources>

@@ -15,6 +15,7 @@ import com.squareup.picasso.Picasso;
 import com.tanzil.sportspal.R;
 import com.tanzil.sportspal.Utility.DrawableImages;
 import com.tanzil.sportspal.Utility.SPLog;
+import com.tanzil.sportspal.Utility.ServiceApi;
 import com.tanzil.sportspal.Utility.Utils;
 import com.tanzil.sportspal.customUi.MyTextView;
 import com.tanzil.sportspal.model.ModelManager;
@@ -55,7 +56,7 @@ public class PlayerDetailFragment extends Fragment implements View.OnClickListen
             if (getArguments() != null) {
                 Bundle bundle = getArguments();
                 id = bundle.getString("id");
-           }
+            }
 
         } catch (Exception ex) {
             Log.e(TAG, ex.toString());
@@ -171,7 +172,7 @@ public class PlayerDetailFragment extends Fragment implements View.OnClickListen
                     }
 
                 if (!Utils.isEmptyString(img1)) {
-                    Picasso.with(activity).load(img1)
+                    Picasso.with(activity).load(ServiceApi.baseurl + img1)
                             .placeholder(R.drawable.players)
                             .into(profilePic);
                 } else if (!Utils.isEmptyString(img2)) {

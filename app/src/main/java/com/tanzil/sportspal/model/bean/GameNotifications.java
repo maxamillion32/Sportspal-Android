@@ -1,12 +1,25 @@
 package com.tanzil.sportspal.model.bean;
 
+import android.util.Log;
+
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.tanzil.sportspal.Utility.ServiceApi;
+import com.tanzil.sportspal.httprequest.SPRestClient;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+
+import cz.msebera.android.httpclient.Header;
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by arun.sharma on 6/1/2016.
  */
 public class GameNotifications {
 
+    private final String TAG = GameNotifications.class.getSimpleName();
     String id, sport_id, name, user_id, game_type, team_id, date, time, latitude, longitude, address, sports_name, sports_status;
     private ArrayList<GameChallenges> userGamesList;
 
@@ -120,5 +133,145 @@ public class GameNotifications {
 
     public void setUserGamesList(ArrayList<GameChallenges> userGamesList) {
         this.userGamesList = userGamesList;
+    }
+
+    public void acceptGameRequest(JSONObject jsonObject) {
+        SPRestClient.post(ServiceApi.ACCEPT_GAME_CHALLENGES, jsonObject.toString(), new JsonHttpResponseHandler() {
+            @Override
+            public void onStart() {
+                Log.e(TAG, "AcceptGameRequest called before request is started");
+            }
+
+            @Override
+            public void onCancel() {
+                super.onCancel();
+                Log.e(TAG, "onCancel  --> ");
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+                Log.e(TAG, "onSuccess  --> " + response.toString());
+
+                try {
+                    int state = response.getInt("status");
+                    if (state == 200) {
+                        EventBus.getDefault().post("AcceptGameRequest True");
+                    } else {
+                        EventBus.getDefault().post("AcceptGameRequest False");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    EventBus.getDefault().post("AcceptGameRequest False");
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+                if (errorResponse != null) {
+                    Log.e(TAG, "onFailure  --> " + errorResponse.toString());
+                    EventBus.getDefault().post("AcceptGameRequest False");
+                } else {
+                    EventBus.getDefault().post("AcceptGameRequest Network Error");
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                super.onFailure(statusCode, headers, responseString, throwable);
+                if (responseString != null) {
+                    Log.e(TAG, "onFailure  --> " + responseString);
+                    EventBus.getDefault().post("AcceptGameRequest False");
+                } else {
+                    EventBus.getDefault().post("AcceptGameRequest Network Error");
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+                Log.e(TAG, "onFinish  --> ");
+            }
+
+            @Override
+            public void onRetry(int retryNo) {
+                // called when request is retried
+                Log.e(TAG, "onRetry  --> ");
+            }
+
+        });
+    }
+
+    public void rejectGameRequest(JSONObject jsonObject) {
+        SPRestClient.delete(ServiceApi.REJECT_GAME_CHALLENGES, jsonObject.toString(), new JsonHttpResponseHandler() {
+            @Override
+            public void onStart() {
+                Log.e(TAG, "RejectGameRequest called before request is started");
+            }
+
+            @Override
+            public void onCancel() {
+                super.onCancel();
+                Log.e(TAG, "onCancel  --> ");
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+                Log.e(TAG, "onSuccess  --> " + response.toString());
+
+                try {
+                    int state = response.getInt("status");
+                    if (state == 200) {
+                        EventBus.getDefault().post("RejectGameRequest True");
+                    } else {
+                        EventBus.getDefault().post("RejectGameRequest False");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    EventBus.getDefault().post("RejectGameRequest False");
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+                if (errorResponse != null) {
+                    Log.e(TAG, "onFailure  --> " + errorResponse.toString());
+                    EventBus.getDefault().post("RejectGameRequest False");
+                } else {
+                    EventBus.getDefault().post("RejectGameRequest Network Error");
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                super.onFailure(statusCode, headers, responseString, throwable);
+                if (responseString != null) {
+                    Log.e(TAG, "onFailure  --> " + responseString);
+                    EventBus.getDefault().post("RejectGameRequest False");
+                } else {
+                    EventBus.getDefault().post("RejectGameRequest Network Error");
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+                Log.e(TAG, "onFinish  --> ");
+            }
+
+            @Override
+            public void onRetry(int retryNo) {
+                // called when request is retried
+                Log.e(TAG, "onRetry  --> ");
+            }
+
+        });
     }
 }

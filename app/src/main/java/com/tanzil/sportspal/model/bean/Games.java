@@ -223,6 +223,7 @@ public class Games {
                                 users.setFirst_name(jsonArray.getJSONObject("user").getString("first_name"));
                                 users.setLast_name(jsonArray.getJSONObject("user").getString("last_name"));
                                 users.setEmail(jsonArray.getJSONObject("user").getString("email"));
+                                users.setImage(jsonArray.getJSONObject("user").getString("image"));
                                 usersArrayList.add(users);
 
                                 Games.this.setUsersArrayList(usersArrayList);

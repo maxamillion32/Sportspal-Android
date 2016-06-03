@@ -24,10 +24,44 @@ public class Teams {
 
     private final String TAG = TeamsManager.class.getSimpleName();
 
-    String id, sport_id, team_name, team_type, members_limit, latitude, longitude, creator_id, address, sports_name;
+    String id, sport_id, team_name, team_type, members_limit, latitude, longitude, creator_id,
+            address, sports_name, sport_status, request_id, status;
 
     private ArrayList<Users> usersList;
     private ArrayList<Teams> teamsArrayList;
+    Users users;
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Users getUsers() {
+        return users;
+    }
+
+    public String getRequest_id() {
+        return request_id;
+    }
+
+    public void setRequest_id(String request_id) {
+        this.request_id = request_id;
+    }
+
+    public void setUsers(Users users) {
+        this.users = users;
+    }
+
+    public String getSport_status() {
+        return sport_status;
+    }
+
+    public void setSport_status(String sport_status) {
+        this.sport_status = sport_status;
+    }
 
     public String getId() {
         return id;
@@ -142,69 +176,6 @@ public class Teams {
                 Log.e(TAG, "onSuccess  --> " + response.toString());
 
                 try {
-//                    "id": 65,
-//                            "sport_id": 16,
-//                            "team_name": "gaggagaga",
-//                            "team_type": "corporate",
-//                            "members_limit": 0,
-//                            "latitude": "0",
-//                            "longitude": "0",
-//                            "address": "",
-//                            "creator_id": 7,
-//                            "created": "2016-06-01T10:44:06+0000",
-//                            "modified": "2016-06-01T10:44:06+0000",
-//                            "team_members": [{
-//                        "id": 124,
-//                                "team_id": 65,
-//                                "user_id": 36,
-//                                "status": "0",
-//                                "created": "2016-06-01T10:44:06+0000",
-//                                "modified": "2016-06-01T10:44:06+0000",
-//                                "user": {
-//                            "id": 36,
-//                                    "first_name": "Amit",
-//                                    "last_name": "Yadav",
-//                                    "email": "amit4490dude@gmail.com",
-//                                    "password": "",
-//                                    "dob": "22-05-1991",
-//                                    "gender": "male",
-//                                    "bio": "",
-//                                    "modified": "2016-06-01T18:39:44+0000",
-//                                    "created": "2016-05-22T15:53:03+0000",
-//                                    "image": "images\/574f2bf003a1f.png",
-//                                    "social_platform": "",
-//                                    "social_id": "10208485761733698",
-//                                    "latitude": "30.704648617981",
-//                                    "longitude": "76.717872619629",
-//                                    "address": "2722, Mohali Bypass, Sector 61, Sahibzada Ajit Singh Nagar, Punjab 160071, India"
-//                        }
-//                    }, {
-//                        "id": 125,
-//                                "team_id": 65,
-//                                "user_id": 38,
-//                                "status": "0",
-//                                "created": "2016-06-01T10:44:06+0000",
-//                                "modified": "2016-06-01T10:44:06+0000",
-//                                "user": {
-//                            "id": 38,
-//                                    "first_name": "Megan",
-//                                    "last_name": "fox",
-//                                    "email": "megan@gmail.com",
-//                                    "password": "$2y$10$MMOChW1BeDpTgojNcp8YJeWHz8hyqKNtKXZenL573kddy2pjYn2g.",
-//                                    "dob": "22-05-1996",
-//                                    "gender": "female",
-//                                    "bio": "",
-//                                    "modified": "2016-06-01T18:29:46+0000",
-//                                    "created": "2016-05-22T16:13:30+0000",
-//                                    "image": "images\/574f299acb797.png",
-//                                    "social_platform": "",
-//                                    "social_id": "",
-//                                    "latitude": "30.704648617981",
-//                                    "longitude": "76.717872619629",
-//                                    "address": "2722, Mohali Bypass, Sector 61, Sahibzada Ajit Singh Nagar, Punjab 160071, India"
-//                        }
-//                    }],
-
                     int state = response.getInt("status");
                     if (state == 200) {
                         JSONObject jsonArray = response.getJSONObject("message");
@@ -233,6 +204,8 @@ public class Teams {
                                 JSONArray jsonArray1 = jsonArray.getJSONArray("team_members");
                                 ArrayList<Users> usersArrayList = new ArrayList<Users>();
                                 for (int j = 0; j < jsonArray1.length(); j++) {
+                                    Teams.this.setRequest_id(jsonArray1.getJSONObject(j).getString("id"));
+                                    Teams.this.setStatus(jsonArray1.getJSONObject(j).getString("status"));
                                     if (jsonArray1.getJSONObject(j).has("user")) {
                                         if (!jsonArray1.getJSONObject(j).isNull("user")) {
                                             JSONObject jsonObject = jsonArray1.getJSONObject(j).getJSONObject("user");
@@ -242,6 +215,7 @@ public class Teams {
                                             users.setFirst_name(jsonObject.getString("first_name"));
                                             users.setLast_name(jsonObject.getString("last_name"));
                                             users.setEmail(jsonObject.getString("email"));
+                                            users.setImage(jsonObject.getString("image"));
                                             usersArrayList.add(users);
                                         }
                                     }
@@ -352,6 +326,146 @@ public class Teams {
                     EventBus.getDefault().post("ChallengeTeam False");
                 } else {
                     EventBus.getDefault().post("ChallengeTeam Network Error");
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+                Log.e(TAG, "onFinish  --> ");
+            }
+
+            @Override
+            public void onRetry(int retryNo) {
+                // called when request is retried
+                Log.e(TAG, "onRetry  --> ");
+            }
+
+        });
+    }
+
+    public void acceptTeamRequest(JSONObject jsonObject) {
+        SPRestClient.post(ServiceApi.ACCEPT_TEAM_REQUEST + id, jsonObject.toString(), new JsonHttpResponseHandler() {
+            @Override
+            public void onStart() {
+                Log.e(TAG, "AcceptTeamRequest called before request is started");
+            }
+
+            @Override
+            public void onCancel() {
+                super.onCancel();
+                Log.e(TAG, "onCancel  --> ");
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+                Log.e(TAG, "onSuccess  --> " + response.toString());
+
+                try {
+                    int state = response.getInt("status");
+                    if (state == 200) {
+                        EventBus.getDefault().post("AcceptTeamRequest True");
+                    } else {
+                        EventBus.getDefault().post("AcceptTeamRequest False");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    EventBus.getDefault().post("AcceptTeamRequest False");
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+                if (errorResponse != null) {
+                    Log.e(TAG, "onFailure  --> " + errorResponse.toString());
+                    EventBus.getDefault().post("AcceptTeamRequest False");
+                } else {
+                    EventBus.getDefault().post("AcceptTeamRequest Network Error");
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                super.onFailure(statusCode, headers, responseString, throwable);
+                if (responseString != null) {
+                    Log.e(TAG, "onFailure  --> " + responseString);
+                    EventBus.getDefault().post("AcceptTeamRequest False");
+                } else {
+                    EventBus.getDefault().post("AcceptTeamRequest Network Error");
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+                Log.e(TAG, "onFinish  --> ");
+            }
+
+            @Override
+            public void onRetry(int retryNo) {
+                // called when request is retried
+                Log.e(TAG, "onRetry  --> ");
+            }
+
+        });
+    }
+
+    public void rejectTeamRequest(JSONObject jsonObject) {
+        SPRestClient.delete(ServiceApi.ACCEPT_TEAM_REQUEST + id, jsonObject.toString(), new JsonHttpResponseHandler() {
+            @Override
+            public void onStart() {
+                Log.e(TAG, "RejectTeamRequest called before request is started");
+            }
+
+            @Override
+            public void onCancel() {
+                super.onCancel();
+                Log.e(TAG, "onCancel  --> ");
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+                Log.e(TAG, "onSuccess  --> " + response.toString());
+
+                try {
+                    int state = response.getInt("status");
+                    if (state == 200) {
+                        EventBus.getDefault().post("RejectTeamRequest True");
+                    } else {
+                        EventBus.getDefault().post("RejectTeamRequest False");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    EventBus.getDefault().post("RejectTeamRequest False");
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+                if (errorResponse != null) {
+                    Log.e(TAG, "onFailure  --> " + errorResponse.toString());
+                    EventBus.getDefault().post("RejectTeamRequest False");
+                } else {
+                    EventBus.getDefault().post("RejectTeamRequest Network Error");
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                super.onFailure(statusCode, headers, responseString, throwable);
+                if (responseString != null) {
+                    Log.e(TAG, "onFailure  --> " + responseString);
+                    EventBus.getDefault().post("RejectTeamRequest False");
+                } else {
+                    EventBus.getDefault().post("RejectTeamRequest Network Error");
                 }
             }
 

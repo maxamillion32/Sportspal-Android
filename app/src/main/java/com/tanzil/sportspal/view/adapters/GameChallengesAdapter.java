@@ -14,6 +14,7 @@ import android.widget.BaseAdapter;
 
 import com.pkmmte.view.CircularImageView;
 import com.tanzil.sportspal.R;
+import com.tanzil.sportspal.Utility.Utils;
 import com.tanzil.sportspal.customUi.MyTextView;
 import com.tanzil.sportspal.model.bean.GameNotifications;
 
@@ -72,10 +73,10 @@ public class GameChallengesAdapter extends BaseAdapter {
             viewHolder.dateText.setText(list.get(position).getDate());
 //            viewHolder.userPic.setImageResource(images[position]);
 
-            viewHolder.userPic.setBorderColor(activity.getResources().getColor(R.color.white));
+            viewHolder.userPic.setBorderColor(Utils.setColor(activity, R.color.white));
             viewHolder.userPic.setBorderWidth(5);
-            viewHolder.userPic.setSelectorColor(activity.getResources().getColor(R.color.transparent_white));
-            viewHolder.userPic.setSelectorStrokeColor(activity.getResources().getColor(R.color.black));
+            viewHolder.userPic.setSelectorColor(Utils.setColor(activity, R.color.transparent_white));
+            viewHolder.userPic.setSelectorStrokeColor(Utils.setColor(activity, R.color.black));
             viewHolder.userPic.setSelectorStrokeWidth(5);
             viewHolder.userPic.addShadow();
 

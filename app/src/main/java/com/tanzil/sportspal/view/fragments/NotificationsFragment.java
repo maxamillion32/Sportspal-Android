@@ -62,13 +62,13 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
         img_team.setOnClickListener(this);
         img_sports.setOnClickListener(this);
 
-        gameNotificationsArrayList = ModelManager.getInstance().getNotificationsManager().getGameChallengesNotifications(false);
-        if (gameNotificationsArrayList == null) {
-            Utils.showLoading(activity, activity.getString(R.string.please_wait));
-            ModelManager.getInstance().getNotificationsManager().getGameChallengesNotifications(true);
-        } else {
-            setData(0);
-        }
+//        gameNotificationsArrayList = ModelManager.getInstance().getNotificationsManager().getGameChallengesNotifications(false);
+//        if (gameNotificationsArrayList == null) {
+        Utils.showLoading(activity, activity.getString(R.string.please_wait));
+        ModelManager.getInstance().getNotificationsManager().getGameChallengesNotifications(true);
+//        } else {
+//            setData(0);
+//        }
 
         notificationListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -92,6 +92,7 @@ public class NotificationsFragment extends Fragment implements View.OnClickListe
                 fragmentTransaction.replace(R.id.container_body, fragment, fragment.getClass().getSimpleName());
                 fragmentTransaction.addToBackStack(fragment.getClass().getSimpleName());
                 fragmentTransaction.commit();
+                whichType = false;
             }
         });
 

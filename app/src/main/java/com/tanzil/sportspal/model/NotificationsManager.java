@@ -218,6 +218,50 @@ public class NotificationsManager {
                                 teamNotifications.setStatus(jsonArray.getJSONObject(i).getString("status"));
                                 teamNotifications.setUser_id(jsonArray.getJSONObject(i).getString("user_id"));
                                 teamNotifications.setTeam_id(jsonArray.getJSONObject(i).getString("team_id"));
+                                teamNotifications.setCreated_date(jsonArray.getJSONObject(i).getString("created"));
+                                if (jsonArray.getJSONObject(i).has("team"))
+                                    if (!jsonArray.getJSONObject(i).isNull("team")) {
+//                                        ArrayList<Teams> teamsArrayList = new ArrayList<Teams>();
+                                        JSONObject jsonObject = jsonArray.getJSONObject(i).getJSONObject("team");
+                                        Teams teams = new Teams();
+                                        teams.setId(jsonObject.getString("id"));
+                                        teams.setSport_id(jsonObject.getString("sport_id"));
+                                        teams.setTeam_name(jsonObject.getString("team_name"));
+                                        teams.setTeam_type(jsonObject.getString("team_type"));
+                                        teams.setMembers_limit(jsonObject.getString("members_limit"));
+                                        teams.setCreator_id(jsonObject.getString("creator_id"));
+                                        teams.setLatitude(jsonObject.getString("latitude"));
+                                        teams.setLongitude(jsonObject.getString("longitude"));
+                                        teams.setAddress(jsonObject.getString("address"));
+
+                                        if (jsonObject.has("sport"))
+                                            if (!jsonObject.isNull("sport"))
+                                                teams.setSports_name(jsonObject.getJSONObject("sport").getString("name"));
+                                        if (jsonObject.has("user"))
+                                            if (!jsonObject.isNull("user")) {
+//                                                    ArrayList<Users> usersArrayList = new ArrayList<Users>();
+                                                JSONObject jsonObject2 = jsonObject.getJSONObject("user");
+                                                Users users = new Users();
+                                                users.setId(jsonObject2.getString("id"));
+                                                users.setFirst_name(jsonObject2.getString("first_name"));
+                                                users.setLast_name(jsonObject2.getString("last_name"));
+                                                users.setEmail(jsonObject2.getString("email"));
+                                                users.setGender(jsonObject2.getString("gender"));
+                                                users.setBio(jsonObject2.getString("bio"));
+                                                users.setImage(jsonObject2.getString("image"));
+                                                users.setSocial_platform(jsonObject2.getString("social_platform"));
+                                                users.setSocial_id(jsonObject2.getString("social_id"));
+                                                users.setLatitude(jsonObject2.getString("latitude"));
+                                                users.setLongitude(jsonObject2.getString("longitude"));
+                                                users.setAddress(jsonObject2.getString("address"));
+
+//                                                    usersArrayList.add(users);
+                                                teams.setUsers(users);
+                                            }
+
+//                                        teamsArrayList.add(teams);
+                                        teamNotifications.setTeams(teams);
+                                    }
                                 teamChallengesNotificationList.add(teamNotifications);
                             }
                         EventBus.getDefault().post("GetTeamChallenges True");
@@ -225,6 +269,7 @@ public class NotificationsManager {
                         EventBus.getDefault().post("GetTeamChallenges False");
                     }
                 } catch (JSONException e) {
+                    e.printStackTrace();
                     EventBus.getDefault().post("GetTeamChallenges False");
                 }
 

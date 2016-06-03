@@ -1,19 +1,26 @@
 package com.tanzil.sportspal.view.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.pkmmte.view.CircularImageView;
+import com.squareup.picasso.Picasso;
 import com.tanzil.sportspal.R;
 import com.tanzil.sportspal.Utility.DrawableImages;
 import com.tanzil.sportspal.Utility.SPLog;
+import com.tanzil.sportspal.Utility.ServiceApi;
 import com.tanzil.sportspal.Utility.Utils;
 import com.tanzil.sportspal.customUi.MyButton;
 import com.tanzil.sportspal.customUi.MyTextView;
@@ -21,7 +28,6 @@ import com.tanzil.sportspal.model.ModelManager;
 import com.tanzil.sportspal.model.bean.GameChallenges;
 import com.tanzil.sportspal.model.bean.GameNotifications;
 import com.tanzil.sportspal.model.bean.Users;
-import com.tanzil.sportspal.view.adapters.MembersListAdapter;
 import com.tanzil.sportspal.view.fragments.play.PlayerDetailFragment;
 
 import org.json.JSONException;
@@ -38,22 +44,16 @@ public class GameNotificationDetailFragment extends Fragment {
 
     private String TAG = PlayerDetailFragment.class.getSimpleName();
     private Activity activity;
-    private ImageView sportsPic, img_right;
-    private MyTextView txt_sportName, txt_teamName, txt_date, txt_address, txt_time, txt_members, txt_memberSize;
-    private MyButton btn_join;
     private ListView memberList;
     private ArrayList<GameNotifications> gamesArrayList;
-    private String id = "", spName = "";
-    private View headerView;
-    private MembersListAdapter adapter;
-    private ArrayList<Users> usersArrayList;
+    private String id = "", spName = "", challenge_id = "";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         this.activity = super.getActivity();
 
-        Utils.setHeader(activity, "2-" + activity.getString(R.string.title_play));
+        Utils.setHeader(activity, "2-" + activity.getString(R.string.game));
 
         View rootView = inflater.inflate(R.layout.fragment_game_details, container, false);
 
@@ -68,7 +68,7 @@ public class GameNotificationDetailFragment extends Fragment {
             Log.e(TAG, ex.toString());
         }
 
-        img_right = (ImageView) activity.findViewById(R.id.img_right);
+        ImageView img_right = (ImageView) activity.findViewById(R.id.img_right);
         img_right.setVisibility(View.INVISIBLE);
 
         memberList = (ListView) rootView.findViewById(R.id.memberList);
@@ -76,13 +76,7 @@ public class GameNotificationDetailFragment extends Fragment {
         gamesArrayList = ModelManager.getInstance().getNotificationsManager().getGameChallengesNotifications(false);
         if (gamesArrayList != null)
             setData();
-//        for (int i = 0; i < gamesArrayList.size(); i++) {
-//            if (gamesArrayList.get(i).getId().equalsIgnoreCase(id)) {
-//                Utils.showLoading(activity, activity.getString(R.string.please_wait));
-//                ModelManager.getInstance().getSportsManager().getUserPreferredGames(false).get(i).getGameDetails(true, id);
-//                break;
-//            }
-//        }
+
         return rootView;
     }
 
@@ -93,42 +87,26 @@ public class GameNotificationDetailFragment extends Fragment {
             if (gamesArrayList.get(i).getId().equalsIgnoreCase(id)) {
 //                ArrayList<Games> gameDetails = gamesArrayList.get(i).getGameDetails(false, id);
 
-                headerView = View
+                View headerView = View
                         .inflate(activity, R.layout.game_detail_header_layout, null);
 
-                sportsPic = (ImageView) headerView.findViewById(R.id.img_sports_pic);
+                ImageView sportsPic = (ImageView) headerView.findViewById(R.id.img_sports_pic);
 
-                txt_address = (MyTextView) headerView.findViewById(R.id.txt_pick_address);
-                txt_sportName = (MyTextView) headerView.findViewById(R.id.sport_name_text);
-                txt_teamName = (MyTextView) headerView.findViewById(R.id.txt_team_name);
-                txt_date = (MyTextView) headerView.findViewById(R.id.txt_date);
-                txt_time = (MyTextView) headerView.findViewById(R.id.txt_time);
-                txt_members = (MyTextView) headerView.findViewById(R.id.txt_members);
-                txt_memberSize = (MyTextView) headerView.findViewById(R.id.txt_member_size);
+                MyTextView txt_address = (MyTextView) headerView.findViewById(R.id.txt_pick_address);
+                MyTextView txt_sportName = (MyTextView) headerView.findViewById(R.id.sport_name_text);
+                MyTextView txt_teamName = (MyTextView) headerView.findViewById(R.id.txt_team_name);
+                MyTextView txt_date = (MyTextView) headerView.findViewById(R.id.txt_date);
+                MyTextView txt_time = (MyTextView) headerView.findViewById(R.id.txt_time);
+                MyTextView txt_members = (MyTextView) headerView.findViewById(R.id.txt_members);
+                MyTextView txt_memberSize = (MyTextView) headerView.findViewById(R.id.txt_member_size);
 
                 if (!Utils.isEmptyString(spName))
                     sportsPic.setImageResource(DrawableImages.setImage(spName));
 
-                btn_join = (MyButton) headerView.findViewById(R.id.join_btn);
+                MyButton btn_join = (MyButton) headerView.findViewById(R.id.join_btn);
                 btn_join.setTransformationMethod(null);
+                btn_join.setVisibility(View.GONE);
 
-                btn_join.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //  accepting the invitation to join the game
-//                        Toast.makeText(activity, "Coming soon! Stay in Touch.", Toast.LENGTH_SHORT).show();
-                        JSONObject jsonObject = new JSONObject();
-                        try {
-                            jsonObject.put("sport_id", id);
-                            jsonObject.put("user_id", ModelManager.getInstance().getAuthManager().getUserId());
-                            jsonObject.put("status", "0");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        Utils.showLoading(activity, activity.getString(R.string.please_wait));
-                        ModelManager.getInstance().getSportsManager().joinGame(jsonObject);
-                    }
-                });
 
                 txt_address.setText(gamesArrayList.get(i).getAddress());
                 txt_sportName.setText(gamesArrayList.get(i).getSports_name());
@@ -147,22 +125,19 @@ public class GameNotificationDetailFragment extends Fragment {
                     gameChallengesArrayList = new ArrayList<>();
                 SPLog.e("gameChallengesArrayList Array List : ", "" + gameChallengesArrayList.size());
 
-                usersArrayList = new ArrayList<Users>();
+                ArrayList<Users> usersArrayList = new ArrayList<Users>();
                 if (gameChallengesArrayList.size() > 0)
                     for (int j = 0; j < gameChallengesArrayList.size(); j++) {
                         if (gameChallengesArrayList.get(j).getGameId().equalsIgnoreCase(gamesArrayList.get(i).getId())) {
+                            challenge_id = gameChallengesArrayList.get(j).getId();
                             usersArrayList.add(gameChallengesArrayList.get(j).getUsers());
                         }
                     }
 
-                if (usersArrayList == null)
-                    usersArrayList = new ArrayList<>();
                 SPLog.e("User Array List : ", "" + usersArrayList.size());
-                if (usersArrayList != null) {
-                    adapter = new MembersListAdapter(activity, usersArrayList);
-                    memberList.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
-                }
+                ChallengeMembersListAdapter adapter = new ChallengeMembersListAdapter(activity, usersArrayList);
+                memberList.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
                 txt_members.setText("Members(" + usersArrayList.size() + ")");
                 break;
             }
@@ -197,12 +172,162 @@ public class GameNotificationDetailFragment extends Fragment {
             Utils.dismissLoading();
         } else if (message.equalsIgnoreCase("JoinGame True")) {
             Utils.dismissLoading();
-            btn_join.setVisibility(View.INVISIBLE);
             Toast.makeText(activity, "Game joined successfully", Toast.LENGTH_SHORT).show();
         } else if (message.equalsIgnoreCase("JoinGame False")) {
             Utils.dismissLoading();
         } else if (message.equalsIgnoreCase("JoinGame Network Error")) {
             Utils.dismissLoading();
+        } else if (message.equalsIgnoreCase("AcceptTeamRequest True")) {
+            Utils.dismissLoading();
+            ((FragmentActivity) activity)
+                    .getSupportFragmentManager().popBackStack();
+            Toast.makeText(activity, "You accepted the challenge successfully", Toast.LENGTH_SHORT).show();
+        } else if (message.equalsIgnoreCase("AcceptGameRequest False")) {
+            Utils.dismissLoading();
+        } else if (message.equalsIgnoreCase("AcceptGameRequest Network Error")) {
+            Utils.dismissLoading();
+        } else if (message.equalsIgnoreCase("RejectGameRequest True")) {
+            Utils.dismissLoading();
+            ((FragmentActivity) activity)
+                    .getSupportFragmentManager().popBackStack();
+            Toast.makeText(activity, "You have rejected the challenge successfully", Toast.LENGTH_SHORT).show();
+        } else if (message.equalsIgnoreCase("RejectGameRequest False")) {
+            Utils.dismissLoading();
+        } else if (message.equalsIgnoreCase("RejectGameRequest Network Error")) {
+            Utils.dismissLoading();
+        }
+    }
+
+    public class ChallengeMembersListAdapter extends BaseAdapter {
+        private ArrayList<Users> list;
+        private Activity activity;
+
+        public ChallengeMembersListAdapter(final Activity context,
+                                           ArrayList<Users> list) {
+            this.list = list;
+            this.activity = context;
+        }
+
+        @Override
+        public int getCount() {
+            // TODO Auto-generated method stub
+            return list.size();
+        }
+
+        @Override
+        public Object getItem(int arg0) {
+            // TODO Auto-generated method stub
+            return list.get(arg0);
+        }
+
+        @Override
+        public long getItemId(int arg0) {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @SuppressLint({"InflateParams", "NewApi"})
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            // TODO Auto-generated method stub
+            View v = convertView;
+            final CompleteListViewHolder viewHolder;
+            if (convertView == null) {
+                LayoutInflater li = (LayoutInflater) activity
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                v = li.inflate(R.layout.row_challenge_members_list, null);
+
+                viewHolder = new CompleteListViewHolder(v);
+                v.setTag(viewHolder);
+            } else {
+                viewHolder = (CompleteListViewHolder) v.getTag();
+            }
+
+            try {
+                SPLog.e("Name :", "" + list.get(position).getFirst_name());
+                viewHolder.userNameText.setText(list.get(position).getFirst_name());
+
+                viewHolder.userPic.setBorderColor(Utils.setColor(activity, R.color.white));
+                viewHolder.userPic.setSelectorColor(Utils.setColor(activity, R.color.circular_image_border_color));
+                viewHolder.userPic.setBorderWidth(5);
+                viewHolder.userPic.setSelectorStrokeWidth(5);
+                viewHolder.userPic.addShadow();
+                if (!Utils.isEmptyString(list.get(position).getImage()))
+                    Picasso.with(activity)
+                            .load(ServiceApi.baseurl + list.get(position).getImage())
+                            .placeholder(R.drawable.customer_img)
+                            .error(R.drawable.customer_img)
+                            .into(viewHolder.userPic);
+                else
+                    viewHolder.userPic.setImageResource(R.drawable.customer_img);
+
+                viewHolder.accept.setTransformationMethod(null);
+                viewHolder.reject.setTransformationMethod(null);
+
+                viewHolder.accept.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        sendRequest(0);
+                    }
+                });
+
+                viewHolder.reject.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        sendRequest(1);
+                    }
+                });
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+            return v;
+        }
+
+        class CompleteListViewHolder {
+            public MyTextView userNameText;
+            public CircularImageView userPic;
+            public ImageView sportsType;
+            public MyButton accept, reject;
+
+            public CompleteListViewHolder(View convertview) {
+                userNameText = (MyTextView) convertview
+                        .findViewById(R.id.txt_user_name);
+                userPic = (CircularImageView) convertview
+                        .findViewById(R.id.img_user_pic);
+                sportsType = (ImageView) convertview
+                        .findViewById(R.id.img_sport_type);
+                accept = (MyButton) convertview.findViewById(R.id.txt_accept);
+                reject = (MyButton) convertview.findViewById(R.id.txt_reject);
+            }
+        }
+    }
+
+    private void sendRequest(int type) {
+        for (int i = 0; i < gamesArrayList.size(); i++) {
+            if (gamesArrayList.get(i).getId().equalsIgnoreCase(id)) {
+                if (type == 0) {
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put("challenge_id", challenge_id);
+                        jsonObject.put("user_id", ModelManager.getInstance().getAuthManager().getUserId());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Utils.showLoading(activity, activity.getString(R.string.please_wait));
+                    gamesArrayList.get(i).acceptGameRequest(jsonObject);
+                } else {
+                    JSONObject jsonObject = new JSONObject();
+                    try {
+                        jsonObject.put("challenge_id", challenge_id);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Utils.showLoading(activity, activity.getString(R.string.please_wait));
+                    gamesArrayList.get(i).rejectGameRequest(jsonObject);
+                }
+            }
         }
     }
 }

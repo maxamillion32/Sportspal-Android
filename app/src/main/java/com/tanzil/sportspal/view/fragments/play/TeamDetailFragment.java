@@ -36,15 +36,11 @@ public class TeamDetailFragment extends Fragment {
 
     private String TAG = PlayerDetailFragment.class.getSimpleName();
     private Activity activity;
-    private ImageView sportsPic, img_right, img_challenge;
-    private MyTextView txt_sportName, txt_teamName, txt_team_type, txt_members, txt_memberSize;
+    private ImageView img_challenge;
     private MyButton btn_join;
     private ListView memberList;
     private ArrayList<Teams> teamsArrayList;
     private String id = "";
-    private View headerView;
-    private MembersListAdapter adapter;
-    private ArrayList<Users> usersArrayList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -65,7 +61,7 @@ public class TeamDetailFragment extends Fragment {
             Log.e(TAG, ex.toString());
         }
 
-        img_right = (ImageView) activity.findViewById(R.id.img_right);
+        ImageView img_right = (ImageView) activity.findViewById(R.id.img_right);
         img_right.setVisibility(View.INVISIBLE);
 
         memberList = (ListView) rootView.findViewById(R.id.team_memberList);
@@ -89,16 +85,16 @@ public class TeamDetailFragment extends Fragment {
             if (teamsArrayList.get(i).getId().equalsIgnoreCase(id)) {
                 ArrayList<Teams> teamDetails = teamsArrayList.get(i).getTeamDetails(false, id);
 
-                headerView = View
+                View headerView = View
                         .inflate(activity, R.layout.team_detail_header_layout, null);
 
-                sportsPic = (ImageView) headerView.findViewById(R.id.img_team_pic);
+                ImageView sportsPic = (ImageView) headerView.findViewById(R.id.img_team_pic);
 
-                txt_sportName = (MyTextView) headerView.findViewById(R.id.txt_sports_name);
-                txt_teamName = (MyTextView) headerView.findViewById(R.id.team_name_text);
-                txt_team_type = (MyTextView) headerView.findViewById(R.id.txt_team_type);
-                txt_members = (MyTextView) headerView.findViewById(R.id.txt_members);
-                txt_memberSize = (MyTextView) headerView.findViewById(R.id.txt_member_size);
+                MyTextView txt_sportName = (MyTextView) headerView.findViewById(R.id.txt_sports_name);
+                MyTextView txt_teamName = (MyTextView) headerView.findViewById(R.id.team_name_text);
+                MyTextView txt_team_type = (MyTextView) headerView.findViewById(R.id.txt_team_type);
+                MyTextView txt_members = (MyTextView) headerView.findViewById(R.id.txt_members);
+                MyTextView txt_memberSize = (MyTextView) headerView.findViewById(R.id.txt_member_size);
 
                 img_challenge = (ImageView) headerView.findViewById(R.id.img_challenge);
                 ImageView img_chat = (ImageView) headerView.findViewById(R.id.img_chat);
@@ -106,6 +102,10 @@ public class TeamDetailFragment extends Fragment {
 
                 btn_join = (MyButton) headerView.findViewById(R.id.join_btn);
                 btn_join.setTransformationMethod(null);
+                if (teamDetails.get(0).getStatus().equalsIgnoreCase("1"))
+                    btn_join.setVisibility(View.GONE);
+                else
+                    btn_join.setVisibility(View.VISIBLE);
 
                 final String id = teamDetails.get(0).getId();
                 btn_join.setOnClickListener(new View.OnClickListener() {
@@ -151,15 +151,13 @@ public class TeamDetailFragment extends Fragment {
 
                 memberList.addHeaderView(headerView);
 
-                usersArrayList = teamDetails.get(0).getUsersList();
+                ArrayList<Users> usersArrayList = teamDetails.get(0).getUsersList();
                 if (usersArrayList == null)
                     usersArrayList = new ArrayList<>();
                 SPLog.e("User Array List : ", "" + usersArrayList.size());
-                if (usersArrayList != null) {
-                    adapter = new MembersListAdapter(activity, usersArrayList);
-                    memberList.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
-                }
+                MembersListAdapter adapter = new MembersListAdapter(activity, usersArrayList);
+                memberList.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
                 txt_members.setText("Members(" + usersArrayList.size() + ")");
                 break;
             }

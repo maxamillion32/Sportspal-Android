@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 
 import com.squareup.picasso.Picasso;
 import com.tanzil.sportspal.R;
+import com.tanzil.sportspal.Utility.ServiceApi;
 import com.tanzil.sportspal.Utility.Utils;
 import com.tanzil.sportspal.customUi.MyTextView;
 import com.tanzil.sportspal.model.ModelManager;
@@ -115,7 +116,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                     }
 
                 if (!Utils.isEmptyString(img1)) {
-                    Picasso.with(activity).load(img1)
+                    Picasso.with(activity).load(ServiceApi.baseurl + img1)
                             .placeholder(R.drawable.players)
                             .into(img_user_pic);
                 } else {
