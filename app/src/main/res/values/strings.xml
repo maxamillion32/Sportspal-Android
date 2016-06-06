@@ -81,6 +81,8 @@
     <string name="pick_address">PICK ADDRESS</string>
     <string name="join_game">JOIN THE GAME</string>
     <string name="add_team_member">Add Team Member</string>
+    <string name="limit">MEMBER LIMIT</string>
+    <string name="game_mode">GAME STATUS</string>
 
     <!-- Create New Team Screen-->
     <string name="team_sport">TEAM SPORT</string>

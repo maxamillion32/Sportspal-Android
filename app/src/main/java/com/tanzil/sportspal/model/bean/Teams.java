@@ -210,7 +210,7 @@ public class Teams {
                                         if (!jsonArray1.getJSONObject(j).isNull("user")) {
                                             JSONObject jsonObject = jsonArray1.getJSONObject(j).getJSONObject("user");
                                             Users users = new Users();
-                                            if (jsonArray1.getJSONObject(j).has("id"))
+                                            if (jsonObject.has("id"))
                                                 users.setId(jsonObject.getString("id"));
                                             users.setFirst_name(jsonObject.getString("first_name"));
                                             users.setLast_name(jsonObject.getString("last_name"));

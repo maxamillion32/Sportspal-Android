@@ -3,10 +3,14 @@ package com.tanzil.sportspal.view.fragments.play;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -21,6 +25,7 @@ import com.tanzil.sportspal.model.ModelManager;
 import com.tanzil.sportspal.model.bean.Teams;
 import com.tanzil.sportspal.model.bean.Users;
 import com.tanzil.sportspal.view.adapters.MembersListAdapter;
+import com.tanzil.sportspal.view.fragments.UserProfileDetailFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,6 +46,7 @@ public class TeamDetailFragment extends Fragment {
     private ListView memberList;
     private ArrayList<Teams> teamsArrayList;
     private String id = "";
+    private ArrayList<Users> usersArrayList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -74,6 +80,21 @@ public class TeamDetailFragment extends Fragment {
                 break;
             }
         }
+        memberList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Fragment fragment = new UserProfileDetailFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("id", usersArrayList.get(position-1).getId());
+                fragment.setArguments(bundle);
+
+                FragmentManager fragmentManager = ((FragmentActivity) activity).getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.container_body, fragment, "UserProfileDetailFragment");
+                fragmentTransaction.addToBackStack("UserProfileDetailFragment");
+                fragmentTransaction.commit();
+            }
+        });
         return rootView;
     }
 
@@ -151,10 +172,24 @@ public class TeamDetailFragment extends Fragment {
 
                 memberList.addHeaderView(headerView);
 
-                ArrayList<Users> usersArrayList = teamDetails.get(0).getUsersList();
+                usersArrayList = teamDetails.get(0).getUsersList();
                 if (usersArrayList == null)
                     usersArrayList = new ArrayList<>();
                 SPLog.e("User Array List : ", "" + usersArrayList.size());
+                boolean is_invitable = false;
+                for (int j = 0; j < usersArrayList.size(); j++) {
+                    if (usersArrayList.get(j).getId().equalsIgnoreCase(ModelManager.getInstance().getAuthManager().getUserId())) {
+                        is_invitable = true;
+                        break;
+                    }
+                }
+                if (is_invitable) {
+                    if (teamDetails.get(0).getStatus().equalsIgnoreCase("1"))
+                        btn_join.setVisibility(View.GONE);
+                    else
+                        btn_join.setVisibility(View.VISIBLE);
+                } else
+                    btn_join.setVisibility(View.GONE);
                 MembersListAdapter adapter = new MembersListAdapter(activity, usersArrayList);
                 memberList.setAdapter(adapter);
                 adapter.notifyDataSetChanged();

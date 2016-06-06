@@ -3,10 +3,14 @@ package com.tanzil.sportspal.view.fragments.play;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -21,6 +25,7 @@ import com.tanzil.sportspal.model.ModelManager;
 import com.tanzil.sportspal.model.bean.Games;
 import com.tanzil.sportspal.model.bean.Users;
 import com.tanzil.sportspal.view.adapters.MembersListAdapter;
+import com.tanzil.sportspal.view.fragments.UserProfileDetailFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,6 +45,7 @@ public class SportsDetailFragment extends Fragment {
     private ListView memberList;
     private ArrayList<Games> gamesArrayList;
     private String id = "", spName = "";
+    private ArrayList<Users> usersArrayList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -65,7 +71,6 @@ public class SportsDetailFragment extends Fragment {
         img_right.setVisibility(View.INVISIBLE);
 
         memberList = (ListView) rootView.findViewById(R.id.memberList);
-        setHeader();
 
         gamesArrayList = ModelManager.getInstance().getSportsManager().getUserPreferredGames(false);
         for (int i = 0; i < gamesArrayList.size(); i++) {
@@ -75,10 +80,23 @@ public class SportsDetailFragment extends Fragment {
                 break;
             }
         }
-        return rootView;
-    }
 
-    private void setHeader() {
+        memberList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Fragment fragment = new UserProfileDetailFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("id", usersArrayList.get(position-1).getId());
+                fragment.setArguments(bundle);
+
+                FragmentManager fragmentManager = ((FragmentActivity) activity).getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.container_body, fragment, "UserProfileDetailFragment");
+                fragmentTransaction.addToBackStack("UserProfileDetailFragment");
+                fragmentTransaction.commit();
+            }
+        });
+        return rootView;
     }
 
     private void setData() {
@@ -141,7 +159,7 @@ public class SportsDetailFragment extends Fragment {
 
                 memberList.addHeaderView(headerView);
 
-                ArrayList<Users> usersArrayList = gameDetails.get(0).getUsersArrayList();
+                usersArrayList = gameDetails.get(0).getUsersArrayList();
                 if (usersArrayList == null)
                     usersArrayList = new ArrayList<>();
                 SPLog.e("User Array List : ", "" + usersArrayList.size());

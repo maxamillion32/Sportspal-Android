@@ -7,7 +7,6 @@ package com.tanzil.sportspal.view.adapters;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +14,11 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.pkmmte.view.CircularImageView;
+import com.squareup.picasso.Picasso;
 import com.tanzil.sportspal.R;
 import com.tanzil.sportspal.Utility.SPLog;
+import com.tanzil.sportspal.Utility.ServiceApi;
+import com.tanzil.sportspal.Utility.Utils;
 import com.tanzil.sportspal.customUi.MyTextView;
 import com.tanzil.sportspal.model.bean.Users;
 
@@ -72,18 +74,22 @@ public class TeamMembersAdapter extends BaseAdapter {
             SPLog.e("Name :", "" + list.get(position).getFirst_name());
             viewHolder.userNameText.setText(list.get(position).getFirst_name());
 
-            if (android.os.Build.VERSION.SDK_INT < 23) {
-                viewHolder.userPic.setBorderColor(activity.getResources().getColor(R.color.white));
-                viewHolder.userPic.setSelectorColor(activity.getResources().getColor(R.color.circular_image_border_color));
-            } else {
-                viewHolder.userPic.setBorderColor(ContextCompat.getColor(activity, R.color.white));
-                viewHolder.userPic.setSelectorStrokeColor(ContextCompat.getColor(activity, R.color.circular_image_border_color));
-            }
+            viewHolder.userPic.setBorderColor(Utils.setColor(activity, R.color.white));
+            viewHolder.userPic.setSelectorColor(Utils.setColor(activity, R.color.circular_image_border_color));
             viewHolder.userPic.setBorderWidth(5);
             viewHolder.userPic.setSelectorStrokeWidth(5);
             viewHolder.userPic.addShadow();
+            if (!Utils.isEmptyString(list.get(position).getImage()))
+                Picasso.with(activity)
+                        .load(ServiceApi.baseurl + list.get(position).getImage())
+                        .placeholder(R.drawable.customer_img)
+                        .error(R.drawable.customer_img)
+                        .into(viewHolder.userPic);
+            else
+                viewHolder.userPic.setImageResource(R.drawable.customer_img);
 
         } catch (Exception ex) {
+            ex.printStackTrace();
         }
 
         return v;

@@ -59,7 +59,7 @@ public class PlayerDetailFragment extends Fragment implements View.OnClickListen
             }
 
         } catch (Exception ex) {
-            Log.e(TAG, ex.toString());
+            SPLog.e(TAG, ex.toString());
         }
 
         img_right = (ImageView) activity.findViewById(R.id.img_right);
@@ -83,13 +83,17 @@ public class PlayerDetailFragment extends Fragment implements View.OnClickListen
         img_challenge.setOnClickListener(this);
 
         usersArrayList = ModelManager.getInstance().getUsersManager().getNearUsers(false);
-        for (int i = 0; i < usersArrayList.size(); i++) {
-            if (usersArrayList.get(i).getId().equalsIgnoreCase(id)) {
-                Utils.showLoading(activity, activity.getString(R.string.please_wait));
-                ModelManager.getInstance().getUsersManager().getNearUsers(false).get(i).getUserDetails(true, id);
-                break;
+        if (usersArrayList == null) {
+            Utils.showLoading(activity, activity.getString(R.string.please_wait));
+            ModelManager.getInstance().getUsersManager().getNearUsers(true);
+        } else
+            for (int i = 0; i < usersArrayList.size(); i++) {
+                if (usersArrayList.get(i).getId().equalsIgnoreCase(id)) {
+                    Utils.showLoading(activity, activity.getString(R.string.please_wait));
+                    ModelManager.getInstance().getUsersManager().getNearUsers(false).get(i).getUserDetails(true, id);
+                    break;
+                }
             }
-        }
 
         return rootView;
     }
@@ -202,7 +206,21 @@ public class PlayerDetailFragment extends Fragment implements View.OnClickListen
 
     public void onEventMainThread(String message) {
         Log.e(TAG, "-- " + message);
-        if (message.equalsIgnoreCase("GetUserDetails True")) {
+        if (message.equalsIgnoreCase("GetNearUsers True")) {
+            Utils.dismissLoading();
+            usersArrayList = ModelManager.getInstance().getUsersManager().getNearUsers(false);
+            for (int i = 0; i < usersArrayList.size(); i++) {
+                if (usersArrayList.get(i).getId().equalsIgnoreCase(id)) {
+                    Utils.showLoading(activity, activity.getString(R.string.please_wait));
+                    ModelManager.getInstance().getUsersManager().getNearUsers(false).get(i).getUserDetails(true, id);
+                    break;
+                }
+            }
+        } else if (message.equalsIgnoreCase("GetNearUsers False")) {
+            Utils.dismissLoading();
+        } else if (message.equalsIgnoreCase("GetNearUsers Network Error")) {
+            Utils.dismissLoading();
+        } else if (message.equalsIgnoreCase("GetUserDetails True")) {
             Utils.dismissLoading();
             setData();
         } else if (message.equalsIgnoreCase("GetUserDetails False")) {

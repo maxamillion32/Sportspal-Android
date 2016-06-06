@@ -220,6 +220,7 @@ public class Games {
 
                                 usersArrayList = new ArrayList<Users>();
                                 Users users = new Users();
+                                users.setId(jsonArray.getJSONObject("user").getString("id"));
                                 users.setFirst_name(jsonArray.getJSONObject("user").getString("first_name"));
                                 users.setLast_name(jsonArray.getJSONObject("user").getString("last_name"));
                                 users.setEmail(jsonArray.getJSONObject("user").getString("email"));

@@ -193,8 +193,8 @@ public class Users {
 
                 try {
 
-                    int state = response.getInt("status");
-                    if (state == 200) {
+                    boolean state = response.getBoolean("success");
+                    if (state) {
                         JSONObject jsonArray = response.getJSONObject("message");
 //                        int count = jsonArray.length();
                         usersList = new ArrayList<Users>();
