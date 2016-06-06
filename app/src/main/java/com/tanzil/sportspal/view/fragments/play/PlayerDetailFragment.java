@@ -117,7 +117,7 @@ public class PlayerDetailFragment extends Fragment implements View.OnClickListen
                     e.printStackTrace();
                 }
                 Utils.showLoading(activity, activity.getString(R.string.please_wait));
-                ModelManager.getInstance().getTeamsManager().challengeTeam(jsonObject);
+//                ModelManager.getInstance().getTeamsManager().challengeTeam(jsonObject);
 
                 break;
 

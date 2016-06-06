@@ -60,7 +60,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
         View rootView = inflater.inflate(R.layout.fragment_settings, container, false);
 
-        ImageView img_right = (ImageView) activity.findViewById(R.id.img_right);
+        img_right = (ImageView) activity.findViewById(R.id.img_right);
         img_right.setImageResource(R.drawable.check);
         img_right.setVisibility(View.VISIBLE);
 
