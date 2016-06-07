@@ -69,12 +69,12 @@ public class TeamsFragment extends Fragment {
         teamsListView = (ListView) rootView.findViewById(R.id.news_feed_list);
         // Inflate the layout for this fragment
 
-        teamsArrayList = ModelManager.getInstance().getTeamsManager().getAllTeams(false);
-        if (teamsArrayList == null) {
+//        teamsArrayList = ModelManager.getInstance().getTeamsManager().getAllTeams(false);
+//        if (teamsArrayList == null) {
             Utils.showLoading(activity, activity.getString(R.string.please_wait));
             ModelManager.getInstance().getTeamsManager().getAllTeams(true);
-        } else
-            setData();
+//        } else
+//            setData();
 
         img_right.setOnClickListener(new View.OnClickListener() {
             @Override

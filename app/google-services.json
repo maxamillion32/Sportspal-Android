@@ -19,6 +19,10 @@
             "package_name": "com.tanzil.sportspal",
             "certificate_hash": "FD946895F5C344EAA09F57E590034E6B922F91EE"
           }
+        },
+        {
+          "client_id": "317594767865-apsuvsr0a6v406f1ltd8uupt9j6g19s3.apps.googleusercontent.com",
+          "client_type": 3
         }
       ],
       "api_key": [
@@ -32,7 +36,12 @@
         },
         "appinvite_service": {
           "status": 2,
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "317594767865-apsuvsr0a6v406f1ltd8uupt9j6g19s3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 1

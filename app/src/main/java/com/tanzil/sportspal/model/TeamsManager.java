@@ -258,9 +258,9 @@ public class TeamsManager {
         });
     }
 
-    public ArrayList<Teams> getUserPreferredTeams(boolean shouldRefresh, String userId) {
+    public ArrayList<Teams> getUserPreferredTeams(boolean shouldRefresh) {
         if (shouldRefresh)
-            getUserTeams(userId);
+            getUserTeams(ModelManager.getInstance().getAuthManager().getUserId());
         return userTeamsList;
     }
 

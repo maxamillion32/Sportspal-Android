@@ -336,7 +336,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                         JSONObject post_data = new JSONObject();
                         try {
                             post_data.put("device_type", "Android");
-                            post_data.put("device_token", ModelManager.getInstance().getAuthManager().getDeviceToken());
+                            post_data.put("device_token", Preferences.readString(getApplicationContext(), Preferences.DEVICE_ID, ""));
                             SPLog.e(TAG, "LoginData" + post_data.toString());
 
                         } catch (Exception e1) {
@@ -420,7 +420,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     }
 
     public void onEventMainThread(String message) {
-        if (message.equalsIgnoreCase("Logout True")) {
+        if (message.contains("Logout True")) {
             Utils.dismissLoading();
             SPLog.e(TAG, "Logout True");
             Preferences.clearAllPreference(MainActivity.this);

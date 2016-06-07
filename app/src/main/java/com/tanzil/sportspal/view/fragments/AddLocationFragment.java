@@ -48,7 +48,7 @@ public class AddLocationFragment extends Fragment implements View.OnClickListene
 
     private GoogleMap googleMap;
     private Double mDropedPinLat, mDropedPinLong;
-    private String sports_name, sports_id, team_type, team_name, date, time, team_id;
+    private String sports_name, sports_id, team_type, team_name, date, time, team_id, game_status, member_limit;
     private Activity activity;
     private boolean check = false;
     private LocationManager locationManagerd;
@@ -94,6 +94,8 @@ public class AddLocationFragment extends Fragment implements View.OnClickListene
             team_id = bundle.getString("team_id");
             date = bundle.getString("date");
             time = bundle.getString("time");
+            game_status = bundle.getString("game_status");
+            member_limit = bundle.getString("member_limit");
         }
 
         myLocationButton = (ImageView) rootView.findViewById(R.id.add_venue_mylocation);
@@ -141,6 +143,8 @@ public class AddLocationFragment extends Fragment implements View.OnClickListene
                 address.setTeam_id(team_id);
                 address.setDate(date);
                 address.setTime(time);
+                address.setGame_status(game_status);
+                address.setGame_status(game_status);
                 addressArrayList.add(address);
                 ModelManager.getInstance().getAddressManager().setAddresses(addressArrayList);
 
@@ -342,6 +346,8 @@ public class AddLocationFragment extends Fragment implements View.OnClickListene
             address.setTeam_id(team_id);
             address.setDate(date);
             address.setTime(time);
+            address.setGame_status(game_status);
+            address.setGame_status(game_status);
             addressArrayList.add(address);
             ModelManager.getInstance().getAddressManager().setAddresses(addressArrayList);
 

@@ -24,10 +24,44 @@ public class Teams {
 
     private final String TAG = TeamsManager.class.getSimpleName();
 
-    String id, sport_id, team_name, team_type, members_limit, latitude, longitude, creator_id, address, sports_name;
+    String id, sport_id, team_name, team_type, members_limit, latitude, longitude, creator_id,
+            address, sports_name, sport_status, request_id, status;
 
     private ArrayList<Users> usersList;
     private ArrayList<Teams> teamsArrayList;
+    Users users;
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Users getUsers() {
+        return users;
+    }
+
+    public String getRequest_id() {
+        return request_id;
+    }
+
+    public void setRequest_id(String request_id) {
+        this.request_id = request_id;
+    }
+
+    public void setUsers(Users users) {
+        this.users = users;
+    }
+
+    public String getSport_status() {
+        return sport_status;
+    }
+
+    public void setSport_status(String sport_status) {
+        this.sport_status = sport_status;
+    }
 
     public String getId() {
         return id;
@@ -124,7 +158,7 @@ public class Teams {
     }
 
     public ArrayList<Teams> getDetails(String id) {
-        SPRestClient.get(ServiceApi.GET_TEAM_DETAIL + "/" + id, null, new JsonHttpResponseHandler() {
+        SPRestClient.get(ServiceApi.GET_TEAM_DETAIL + id, null, new JsonHttpResponseHandler() {
             @Override
             public void onStart() {
                 Log.e(TAG, "GetTeamDetails called before request is started");
@@ -142,7 +176,6 @@ public class Teams {
                 Log.e(TAG, "onSuccess  --> " + response.toString());
 
                 try {
-
                     int state = response.getInt("status");
                     if (state == 200) {
                         JSONObject jsonArray = response.getJSONObject("message");
@@ -166,22 +199,28 @@ public class Teams {
                                 Teams.this.setSports_name("NA");
                             }
                         }
-                        if (jsonArray.has("user")) {
-                            if (!jsonArray.isNull("user")) {
-                                JSONArray jsonArray1 = jsonArray.getJSONArray("user");
-                                if (jsonArray1 != null) {
-                                    ArrayList<Users> usersArrayList = new ArrayList<Users>();
-                                    for (int j = 0; j < jsonArray1.length(); j++) {
-                                        Users users = new Users();
-                                        if (jsonArray1.getJSONObject(j).has("id"))
-                                            users.setId(jsonArray1.getJSONObject(j).getString("id"));
-                                        users.setFirst_name(jsonArray1.getJSONObject(j).getString("first_name"));
-                                        users.setLast_name(jsonArray1.getJSONObject(j).getString("last_name"));
-                                        users.setEmail(jsonArray1.getJSONObject(j).getString("email"));
-                                        usersArrayList.add(users);
+                        if (jsonArray.has("team_members")) {
+                            if (!jsonArray.isNull("team_members")) {
+                                JSONArray jsonArray1 = jsonArray.getJSONArray("team_members");
+                                ArrayList<Users> usersArrayList = new ArrayList<Users>();
+                                for (int j = 0; j < jsonArray1.length(); j++) {
+                                    Teams.this.setRequest_id(jsonArray1.getJSONObject(j).getString("id"));
+                                    Teams.this.setStatus(jsonArray1.getJSONObject(j).getString("status"));
+                                    if (jsonArray1.getJSONObject(j).has("user")) {
+                                        if (!jsonArray1.getJSONObject(j).isNull("user")) {
+                                            JSONObject jsonObject = jsonArray1.getJSONObject(j).getJSONObject("user");
+                                            Users users = new Users();
+                                            if (jsonObject.has("id"))
+                                                users.setId(jsonObject.getString("id"));
+                                            users.setFirst_name(jsonObject.getString("first_name"));
+                                            users.setLast_name(jsonObject.getString("last_name"));
+                                            users.setEmail(jsonObject.getString("email"));
+                                            users.setImage(jsonObject.getString("image"));
+                                            usersArrayList.add(users);
+                                        }
                                     }
-                                    Teams.this.setUsersList(usersArrayList);
                                 }
+                                Teams.this.setUsersList(usersArrayList);
                             }
                         }
                         teamsArrayList.add(Teams.this);
@@ -287,6 +326,146 @@ public class Teams {
                     EventBus.getDefault().post("ChallengeTeam False");
                 } else {
                     EventBus.getDefault().post("ChallengeTeam Network Error");
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+                Log.e(TAG, "onFinish  --> ");
+            }
+
+            @Override
+            public void onRetry(int retryNo) {
+                // called when request is retried
+                Log.e(TAG, "onRetry  --> ");
+            }
+
+        });
+    }
+
+    public void acceptTeamRequest(JSONObject jsonObject) {
+        SPRestClient.post(ServiceApi.ACCEPT_TEAM_REQUEST + id, jsonObject.toString(), new JsonHttpResponseHandler() {
+            @Override
+            public void onStart() {
+                Log.e(TAG, "AcceptTeamRequest called before request is started");
+            }
+
+            @Override
+            public void onCancel() {
+                super.onCancel();
+                Log.e(TAG, "onCancel  --> ");
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+                Log.e(TAG, "onSuccess  --> " + response.toString());
+
+                try {
+                    int state = response.getInt("status");
+                    if (state == 200) {
+                        EventBus.getDefault().post("AcceptTeamRequest True");
+                    } else {
+                        EventBus.getDefault().post("AcceptTeamRequest False");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    EventBus.getDefault().post("AcceptTeamRequest False");
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+                if (errorResponse != null) {
+                    Log.e(TAG, "onFailure  --> " + errorResponse.toString());
+                    EventBus.getDefault().post("AcceptTeamRequest False");
+                } else {
+                    EventBus.getDefault().post("AcceptTeamRequest Network Error");
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                super.onFailure(statusCode, headers, responseString, throwable);
+                if (responseString != null) {
+                    Log.e(TAG, "onFailure  --> " + responseString);
+                    EventBus.getDefault().post("AcceptTeamRequest False");
+                } else {
+                    EventBus.getDefault().post("AcceptTeamRequest Network Error");
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+                Log.e(TAG, "onFinish  --> ");
+            }
+
+            @Override
+            public void onRetry(int retryNo) {
+                // called when request is retried
+                Log.e(TAG, "onRetry  --> ");
+            }
+
+        });
+    }
+
+    public void rejectTeamRequest(JSONObject jsonObject) {
+        SPRestClient.delete(ServiceApi.ACCEPT_TEAM_REQUEST + id, jsonObject.toString(), new JsonHttpResponseHandler() {
+            @Override
+            public void onStart() {
+                Log.e(TAG, "RejectTeamRequest called before request is started");
+            }
+
+            @Override
+            public void onCancel() {
+                super.onCancel();
+                Log.e(TAG, "onCancel  --> ");
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+                Log.e(TAG, "onSuccess  --> " + response.toString());
+
+                try {
+                    int state = response.getInt("status");
+                    if (state == 200) {
+                        EventBus.getDefault().post("RejectTeamRequest True");
+                    } else {
+                        EventBus.getDefault().post("RejectTeamRequest False");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    EventBus.getDefault().post("RejectTeamRequest False");
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+                if (errorResponse != null) {
+                    Log.e(TAG, "onFailure  --> " + errorResponse.toString());
+                    EventBus.getDefault().post("RejectTeamRequest False");
+                } else {
+                    EventBus.getDefault().post("RejectTeamRequest Network Error");
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                super.onFailure(statusCode, headers, responseString, throwable);
+                if (responseString != null) {
+                    Log.e(TAG, "onFailure  --> " + responseString);
+                    EventBus.getDefault().post("RejectTeamRequest False");
+                } else {
+                    EventBus.getDefault().post("RejectTeamRequest Network Error");
                 }
             }
 

@@ -40,4 +40,10 @@ public class ServiceApi {
     public static final String GET_SEARCH_USERS = baseurl + "users/search";
     public static final String JOIN_TEAM = baseurl + "teams/join";
     public static final String CHALLENGE_TEAM = baseurl + "teams/challenge/";
+    public static final String GET_GAME_CHALLENGES = baseurl + "games/users/";
+    public static final String GET_TEAM_CHALLENGES = baseurl + "teams/user_team_request/";
+
+    public static final String ACCEPT_TEAM_REQUEST = baseurl + "teams/request/";
+    public static final String REJECT_GAME_CHALLENGES = baseurl + "games/challenge";
+    public static final String ACCEPT_GAME_CHALLENGES = baseurl + "games/acceptchallenge";
 }

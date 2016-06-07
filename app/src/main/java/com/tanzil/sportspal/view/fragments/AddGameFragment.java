@@ -9,7 +9,9 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -31,6 +33,7 @@ import android.widget.Toast;
 
 import com.pkmmte.view.CircularImageView;
 import com.tanzil.sportspal.R;
+import com.tanzil.sportspal.Utility.DrawableImages;
 import com.tanzil.sportspal.Utility.GPSTracker;
 import com.tanzil.sportspal.Utility.SPLog;
 import com.tanzil.sportspal.Utility.Utils;
@@ -65,28 +68,26 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
 
     private String TAG = AddGameFragment.class.getSimpleName();
     private Activity activity;
-    private ImageView addGame, img_sports, img_team, ic_sport;
-    private MyTextView game_sportsName, game_teamName, textMember,txt_Date, txt_Time, txt_teamType, txt_Address, game_sports, add_team_member, teamT;
-    //    private AutoCompleteTextView txt_Address;
+    private ImageView /*addGame, */img_sports, img_team, ic_sport;
+    private MyTextView game_sportsName, game_teamName, textMember, txt_Date, txt_Time,
+            txt_teamType, txt_Address, game_sports, /*add_team_member, */
+            teamT;
     private Calendar myCalendar;
-    //    private LinearLayout upperLayout;
-    private LinearLayout gameLayout, teamLayout, layout_TeamName, layoutSearch, createTeam, layoutSport;
+    private LinearLayout gameLayout, teamLayout, layout_TeamName, layoutSearch, /*createTeam,*/
+            layoutSport;
     private String type = "game", sportsId = "", teamId = "", latitude = "0.00", longitude = "0.00";
     private ListView membersList, teamMemberList;
-    private View headerView, footerView;
 
-    private MyEditText teamName, et_search, teamN /*corporateGroup, privateText*/;
-    private MyTextView teamSport, txt_Type;
+    private MyEditText et_search, teamN, et_member_limit;
+    private MyTextView txt_Type, txt_mode;
     private ArrayList<Teams> teamsArrayList;
     private ArrayList<Sports> sportsArrayList;
     private Dialog sportsDialog, teamDialog;
-    private SportsDialogAdapter sportsDialogAdapter;
-    private TeamsDialogAdapter teamsDialogAdapter;
     private ArrayList<Users> playersArrayList;
-    private MembersListAdapter membersListAdapter;
     private TeamTypeDialogAdapter teamTypeDialogAdapter;
     private ArrayList<String> teamsType = new ArrayList<String>();
     private ArrayList<String> corporateTypes = new ArrayList<String>();
+    private ArrayList<String> gameStatus = new ArrayList<String>();
     private double lat = 0.000, lng = 0.000;
     private GPSTracker gps;
     private boolean mAlreadyLoaded = false;
@@ -116,7 +117,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         gps = new GPSTracker(activity);
 
         myCalendar = Calendar.getInstance();
-        addGame = (ImageView) rootView.findViewById(R.id.add_game);
+        ImageView addGame = (ImageView) rootView.findViewById(R.id.add_game);
         img_sports = (ImageView) rootView.findViewById(R.id.img_sports);
         img_team = (ImageView) rootView.findViewById(R.id.img_team);
         ic_sport = (ImageView) rootView.findViewById(R.id.ic_sport);
@@ -130,12 +131,12 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
 
         txt_Date = (MyTextView) rootView.findViewById(R.id.txt_date);
         txt_Time = (MyTextView) rootView.findViewById(R.id.txt_time);
-        add_team_member = (MyTextView) rootView.findViewById(R.id.add_team_member);
+        MyTextView add_team_member = (MyTextView) rootView.findViewById(R.id.add_team_member);
         textMember = (MyTextView) rootView.findViewById(R.id.members);
 
         et_search = (MyEditText) rootView.findViewById(R.id.et_search);
 //        txt_Address = (MyEditText) rootView.findViewById(R.id.txt_pick_address);
-        createTeam = (LinearLayout) rootView.findViewById(R.id.game);
+        LinearLayout createTeam = (LinearLayout) rootView.findViewById(R.id.game);
         layoutSearch = (LinearLayout) rootView.findViewById(R.id.layout_search);
         gameLayout = (LinearLayout) rootView.findViewById(R.id.create_new_game_layout);
         teamLayout = (LinearLayout) rootView.findViewById(R.id.create_new_team_layout);
@@ -146,6 +147,8 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
 //        txt_Address = (AutoCompleteTextView) rootView.findViewById(R.id.txt_pick_address);
         txt_Address = (MyTextView) rootView.findViewById(R.id.txt_pick_address);
 //        txt_Address.setThreshold(1);
+        txt_mode = (MyTextView) rootView.findViewById(R.id.txt_mode);
+        et_member_limit = (MyEditText) rootView.findViewById(R.id.et_member_limit);
 
         addGame.setOnClickListener(this);
         game_sportsName.setOnClickListener(this);
@@ -162,6 +165,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         add_team_member.setOnClickListener(this);
         createTeam.setOnClickListener(this);
         img_right.setOnClickListener(this);
+        txt_mode.setOnClickListener(this);
 
         if (!canAccessLocation()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -172,10 +176,10 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         if (savedInstanceState == null && !mAlreadyLoaded) {
 //            ModelManager.getInstance().getAddressManager().clearData();
             mAlreadyLoaded = true;
-            teamsArrayList = ModelManager.getInstance().getTeamsManager().getAllTeams(false);
+            teamsArrayList = ModelManager.getInstance().getTeamsManager().getUserPreferredTeams(false);
             if (teamsArrayList == null) {
                 Utils.showLoading(activity, activity.getString(R.string.please_wait));
-                ModelManager.getInstance().getTeamsManager().getAllTeams(true);
+                ModelManager.getInstance().getTeamsManager().getUserPreferredTeams(true);
             } else {
                 sportsArrayList = ModelManager.getInstance().getSportsManager().getAllSportsList(false);
                 if (sportsArrayList == null) {
@@ -186,6 +190,23 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         } else {
             getLatLong();
         }
+
+        membersList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Fragment fragment = new UserProfileDetailFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("id", selectedPlayers.get(position).getId());
+                fragment.setArguments(bundle);
+
+                FragmentManager fragmentManager = ((FragmentActivity) activity).getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.container_body, fragment, "UserProfileDetailFragment");
+                fragmentTransaction.addToBackStack("UserProfileDetailFragment");
+                fragmentTransaction.commit();
+
+            }
+        });
 
         setValues();
         addTextChangeListener();
@@ -206,6 +227,9 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 ArrayList<Users> array = ModelManager.getInstance().getTeamMembersManager().getNearUsers("", false);
+                if (array == null)
+                    array = new ArrayList<Users>();
+
                 arrayTeam = new ArrayList<Users>();
                 for (int j = 0; j < array.size(); j++) {
                     if (array.get(j).getFirst_name().toLowerCase().contains(charSequence.toString().toLowerCase())) {
@@ -239,12 +263,18 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         teamMemberList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                for (int k = 0; k < selectedPlayers.size(); k++) {
+                    if (selectedPlayers.get(k).getId().equalsIgnoreCase(arrayTeam.get(i).getId())) {
+                        Toast.makeText(activity, "Already Added!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
                 layoutSearch.setVisibility(View.GONE);
                 selectedPlayers.add(arrayTeam.get(i));
                 TeamMembersAdapter teamMembersAdapter = new TeamMembersAdapter(activity, selectedPlayers);
                 membersList.setAdapter(teamMembersAdapter);
                 teamMembersAdapter.notifyDataSetChanged();
-                textMember.setText("Member ("+selectedPlayers.size()+")");
+                textMember.setText("Member (" + selectedPlayers.size() + ")");
             }
         });
     }
@@ -262,6 +292,8 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
             game_sportsName.setText(addressArrayList.get(0).getSports_name());
             txt_Date.setText(addressArrayList.get(0).getDate());
             txt_teamType.setText(addressArrayList.get(0).getTeam_type());
+            txt_mode.setText(addressArrayList.get(0).getGame_status());
+            et_member_limit.setText(addressArrayList.get(0).getMember_limit());
             txt_Time.setText(addressArrayList.get(0).getTime());
             txt_Address.setText(addressArrayList.get(0).getAddress());
             sportsId = addressArrayList.get(0).getSports_id();
@@ -288,7 +320,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
 
             case Utils.LOCATION_REQUEST:
@@ -314,15 +346,13 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
     // Header for the add Team layout so that we can show Members list there
     private void setHeader() {
         SPLog.e("headerView Data : ", "Setting headerView to List data");
-        headerView = View
+        View headerView = View
                 .inflate(activity, R.layout.add_team_header_layout, null);
 
-        teamName = (MyEditText) headerView.findViewById(R.id.et_team_name);
-//        corporateGroup = (MyEditText) headerView.findViewById(R.id.et_corporate);
-//        privateText = (MyEditText) headerView.findViewById(R.id.et_private);
+        MyEditText teamName = (MyEditText) headerView.findViewById(R.id.et_team_name);
         txt_Type = (MyTextView) headerView.findViewById(R.id.team_type_txt);
 
-        teamSport = (MyTextView) headerView.findViewById(R.id.txt_team_sport);
+        MyTextView teamSport = (MyTextView) headerView.findViewById(R.id.txt_team_sport);
 
         corporateTypes = new ArrayList<String>();
         corporateTypes.add(activity.getString(R.string.corporate));
@@ -340,20 +370,20 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
     // Footer for the Add team to show Add Member row in the last
     private void setFooter() {
         SPLog.e("footerView Data : ", "Setting footerView to List data");
-        footerView = View
+        View footerView = View
                 .inflate(activity, R.layout.row_members_list, null);
 
         CircularImageView userPic = (CircularImageView) footerView.findViewById(R.id.img_user_pic);
         MyTextView memberName = (MyTextView) footerView.findViewById(R.id.txt_user_name);
         ImageView img_sportType = (ImageView) footerView.findViewById(R.id.img_sport_type);
 
-        if (Build.VERSION.SDK_INT < 23) {
-            userPic.setBorderColor(activity.getResources().getColor(R.color.white));
-            userPic.setSelectorColor(activity.getResources().getColor(R.color.circular_image_border_color));
-        } else {
-            userPic.setBorderColor(ContextCompat.getColor(activity, R.color.white));
-            userPic.setSelectorStrokeColor(ContextCompat.getColor(activity, R.color.circular_image_border_color));
-        }
+//        if (Build.VERSION.SDK_INT < 23) {
+        userPic.setBorderColor(Utils.setColor(activity, R.color.white));
+        userPic.setSelectorColor(Utils.setColor(activity, R.color.circular_image_border_color));
+//        } else {
+//            userPic.setBorderColor(ContextCompat.getColor(activity, R.color.white));
+//            userPic.setSelectorStrokeColor(ContextCompat.getColor(activity, R.color.circular_image_border_color));
+//        }
         userPic.setBorderWidth(5);
         userPic.setSelectorStrokeWidth(5);
         userPic.addShadow();
@@ -374,10 +404,10 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         titleView.setText(activity.getString(R.string.select_team));
 
         ListView listView = (ListView) teamDialog.findViewById(R.id.items_list);
-        teamsArrayList = ModelManager.getInstance().getTeamsManager().getAllTeams(false);
+        teamsArrayList = ModelManager.getInstance().getTeamsManager().getUserPreferredTeams(false);
         if (teamsArrayList != null)
             if (teamsArrayList.size() > 0) {
-                teamsDialogAdapter = new TeamsDialogAdapter(activity,
+                TeamsDialogAdapter teamsDialogAdapter = new TeamsDialogAdapter(activity,
                         teamsArrayList);
                 listView.setAdapter(teamsDialogAdapter);
                 teamsDialogAdapter.notifyDataSetChanged();
@@ -394,7 +424,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
 //                if (isGame)
-                    game_teamName.setText(teamsArrayList.get(position).getTeam_name());
+                game_teamName.setText(teamsArrayList.get(position).getTeam_name());
 //                else
 //                    teamN.setText(teamsArrayList.get(position).getTeam_name());
                 teamId = teamsArrayList.get(position).getId();
@@ -450,7 +480,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         sportsArrayList = ModelManager.getInstance().getSportsManager().getAllSportsList(false);
         if (sportsArrayList != null)
             if (sportsArrayList.size() > 0) {
-                sportsDialogAdapter = new SportsDialogAdapter(activity,
+                SportsDialogAdapter sportsDialogAdapter = new SportsDialogAdapter(activity,
                         sportsArrayList);
                 listView.setAdapter(sportsDialogAdapter);
                 sportsDialogAdapter.notifyDataSetChanged();
@@ -473,78 +503,10 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
                 sportsId = sportsArrayList.get(position).getId();
                 sportsDialog.dismiss();
                 layoutSport.setVisibility(View.VISIBLE);
-                setImage(position);
-
+//                setImage(position);
+                ic_sport.setBackgroundResource(DrawableImages.setImage(sportsArrayList.get(position).getName()));
             }
         });
-    }
-
-    private void setImage(int pos) {
-
-        switch (pos) {
-            case 0:
-                ic_sport.setBackgroundResource(R.drawable.badminton);
-                break;
-
-            case 1:
-                ic_sport.setBackgroundResource(R.drawable.basketball);
-                break;
-
-            case 2:
-                ic_sport.setBackgroundResource(R.drawable.cricket);
-                break;
-
-            case 3:
-                ic_sport.setBackgroundResource(R.drawable.cycling);
-                break;
-
-            case 4:
-                ic_sport.setBackgroundResource(R.drawable.football);
-                break;
-            case 5:
-                ic_sport.setBackgroundResource(R.drawable.frisbee);
-                break;
-            case 6:
-                ic_sport.setBackgroundResource(R.drawable.golf);
-                break;
-            case 7:
-                ic_sport.setBackgroundResource(R.drawable.gymming);
-                break;
-            case 8:
-                ic_sport.setBackgroundResource(R.drawable.skating);//
-                break;
-            case 9:
-                ic_sport.setBackgroundResource(R.drawable.skating);//other
-                break;
-            case 10:
-                ic_sport.setBackgroundResource(R.drawable.skating);
-                break;
-            case 11:
-                ic_sport.setBackgroundResource(R.drawable.squash);//skiing
-                break;
-            case 12:
-                ic_sport.setBackgroundResource(R.drawable.squash);//snooker
-                break;
-            case 13:
-                ic_sport.setBackgroundResource(R.drawable.squash);
-                break;
-            case 14:
-                ic_sport.setBackgroundResource(R.drawable.swimming);
-                break;
-            case 15:
-                ic_sport.setBackgroundResource(R.drawable.tabletennis);
-                break;
-            case 16:
-                ic_sport.setBackgroundResource(R.drawable.tennis);
-                break;
-            case 17:
-                ic_sport.setBackgroundResource(R.drawable.volleyball);
-                break;
-            case 18:
-                ic_sport.setBackgroundResource(R.drawable.yoga);
-                break;
-        }
-
     }
 
     // to show the team type in add game layout for selecting type
@@ -589,6 +551,41 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         teamDialog.show();
     }
 
+    // to choose game status in add game layout for selecting type
+    private void showGameStatus() {
+        final Dialog gameStatusDialog = new Dialog(activity);
+        gameStatusDialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+        gameStatusDialog.setContentView(R.layout.alert_dialog_custom_view);
+        gameStatusDialog.getWindow().setBackgroundDrawable(
+                new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        MyTextView titleView = (MyTextView) gameStatusDialog.findViewById(R.id.title_name);
+        titleView.setText(activity.getString(R.string.select_team_type));
+
+        ListView listView = (ListView) gameStatusDialog.findViewById(R.id.items_list);
+
+        gameStatus = new ArrayList<String>();
+        gameStatus.add("Open");
+        gameStatus.add("Closed");
+        TeamTypeDialogAdapter teamTypeDialogAdapter = new TeamTypeDialogAdapter(activity,
+                gameStatus);
+        listView.setAdapter(teamTypeDialogAdapter);
+        teamTypeDialogAdapter.notifyDataSetChanged();
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                // TODO Auto-generated method stub
+                // setData(position);
+                txt_mode.setText(gameStatus.get(position));
+                gameStatusDialog.dismiss();
+            }
+        });
+        gameStatusDialog.show();
+    }
+
     // to check the validation for add game layout
     private boolean isGameValidate() {
         if (lat == 0.000 || lng == 0.000) {
@@ -608,6 +605,13 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         } else if (txt_Date.getText().toString().length() == 0) {
             isValidate = false;
             Utils.showMessage(activity, "Please select date");
+        } else if (txt_mode.getText().toString().length() == 0) {
+            isValidate = false;
+            Utils.showMessage(activity, "Please select game status");
+        } else if (et_member_limit.getText().toString().length() == 0) {
+            et_member_limit.requestFocus();
+            isValidate = false;
+            Utils.showMessage(activity, "Please fill member limit");
         } else if (txt_Time.getText().toString().length() == 0) {
             isValidate = false;
             Utils.showMessage(activity, "Please select time");
@@ -622,7 +626,8 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.add_game:
+            case R.id.txt_mode:
+                showGameStatus();
                 break;
 
             case R.id.img_sports:
@@ -691,6 +696,8 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
                 bundle.putString("team_id", teamId);
                 bundle.putString("date", txt_Date.getText().toString());
                 bundle.putString("time", txt_Time.getText().toString());
+                bundle.putString("game_status", txt_mode.getText().toString());
+                bundle.putString("member_limit", et_member_limit.getText().toString());
                 fragment.setArguments(bundle);
                 fragmentTransaction.replace(R.id.container_body, fragment, "AddLocationFragment");
                 fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
@@ -734,6 +741,8 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
                     jsonObject.put("user_id", ModelManager.getInstance().getAuthManager().getUserId());
                     jsonObject.put("game_type", txt_teamType.getText().toString());
                     jsonObject.put("team_id", teamId);
+                    jsonObject.put("game_status", txt_mode.getText().toString());
+                    jsonObject.put("member_limit", et_member_limit.getText().toString());
                     jsonObject.put("date", txt_Date.getText().toString());
                     jsonObject.put("time", txt_Time.getText().toString());
                     jsonObject.put("latitude", latitude);
@@ -746,7 +755,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
                 ModelManager.getInstance().getSportsManager().addGame(jsonObject);
             }
         } else {
-            if (arrayTeam != null&&arrayTeam.size()>0) {
+            if (arrayTeam != null && arrayTeam.size() > 0) {
                 JSONObject jsonObject = new JSONObject();
                 try {
                     jsonObject.put("sport_id", sportsId);
@@ -790,7 +799,7 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         setFooter();
         if (playersArrayList != null)
             if (playersArrayList.size() > 0) {
-                membersListAdapter = new MembersListAdapter(activity, playersArrayList);
+                MembersListAdapter membersListAdapter = new MembersListAdapter(activity, playersArrayList);
                 membersList.setAdapter(membersListAdapter);
                 membersListAdapter.notifyDataSetChanged();
             }
@@ -847,11 +856,17 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
     }
 
     private void clearData() {
+        ModelManager.getInstance().getAddressManager().setAddresses(new ArrayList<Address>());
         game_sportsName.setText("");
         game_teamName.setText("");
         txt_Address.setText("");
         txt_Date.setText("");
         txt_Time.setText("");
+        sportsId = "";
+        teamN.setText("");
+        teamT.setText("");
+        latitude = "0.00";
+        longitude = "0.00";
     }
 
     @Override
@@ -861,18 +876,18 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
 
     public void onEventMainThread(String message) {
         Log.e(TAG, "-- " + message);
-        if (message.equalsIgnoreCase("GetAllTeams True")) {
+        if (message.equalsIgnoreCase("GetUserTeams True")) {
             Utils.dismissLoading();
-            teamsArrayList = ModelManager.getInstance().getTeamsManager().getAllTeams(false);
+            teamsArrayList = ModelManager.getInstance().getTeamsManager().getUserPreferredTeams(false);
             sportsArrayList = ModelManager.getInstance().getSportsManager().getAllSportsList(false);
             if (sportsArrayList == null) {
                 Utils.showLoading(activity, activity.getString(R.string.please_wait));
                 ModelManager.getInstance().getSportsManager().getAllSportsList(true);
             }
-        } else if (message.equalsIgnoreCase("GetAllTeams False")) {
+        } else if (message.equalsIgnoreCase("GetUserTeams False")) {
             Utils.dismissLoading();
             Utils.showMessage(activity, activity.getString(R.string.something_went_wrong));
-        } else if (message.equalsIgnoreCase("GetAllTeams Network Error")) {
+        } else if (message.equalsIgnoreCase("GetUserTeams Network Error")) {
             Utils.dismissLoading();
             Utils.showMessage(activity, activity.getString(R.string.something_went_wrong));
         } else if (message.equalsIgnoreCase("GetAllSports True")) {
@@ -899,14 +914,14 @@ public class AddGameFragment extends Fragment implements View.OnClickListener {
         } else if (message.equalsIgnoreCase("AddGame False")) {
             Utils.dismissLoading();
             Utils.showMessage(activity, activity.getString(R.string.something_went_wrong));
+        } else if (message.equalsIgnoreCase("AddGame Network Error")) {
+            Utils.dismissLoading();
+            Utils.showMessage(activity, activity.getString(R.string.something_went_wrong));
         } else if (message.equalsIgnoreCase("AddTeam True")) {
             Utils.showMessage(activity, "Team created successfully");
             Utils.dismissLoading();
             clearData();
         } else if (message.equalsIgnoreCase("AddTeam False")) {
-            Utils.dismissLoading();
-            Utils.showMessage(activity, activity.getString(R.string.something_went_wrong));
-        } else if (message.equalsIgnoreCase("AddGame Network Error")) {
             Utils.dismissLoading();
             Utils.showMessage(activity, activity.getString(R.string.something_went_wrong));
         } else if (message.equalsIgnoreCase("GetNearUsers True")) {

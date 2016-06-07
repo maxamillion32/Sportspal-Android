@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -21,6 +23,8 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.tanzil.sportspal.R;
+import com.tanzil.sportspal.Utility.SPLog;
+import com.tanzil.sportspal.Utility.ServiceApi;
 import com.tanzil.sportspal.Utility.Utils;
 import com.tanzil.sportspal.customUi.MyButton;
 import com.tanzil.sportspal.customUi.MyEditText;
@@ -31,6 +35,9 @@ import com.tanzil.sportspal.model.bean.Users;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -46,10 +53,12 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     private MyEditText et_email, et_firstName, et_lastName, et_dob;
     private MyTextView et_description;
     private MyButton btn_preferences, btn_location;
-    private Calendar myCalendar;
+//    private Calendar myCalendar;
     private ImageView /*img_update*/img_right, img_user_pic;
     private ArrayList<Users> usersArrayList;
     private String base64ImageData = "", gender = "";
+    private int REQUEST_CAMERA = 0, SELECT_FILE = 1;
+    private String userChoosenTask;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -64,7 +73,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         img_right.setImageResource(R.drawable.check);
         img_right.setVisibility(View.VISIBLE);
 
-        myCalendar = Calendar.getInstance();
+//        myCalendar = Calendar.getInstance();
 
         et_email = (MyEditText) rootView.findViewById(R.id.et_email);
         et_firstName = (MyEditText) rootView.findViewById(R.id.et_first_name);
@@ -98,6 +107,23 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         return rootView;
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case Utils.MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (userChoosenTask.equals("Take Photo"))
+                        cameraIntent();
+                    else if (userChoosenTask.equals("Choose from Library"))
+                        galleryIntent();
+                } else {
+                    //code for deny
+                    SPLog.e("Permission Denied : ", "Permission not granted");
+                }
+                break;
+        }
+    }
+
     private void setData() {
         usersArrayList = ModelManager.getInstance().getUsersManager().getMyDetails(false);
         if (usersArrayList != null) {
@@ -129,7 +155,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
                 if (!Utils.isEmptyString(usersArrayList.get(i).getImage()))
                     Picasso.with(activity)
-                            .load(usersArrayList.get(i).getImage())
+                            .load(ServiceApi.baseurl + usersArrayList.get(i).getImage())
                             .placeholder(img)
                             .error(img)
                             .into(img_user_pic);
@@ -194,19 +220,26 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     }
 
     private void selectImage() {
-        final CharSequence[] items = {"Take Photo", "Choose from gallery", "Cancel"};
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final CharSequence[] items = {"Take Photo", "Choose from Library",
+                "Cancel"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle("Add Photo!");
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
+                boolean result = Utils.checkPermission(activity);
+
                 if (items[item].equals("Take Photo")) {
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    startActivityForResult(intent, Utils.REQUEST_CAMERA);
-                } else if (items[item].equals("Choose from gallery")) {
-                    Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    intent.setType("image/*");
-                    startActivityForResult(Intent.createChooser(intent, "Select File"), Utils.SELECT_FILE);
+                    userChoosenTask = "Take Photo";
+                    if (result)
+                        cameraIntent();
+
+                } else if (items[item].equals("Choose from Library")) {
+                    userChoosenTask = "Choose from Library";
+                    if (result)
+                        galleryIntent();
+
                 } else if (items[item].equals("Cancel")) {
                     dialog.dismiss();
                 }
@@ -215,35 +248,73 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         builder.show();
     }
 
+    private void galleryIntent() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);//
+        startActivityForResult(Intent.createChooser(intent, "Select File"), SELECT_FILE);
+    }
+
+    private void cameraIntent() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, REQUEST_CAMERA);
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+//        super.onActivityResult(requestCode, resultCode, data);
+        img_right.setVisibility(View.VISIBLE);
+
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == Utils.REQUEST_CAMERA) {
-                try {
-                    Bitmap imagedata = (Bitmap) data.getExtras().get("data");
-                    img_user_pic.setImageBitmap(imagedata);
-                    base64ImageData = null;
-                    base64ImageData = Utils.encodeTobase64(Utils.scaleBitmap(imagedata, 300, 400));
+            if (requestCode == SELECT_FILE)
+                onSelectFromGalleryResult(data);
+            else if (requestCode == REQUEST_CAMERA)
+                onCaptureImageResult(data);
+        }
+    }
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else if (requestCode == Utils.SELECT_FILE) {
-                try {
-                    Uri selectedImageUri = data.getData();
-                    Bitmap imagedata = MediaStore.Images.Media.getBitmap(activity.getContentResolver(), selectedImageUri);
-                    img_user_pic.setImageBitmap(imagedata);
-                    base64ImageData = null;
-                    base64ImageData = Utils.encodeTobase64(Utils.scaleBitmap(imagedata, 300, 400));
+    private void onCaptureImageResult(Intent data) {
+        Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        if (thumbnail != null) {
+            thumbnail.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
+        }
 
+        File destination = new File(Environment.getExternalStorageDirectory(),
+                System.currentTimeMillis() + ".jpg");
 
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        FileOutputStream fo;
+        try {
+            destination.createNewFile();
+            fo = new FileOutputStream(destination);
+            fo.write(bytes.toByteArray());
+            fo.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        base64ImageData = null;
+        base64ImageData = Utils.encodeTobase64(Utils.scaleBitmap(thumbnail, 300, 400));
+        img_user_pic.setImageBitmap(thumbnail);
+
+        SPLog.e("Base 64 String", ""+base64ImageData);
+    }
+
+    private void onSelectFromGalleryResult(Intent data) {
+
+        Bitmap bm = null;
+        if (data != null) {
+            try {
+                bm = MediaStore.Images.Media.getBitmap(activity.getContentResolver(), data.getData());
+                base64ImageData = null;
+                base64ImageData = Utils.encodeTobase64(Utils.scaleBitmap(bm, 300, 400));
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
+
+        SPLog.e("Base 64 String", ""+base64ImageData);
+        img_user_pic.setImageBitmap(bm);
     }
 
     @Override

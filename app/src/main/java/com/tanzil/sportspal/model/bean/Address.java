@@ -4,11 +4,27 @@ package com.tanzil.sportspal.model.bean;
  * Created by arun.sharma on 5/17/2016.
  */
 public class Address {
-    String address, sports_name, sports_id, team_type, team_name, date, time, team_id;
+    String address, sports_name, sports_id, team_type, team_name, date, time, team_id, member_limit, game_status;
     double latitude, longitude;
 
     public String getAddress() {
         return address;
+    }
+
+    public String getMember_limit() {
+        return member_limit;
+    }
+
+    public void setMember_limit(String member_limit) {
+        this.member_limit = member_limit;
+    }
+
+    public String getGame_status() {
+        return game_status;
+    }
+
+    public void setGame_status(String game_status) {
+        this.game_status = game_status;
     }
 
     public void setAddress(String address) {

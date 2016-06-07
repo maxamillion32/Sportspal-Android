@@ -69,12 +69,12 @@ public class SportsFragment extends Fragment {
         sportsListView = (ListView) rootView.findViewById(R.id.news_feed_list);
         // Inflate the layout for this fragment
 
-        gamesArrayList = ModelManager.getInstance().getSportsManager().getUserPreferredGames(false);
-        if (gamesArrayList == null) {
+//        gamesArrayList = ModelManager.getInstance().getSportsManager().getUserPreferredGames(false);
+//        if (gamesArrayList == null) {
             Utils.showLoading(activity, activity.getString(R.string.please_wait));
             ModelManager.getInstance().getSportsManager().getUserPreferredGames(true);
-        } else
-            setData();
+//        } else
+//            setData();
 
         img_right.setOnClickListener(new View.OnClickListener() {
             @Override

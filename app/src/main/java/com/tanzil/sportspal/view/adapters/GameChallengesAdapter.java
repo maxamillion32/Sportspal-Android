@@ -11,21 +11,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 
+import com.pkmmte.view.CircularImageView;
 import com.tanzil.sportspal.R;
+import com.tanzil.sportspal.Utility.Utils;
 import com.tanzil.sportspal.customUi.MyTextView;
+import com.tanzil.sportspal.model.bean.GameNotifications;
 
 import java.util.ArrayList;
 
 
 public class GameChallengesAdapter extends BaseAdapter {
-    private ArrayList<String> list;
+    private ArrayList<GameNotifications> list;
     private Activity activity;
-    private int[] images = {R.drawable.patanjali, R.drawable.decathlon, R.drawable.nike};
 
     public GameChallengesAdapter(final Activity context,
-                                 ArrayList<String> list) {
+                                 ArrayList<GameNotifications> list) {
         this.list = list;
         this.activity = context;
     }
@@ -57,7 +58,7 @@ public class GameChallengesAdapter extends BaseAdapter {
         if (convertView == null) {
             LayoutInflater li = (LayoutInflater) activity
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = li.inflate(R.layout.news_feed_row, null);
+            v = li.inflate(R.layout.row_game_challenge, null);
 
             viewHolder = new CompleteListViewHolder(v);
             v.setTag(viewHolder);
@@ -67,24 +68,36 @@ public class GameChallengesAdapter extends BaseAdapter {
 
         try {
 
-            viewHolder.descriptionText.setText(list.get(position));
-            viewHolder.userPic.setImageResource(images[position]);
+            String desc = "Challenge received for " + list.get(position).getName() + " game";
+            viewHolder.descriptionText.setText(desc);
+            viewHolder.dateText.setText(list.get(position).getDate());
+//            viewHolder.userPic.setImageResource(images[position]);
+
+            viewHolder.userPic.setBorderColor(Utils.setColor(activity, R.color.white));
+            viewHolder.userPic.setBorderWidth(5);
+            viewHolder.userPic.setSelectorColor(Utils.setColor(activity, R.color.transparent_white));
+            viewHolder.userPic.setSelectorStrokeColor(Utils.setColor(activity, R.color.black));
+            viewHolder.userPic.setSelectorStrokeWidth(5);
+            viewHolder.userPic.addShadow();
 
         } catch (Exception ex) {
+            ex.printStackTrace();
         }
 
         return v;
     }
 
     class CompleteListViewHolder {
-        public MyTextView descriptionText;
-        public ImageView userPic;
+        public MyTextView descriptionText, dateText;
+        public CircularImageView userPic;
 
         public CompleteListViewHolder(View convertview) {
             descriptionText = (MyTextView) convertview
-                    .findViewById(R.id.description_text);
-            userPic = (ImageView) convertview
-                    .findViewById(R.id.img_profile);
+                    .findViewById(R.id.txt_description);
+            dateText = (MyTextView) convertview
+                    .findViewById(R.id.txt_date);
+            userPic = (CircularImageView) convertview
+                    .findViewById(R.id.img_sender);
         }
     }
 }

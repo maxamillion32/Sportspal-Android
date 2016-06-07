@@ -15,6 +15,7 @@ import com.squareup.picasso.Picasso;
 import com.tanzil.sportspal.R;
 import com.tanzil.sportspal.Utility.DrawableImages;
 import com.tanzil.sportspal.Utility.SPLog;
+import com.tanzil.sportspal.Utility.ServiceApi;
 import com.tanzil.sportspal.Utility.Utils;
 import com.tanzil.sportspal.customUi.MyTextView;
 import com.tanzil.sportspal.model.ModelManager;
@@ -35,8 +36,8 @@ public class PlayerDetailFragment extends Fragment implements View.OnClickListen
 
     private String TAG = PlayerDetailFragment.class.getSimpleName();
     private Activity activity;
-    private ImageView profilePic, img_challenge, img_chat, img_fav, img_right;
-    private MyTextView txt_playerName, txt_occupation, txt_age, txt_description, txt_advanced;
+    private ImageView profilePic, /*img_challenge, img_chat, */img_fav/*, img_right*/;
+    private MyTextView txt_playerName, txt_occupation, txt_age, txt_description/*, txt_advanced*/;
     private LinearLayout gamesLayout;
     private ArrayList<Users> usersArrayList;
     private String id = "";
@@ -55,21 +56,21 @@ public class PlayerDetailFragment extends Fragment implements View.OnClickListen
             if (getArguments() != null) {
                 Bundle bundle = getArguments();
                 id = bundle.getString("id");
-           }
+            }
 
         } catch (Exception ex) {
-            Log.e(TAG, ex.toString());
+            SPLog.e(TAG, ex.toString());
         }
 
-        img_right = (ImageView) activity.findViewById(R.id.img_right);
+        ImageView img_right = (ImageView) activity.findViewById(R.id.img_right);
         img_right.setVisibility(View.INVISIBLE);
 
         profilePic = (ImageView) rootView.findViewById(R.id.img_profile);
-        img_challenge = (ImageView) rootView.findViewById(R.id.img_challenge);
-        img_chat = (ImageView) rootView.findViewById(R.id.img_chat);
+        ImageView img_challenge = (ImageView) rootView.findViewById(R.id.img_challenge);
+        ImageView img_chat = (ImageView) rootView.findViewById(R.id.img_chat);
         img_fav = (ImageView) rootView.findViewById(R.id.img_favorite);
 
-        txt_advanced = (MyTextView) rootView.findViewById(R.id.advanced_text);
+//        MyTextView txt_advanced = (MyTextView) rootView.findViewById(R.id.advanced_text);
         txt_playerName = (MyTextView) rootView.findViewById(R.id.player_name_text);
         txt_occupation = (MyTextView) rootView.findViewById(R.id.occupation_text);
         txt_age = (MyTextView) rootView.findViewById(R.id.age_text);
@@ -82,13 +83,17 @@ public class PlayerDetailFragment extends Fragment implements View.OnClickListen
         img_challenge.setOnClickListener(this);
 
         usersArrayList = ModelManager.getInstance().getUsersManager().getNearUsers(false);
-        for (int i = 0; i < usersArrayList.size(); i++) {
-            if (usersArrayList.get(i).getId().equalsIgnoreCase(id)) {
-                Utils.showLoading(activity, activity.getString(R.string.please_wait));
-                ModelManager.getInstance().getUsersManager().getNearUsers(false).get(i).getUserDetails(true, id);
-                break;
+        if (usersArrayList == null) {
+            Utils.showLoading(activity, activity.getString(R.string.please_wait));
+            ModelManager.getInstance().getUsersManager().getNearUsers(true);
+        } else
+            for (int i = 0; i < usersArrayList.size(); i++) {
+                if (usersArrayList.get(i).getId().equalsIgnoreCase(id)) {
+                    Utils.showLoading(activity, activity.getString(R.string.please_wait));
+                    ModelManager.getInstance().getUsersManager().getNearUsers(false).get(i).getUserDetails(true, id);
+                    break;
+                }
             }
-        }
 
         return rootView;
     }
@@ -171,7 +176,7 @@ public class PlayerDetailFragment extends Fragment implements View.OnClickListen
                     }
 
                 if (!Utils.isEmptyString(img1)) {
-                    Picasso.with(activity).load(img1)
+                    Picasso.with(activity).load(ServiceApi.baseurl + img1)
                             .placeholder(R.drawable.players)
                             .into(profilePic);
                 } else if (!Utils.isEmptyString(img2)) {
@@ -201,7 +206,21 @@ public class PlayerDetailFragment extends Fragment implements View.OnClickListen
 
     public void onEventMainThread(String message) {
         Log.e(TAG, "-- " + message);
-        if (message.equalsIgnoreCase("GetUserDetails True")) {
+        if (message.equalsIgnoreCase("GetNearUsers True")) {
+            Utils.dismissLoading();
+            usersArrayList = ModelManager.getInstance().getUsersManager().getNearUsers(false);
+            for (int i = 0; i < usersArrayList.size(); i++) {
+                if (usersArrayList.get(i).getId().equalsIgnoreCase(id)) {
+                    Utils.showLoading(activity, activity.getString(R.string.please_wait));
+                    ModelManager.getInstance().getUsersManager().getNearUsers(false).get(i).getUserDetails(true, id);
+                    break;
+                }
+            }
+        } else if (message.equalsIgnoreCase("GetNearUsers False")) {
+            Utils.dismissLoading();
+        } else if (message.equalsIgnoreCase("GetNearUsers Network Error")) {
+            Utils.dismissLoading();
+        } else if (message.equalsIgnoreCase("GetUserDetails True")) {
             Utils.dismissLoading();
             setData();
         } else if (message.equalsIgnoreCase("GetUserDetails False")) {

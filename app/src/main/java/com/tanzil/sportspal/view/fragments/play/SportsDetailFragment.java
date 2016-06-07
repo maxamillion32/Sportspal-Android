@@ -3,10 +3,14 @@ package com.tanzil.sportspal.view.fragments.play;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -21,6 +25,7 @@ import com.tanzil.sportspal.model.ModelManager;
 import com.tanzil.sportspal.model.bean.Games;
 import com.tanzil.sportspal.model.bean.Users;
 import com.tanzil.sportspal.view.adapters.MembersListAdapter;
+import com.tanzil.sportspal.view.fragments.UserProfileDetailFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,14 +41,10 @@ public class SportsDetailFragment extends Fragment {
 
     private String TAG = PlayerDetailFragment.class.getSimpleName();
     private Activity activity;
-    private ImageView sportsPic, img_right;
-    private MyTextView txt_sportName, txt_teamName, txt_date, txt_address, txt_time, txt_members, txt_memberSize;
     private MyButton btn_join;
     private ListView memberList;
     private ArrayList<Games> gamesArrayList;
     private String id = "", spName = "";
-    private View headerView;
-    private MembersListAdapter adapter;
     private ArrayList<Users> usersArrayList;
 
     @Override
@@ -66,11 +67,10 @@ public class SportsDetailFragment extends Fragment {
             Log.e(TAG, ex.toString());
         }
 
-        img_right = (ImageView) activity.findViewById(R.id.img_right);
+        ImageView img_right = (ImageView) activity.findViewById(R.id.img_right);
         img_right.setVisibility(View.INVISIBLE);
 
         memberList = (ListView) rootView.findViewById(R.id.memberList);
-        setHeader();
 
         gamesArrayList = ModelManager.getInstance().getSportsManager().getUserPreferredGames(false);
         for (int i = 0; i < gamesArrayList.size(); i++) {
@@ -80,10 +80,23 @@ public class SportsDetailFragment extends Fragment {
                 break;
             }
         }
-        return rootView;
-    }
 
-    private void setHeader() {
+        memberList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Fragment fragment = new UserProfileDetailFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("id", usersArrayList.get(position-1).getId());
+                fragment.setArguments(bundle);
+
+                FragmentManager fragmentManager = ((FragmentActivity) activity).getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.container_body, fragment, "UserProfileDetailFragment");
+                fragmentTransaction.addToBackStack("UserProfileDetailFragment");
+                fragmentTransaction.commit();
+            }
+        });
+        return rootView;
     }
 
     private void setData() {
@@ -92,24 +105,29 @@ public class SportsDetailFragment extends Fragment {
             if (gamesArrayList.get(i).getId().equalsIgnoreCase(id)) {
                 ArrayList<Games> gameDetails = gamesArrayList.get(i).getGameDetails(false, id);
 
-                headerView = View
+                View headerView = View
                         .inflate(activity, R.layout.game_detail_header_layout, null);
 
-                sportsPic = (ImageView) headerView.findViewById(R.id.img_sports_pic);
+                ImageView sportsPic = (ImageView) headerView.findViewById(R.id.img_sports_pic);
 
-                txt_address = (MyTextView) headerView.findViewById(R.id.txt_pick_address);
-                txt_sportName = (MyTextView) headerView.findViewById(R.id.sport_name_text);
-                txt_teamName = (MyTextView) headerView.findViewById(R.id.txt_team_name);
-                txt_date = (MyTextView) headerView.findViewById(R.id.txt_date);
-                txt_time = (MyTextView) headerView.findViewById(R.id.txt_time);
-                txt_members = (MyTextView) headerView.findViewById(R.id.txt_members);
-                txt_memberSize = (MyTextView) headerView.findViewById(R.id.txt_member_size);
+                MyTextView txt_address = (MyTextView) headerView.findViewById(R.id.txt_pick_address);
+                MyTextView txt_sportName = (MyTextView) headerView.findViewById(R.id.sport_name_text);
+                MyTextView txt_teamName = (MyTextView) headerView.findViewById(R.id.txt_team_name);
+                MyTextView txt_date = (MyTextView) headerView.findViewById(R.id.txt_date);
+                MyTextView txt_time = (MyTextView) headerView.findViewById(R.id.txt_time);
+                MyTextView txt_members = (MyTextView) headerView.findViewById(R.id.txt_members);
+                MyTextView txt_memberSize = (MyTextView) headerView.findViewById(R.id.txt_member_size);
 
                 if (!Utils.isEmptyString(spName))
                     sportsPic.setImageResource(DrawableImages.setImage(spName));
 
                 btn_join = (MyButton) headerView.findViewById(R.id.join_btn);
                 btn_join.setTransformationMethod(null);
+
+                if (gameDetails.get(0).getUserId().equalsIgnoreCase(ModelManager.getInstance().getAuthManager().getUserId()))
+                    btn_join.setVisibility(View.GONE);
+                else
+                    btn_join.setVisibility(View.VISIBLE);
 
                 btn_join.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -145,11 +163,9 @@ public class SportsDetailFragment extends Fragment {
                 if (usersArrayList == null)
                     usersArrayList = new ArrayList<>();
                 SPLog.e("User Array List : ", "" + usersArrayList.size());
-                if (usersArrayList != null) {
-                    adapter = new MembersListAdapter(activity, usersArrayList);
-                    memberList.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
-                }
+                MembersListAdapter adapter = new MembersListAdapter(activity, usersArrayList);
+                memberList.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
                 txt_members.setText("Members(" + usersArrayList.size() + ")");
                 break;
             }
